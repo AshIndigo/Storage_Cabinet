@@ -1,0 +1,16 @@
+[
+{
+  "modid": "filingcabinet",
+  "name": "Filing Cabinet",
+  "description": "Adds a filing cabinet for all of those enchanted books or partially damaged tools you have!",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["AshIndigo"],
+  "credits": "The Forge and FML guys, for making Forge and FML",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

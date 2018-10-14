@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ACA",
+    "ACA",
+    "ACA"  ],
+  "key": {
+    "A": [
+      {
+        "item": "minecraft:iron_ingot",
+        "data": 0
+      }
+    ],
+    "C": [
+      {
+        "item": "minecraft:chest",
+        "data": 0
+      }
+    ]
+  },
+  "result": {
+    "item": "filingcabinet:filingcabinet",
+    "data": 0
+  }
+}
