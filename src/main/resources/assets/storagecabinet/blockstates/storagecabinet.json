@@ -2,9 +2,9 @@
   "forge_marker": 1,
   "defaults": {
     "textures": {
-      "top": "filingcabinet:blocks/filingcabinet",
-      "side": "filingcabinet:blocks/filingcabinet",
-      "front": "filingcabinet:blocks/filingcabinetfront"
+      "top": "storagecabinet:blocks/storagecabinet",
+      "side": "storagecabinet:blocks/storagecabinet",
+      "front": "storagecabinet:blocks/storagecabinetfront"
     }
   },
   "variants": {

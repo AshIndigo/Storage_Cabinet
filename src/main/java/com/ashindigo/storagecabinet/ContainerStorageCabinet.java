@@ -1,6 +1,6 @@
-package com.ashindigo.filingcabinet;
+package com.ashindigo.storagecabinet;
 
-import com.ashindigo.filingcabinet.tileentities.TileEntityFilingCabinet;
+import com.ashindigo.storagecabinet.tileentities.TileEntityStorageCabinet;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -15,11 +15,11 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
-public class ContainerFilingCabinet extends Container {
+public class ContainerStorageCabinet extends Container {
 
     private IItemHandler inventoryCap;
 
-    ContainerFilingCabinet(InventoryPlayer playerInv, final TileEntityFilingCabinet cabinet) {
+    ContainerStorageCabinet(InventoryPlayer playerInv, final TileEntityStorageCabinet cabinet) {
 
         inventoryCap = cabinet.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.NORTH);
 

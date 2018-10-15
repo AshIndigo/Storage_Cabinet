@@ -1,7 +1,7 @@
-package com.ashindigo.filingcabinet;
+package com.ashindigo.storagecabinet;
 
-import com.ashindigo.filingcabinet.blocks.FilingCabinetBlock;
-import com.ashindigo.filingcabinet.tileentities.TileEntityFilingCabinet;
+import com.ashindigo.storagecabinet.blocks.StorageCabinetBlock;
+import com.ashindigo.storagecabinet.tileentities.TileEntityStorageCabinet;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
@@ -22,27 +22,27 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import java.util.Objects;
 
 // TODO Make/Clean comments
-@Mod(modid = FilingCabinetMod.MODID, name = FilingCabinetMod.NAME, version = FilingCabinetMod.VERSION)
-public class FilingCabinetMod {
+@Mod(modid = StorageCabinetMod.MODID, name = StorageCabinetMod.NAME, version = StorageCabinetMod.VERSION)
+public class StorageCabinetMod {
 
     @Mod.Instance
-    public static FilingCabinetMod instance;
+    public static StorageCabinetMod instance;
 
-    static final String MODID = "filingcabinet";
-    static final String NAME = "Filing Cabinet";
+    static final String MODID = "storagecabinet";
+    static final String NAME = "Storage Cabinet";
     static final String VERSION = "1.0";
 
-    static Block filingCabinetBlock;
+    static Block storageCabinetBlock;
 
-    @SidedProxy(serverSide = "com.ashindigo.filingcabinet.CommonProxy", clientSide = "com.ashindigo.filingcabinet.ClientProxy")
+    @SidedProxy(serverSide = "com.ashindigo.storagecabinet.CommonProxy", clientSide = "com.ashindigo.storagecabinet.ClientProxy")
     private static CommonProxy proxy;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        filingCabinetBlock = new FilingCabinetBlock(Material.IRON);
+        storageCabinetBlock = new StorageCabinetBlock(Material.IRON);
         NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
         MinecraftForge.EVENT_BUS.register(new RegistrationHandler());
-        GameRegistry.registerTileEntity(TileEntityFilingCabinet.class, new ResourceLocation(MODID, "filingcabinet"));
+        GameRegistry.registerTileEntity(TileEntityStorageCabinet.class, new ResourceLocation(MODID, "storagecabinet"));
 
     }
 
@@ -51,17 +51,17 @@ public class FilingCabinetMod {
 
         @SubscribeEvent
         public void registerBlocks(RegistryEvent.Register<Block> event) {
-            event.getRegistry().registerAll(filingCabinetBlock.setRegistryName(MODID, "filingcabinet"));
+            event.getRegistry().registerAll(storageCabinetBlock.setRegistryName(MODID, "storagecabinet"));
         }
 
         @SubscribeEvent
         public void registerItems(RegistryEvent.Register<Item> event) {
-            event.getRegistry().registerAll(new ItemBlock(filingCabinetBlock).setRegistryName(Objects.requireNonNull(filingCabinetBlock.getRegistryName())));
+            event.getRegistry().registerAll(new ItemBlock(storageCabinetBlock).setRegistryName(Objects.requireNonNull(storageCabinetBlock.getRegistryName())));
         }
 
         @SubscribeEvent
         public static void registerModels(ModelRegistryEvent event) {
-            proxy.registerItemRenderer(Item.getItemFromBlock(filingCabinetBlock), 0, "filingcabinet");
+            proxy.registerItemRenderer(Item.getItemFromBlock(storageCabinetBlock), 0, "storagecabinet");
         }
     }
 

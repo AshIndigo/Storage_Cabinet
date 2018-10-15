@@ -1,4 +1,4 @@
-package com.ashindigo.filingcabinet.tileentities;
+package com.ashindigo.storagecabinet.tileentities;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -10,7 +10,7 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 
-public class TileEntityFilingCabinet extends TileEntity {
+public class TileEntityStorageCabinet extends TileEntity {
 
     private ItemStackHandler inventory = new ItemStackHandler(270){
         // TODO Probably unoptimized

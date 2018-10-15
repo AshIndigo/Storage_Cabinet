@@ -1,4 +1,4 @@
-package com.ashindigo.filingcabinet;
+package com.ashindigo.storagecabinet;
 
 import net.minecraft.item.Item;
 

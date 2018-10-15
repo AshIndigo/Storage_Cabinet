@@ -1,6 +1,6 @@
-package com.ashindigo.filingcabinet;
+package com.ashindigo.storagecabinet;
 
-import com.ashindigo.filingcabinet.tileentities.TileEntityFilingCabinet;
+import com.ashindigo.storagecabinet.tileentities.TileEntityStorageCabinet;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.math.BlockPos;
@@ -17,7 +17,7 @@ public class GuiHandler implements IGuiHandler {
     public Container getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         switch (ID) {
             case CABINET:
-                return new ContainerFilingCabinet(player.inventory, (TileEntityFilingCabinet) Objects.requireNonNull(world.getTileEntity(new BlockPos(x, y, z))));
+                return new ContainerStorageCabinet(player.inventory, (TileEntityStorageCabinet) Objects.requireNonNull(world.getTileEntity(new BlockPos(x, y, z))));
             default:
                 return null;
         }
@@ -27,7 +27,7 @@ public class GuiHandler implements IGuiHandler {
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         switch (ID) {
             case CABINET:
-                return new GuiFilingCabinet(getServerGuiElement(ID, player, world, x, y, z), player);
+                return new GuiStorageCabinet(getServerGuiElement(ID, player, world, x, y, z), player);
             default:
                 return null;
         }

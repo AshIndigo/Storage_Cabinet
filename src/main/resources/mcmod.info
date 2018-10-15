@@ -1,8 +1,8 @@
 [
 {
-  "modid": "filingcabinet",
-  "name": "Filing Cabinet",
-  "description": "Adds a filing cabinet for all of those enchanted books or partially damaged tools you have!",
+  "modid": "storagecabinet",
+  "name": "Storage Cabinet",
+  "description": "Adds a storage cabinet for all of those enchanted books or partially damaged tools you have!",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",

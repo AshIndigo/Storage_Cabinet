@@ -1,8 +1,8 @@
-package com.ashindigo.filingcabinet.blocks;
+package com.ashindigo.storagecabinet.blocks;
 
-import com.ashindigo.filingcabinet.FilingCabinetMod;
-import com.ashindigo.filingcabinet.GuiHandler;
-import com.ashindigo.filingcabinet.tileentities.TileEntityFilingCabinet;
+import com.ashindigo.storagecabinet.StorageCabinetMod;
+import com.ashindigo.storagecabinet.GuiHandler;
+import com.ashindigo.storagecabinet.tileentities.TileEntityStorageCabinet;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
 import net.minecraft.block.material.Material;
@@ -20,12 +20,12 @@ import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nullable;
 
-public class FilingCabinetBlock extends Block {
+public class StorageCabinetBlock extends Block {
 
-    public FilingCabinetBlock(Material materialIn) {
+    public StorageCabinetBlock(Material materialIn) {
         super(materialIn);
         setCreativeTab(CreativeTabs.DECORATIONS);
-        setUnlocalizedName("filingcabinet");
+        setUnlocalizedName("storagecabinet");
         setHardness(3.0F);
     }
 
@@ -33,7 +33,7 @@ public class FilingCabinetBlock extends Block {
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (!world.isRemote) {
             if (!player.isSneaking()) {
-                player.openGui(FilingCabinetMod.instance, GuiHandler.CABINET, world, pos.getX(), pos.getY(), pos.getZ());
+                player.openGui(StorageCabinetMod.instance, GuiHandler.CABINET, world, pos.getX(), pos.getY(), pos.getZ());
             }
         }
         return true;
@@ -46,13 +46,13 @@ public class FilingCabinetBlock extends Block {
 
     @Nullable
     @Override
-    public TileEntityFilingCabinet createTileEntity(World world, IBlockState state) {
-        return new TileEntityFilingCabinet();
+    public TileEntityStorageCabinet createTileEntity(World world, IBlockState state) {
+        return new TileEntityStorageCabinet();
     }
 
     @Override
     public void breakBlock(World world, BlockPos pos, IBlockState state) {
-            TileEntityFilingCabinet tile = (TileEntityFilingCabinet) world.getTileEntity(pos);
+            TileEntityStorageCabinet tile = (TileEntityStorageCabinet) world.getTileEntity(pos);
             IItemHandler itemHandler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.NORTH);
             for (int i = 0; i < itemHandler.getSlots(); i++) {
                 ItemStack stack = itemHandler.getStackInSlot(i);

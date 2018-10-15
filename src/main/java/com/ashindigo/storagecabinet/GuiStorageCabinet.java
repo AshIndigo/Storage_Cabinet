@@ -1,5 +1,5 @@
 /*
-package com.ashindigo.filingcabinet;
+package com.ashindigo.storagecabinet;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -9,13 +9,13 @@ import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.GuiScrollingList;
 
-public class GuiFilingCabinet extends GuiContainer {
+public class GuiStorageCabinet extends GuiContainer {
 
     private InventoryPlayer playerInv;
 
-    private static final ResourceLocation BG_TEXTURE = new ResourceLocation(FilingCabinetMod.MODID, "textures/gui/cabinet.png");
+    private static final ResourceLocation BG_TEXTURE = new ResourceLocation(StorageCabinetMod.MODID, "textures/gui/cabinet.png");
 
-    public GuiFilingCabinet(Container container, InventoryPlayer playerInv) {
+    public GuiStorageCabinet(Container container, InventoryPlayer playerInv) {
         super(container);
         this.playerInv = playerInv;
     }
@@ -32,13 +32,13 @@ public class GuiFilingCabinet extends GuiContainer {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        String name = I18n.format(FilingCabinetMod.filingCabinetBlock.getUnlocalizedName() + ".name");
+        String name = I18n.format(StorageCabinetMod.storageCabinetBlock.getUnlocalizedName() + ".name");
         fontRenderer.drawString(name, xSize / 2 - fontRenderer.getStringWidth(name) / 2, 6, 0x404040);
         fontRenderer.drawString(playerInv.getDisplayName().getUnformattedText(), 8, ySize - 94, 0x404040);
     }
 }
 */
-package com.ashindigo.filingcabinet;
+package com.ashindigo.storagecabinet;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -56,24 +56,24 @@ import org.lwjgl.input.Mouse;
 import java.io.IOException;
 
 @SideOnly(Side.CLIENT)
-public class GuiFilingCabinet extends GuiContainer {
+public class GuiStorageCabinet extends GuiContainer {
 
     private static final ResourceLocation CREATIVE_INVENTORY_TABS = new ResourceLocation("textures/gui/container/creative_inventory/tabs.png");
     private float currentScroll;
     private boolean isScrolling;
     private boolean wasClicking;
     private InventoryPlayer playerInv;
-    private ContainerFilingCabinet container;
+    private ContainerStorageCabinet container;
 
-    private static final ResourceLocation BG_TEXTURE = new ResourceLocation(FilingCabinetMod.MODID, "textures/gui/cabinet.png");
+    private static final ResourceLocation BG_TEXTURE = new ResourceLocation(StorageCabinetMod.MODID, "textures/gui/cabinet.png");
 
-    GuiFilingCabinet(Container container, EntityPlayer player) {
+    GuiStorageCabinet(Container container, EntityPlayer player) {
         super(container);
         this.allowUserInput = true;
         this.ySize = 200;
         this.xSize = 195;
         playerInv = player.inventory;
-        this.container = (ContainerFilingCabinet) container;
+        this.container = (ContainerStorageCabinet) container;
     }
 
     @Override
@@ -92,7 +92,7 @@ public class GuiFilingCabinet extends GuiContainer {
     // Draw labels
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        String name = I18n.format(FilingCabinetMod.filingCabinetBlock.getUnlocalizedName() + ".name");
+        String name = I18n.format(StorageCabinetMod.storageCabinetBlock.getUnlocalizedName() + ".name");
         fontRenderer.drawString(name, xSize / 2 - fontRenderer.getStringWidth(name) / 2, 6, 0x404040);
         fontRenderer.drawString(playerInv.getDisplayName().getUnformattedText(), 8, ySize - 92, 0x404040);
     }
@@ -115,7 +115,7 @@ public class GuiFilingCabinet extends GuiContainer {
         int i = Mouse.getEventDWheel();
 
         if (i != 0 && this.needsScrollBars()) {
-            // 270 Slots in the filing cabinet
+            // 270 Slots in the storage cabinet
             int j = (270 + 9 - 1) / 9 - 5;
 
             if (i > 0) {
