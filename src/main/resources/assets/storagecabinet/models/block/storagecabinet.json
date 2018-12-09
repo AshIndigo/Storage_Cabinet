@@ -1,0 +1,11 @@
+{
+  "parent": "block/orientable",
+  "forge_marker": 1,
+  "textures": {
+    "top": "storagecabinet:blocks/storagecabinet",
+    "side": "storagecabinet:blocks/storagecabinet",
+    "front": "storagecabinet:blocks/storagecabinetfront"
+  }
+}
+
+

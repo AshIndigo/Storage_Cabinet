@@ -1,13 +1,16 @@
 package com.ashindigo.storagecabinet.blocks;
 
-import com.ashindigo.storagecabinet.StorageCabinetMod;
 import com.ashindigo.storagecabinet.GuiHandler;
+import com.ashindigo.storagecabinet.StorageCabinetMod;
 import com.ashindigo.storagecabinet.tileentities.TileEntityStorageCabinet;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockChest;
+import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -22,11 +25,19 @@ import javax.annotation.Nullable;
 
 public class StorageCabinetBlock extends Block {
 
+    private static final PropertyDirection FACING = BlockHorizontal.FACING;
+
     public StorageCabinetBlock(Material materialIn) {
         super(materialIn);
         setCreativeTab(CreativeTabs.DECORATIONS);
         setUnlocalizedName("storagecabinet");
         setHardness(3.0F);
+        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
+    }
+
+    @Override
+    public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
+        this.setDefaultFacing(worldIn, pos, state);
     }
 
     @Override
@@ -39,10 +50,32 @@ public class StorageCabinetBlock extends Block {
         return true;
     }
 
-   @Override
-   public boolean hasTileEntity(IBlockState state) {
+    private void setDefaultFacing(World worldIn, BlockPos pos, IBlockState state) {
+        if (!worldIn.isRemote) {
+            IBlockState iblockstate = worldIn.getBlockState(pos.north());
+            IBlockState iblockstate1 = worldIn.getBlockState(pos.south());
+            IBlockState iblockstate2 = worldIn.getBlockState(pos.west());
+            IBlockState iblockstate3 = worldIn.getBlockState(pos.east());
+            EnumFacing enumfacing = (EnumFacing) state.getValue(FACING);
+
+            if (enumfacing == EnumFacing.NORTH && iblockstate.isFullBlock() && !iblockstate1.isFullBlock()) {
+                enumfacing = EnumFacing.SOUTH;
+            } else if (enumfacing == EnumFacing.SOUTH && iblockstate1.isFullBlock() && !iblockstate.isFullBlock()) {
+                enumfacing = EnumFacing.NORTH;
+            } else if (enumfacing == EnumFacing.WEST && iblockstate2.isFullBlock() && !iblockstate3.isFullBlock()) {
+                enumfacing = EnumFacing.EAST;
+            } else if (enumfacing == EnumFacing.EAST && iblockstate3.isFullBlock() && !iblockstate2.isFullBlock()) {
+                enumfacing = EnumFacing.WEST;
+            }
+
+            worldIn.setBlockState(pos, state.withProperty(FACING, enumfacing), 2);
+        }
+    }
+
+    @Override
+    public boolean hasTileEntity(IBlockState state) {
         return true;
-   }
+    }
 
     @Nullable
     @Override
@@ -52,15 +85,31 @@ public class StorageCabinetBlock extends Block {
 
     @Override
     public void breakBlock(World world, BlockPos pos, IBlockState state) {
-            TileEntityStorageCabinet tile = (TileEntityStorageCabinet) world.getTileEntity(pos);
-            IItemHandler itemHandler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.NORTH);
-            for (int i = 0; i < itemHandler.getSlots(); i++) {
-                ItemStack stack = itemHandler.getStackInSlot(i);
-                if (!stack.isEmpty()) {
-                    EntityItem item = new EntityItem(world, pos.getX(), pos.getY(), pos.getZ(), stack);
-                    world.spawnEntity(item);
-                }
+        TileEntityStorageCabinet tile = (TileEntityStorageCabinet) world.getTileEntity(pos);
+        IItemHandler itemHandler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.NORTH);
+        for (int i = 0; i < itemHandler.getSlots(); i++) {
+            ItemStack stack = itemHandler.getStackInSlot(i);
+            if (!stack.isEmpty()) {
+                EntityItem item = new EntityItem(world, pos.getX(), pos.getY(), pos.getZ(), stack);
+                world.spawnEntity(item);
             }
-            super.breakBlock(world, pos, state);
+        }
+        super.breakBlock(world, pos, state);
+    }
+
+    @Override
+    public int getMetaFromState(IBlockState state) {
+
+        return ((EnumFacing) state.getValue(FACING)).getIndex();
+    }
+
+    @Override
+    public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+        return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing().getOpposite());
+    }
+
+    @Override
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, FACING);
     }
 }

@@ -1,18 +1,20 @@
 {
-  "forge_marker": 1,
-  "defaults": {
-    "textures": {
-      "top": "storagecabinet:blocks/storagecabinet",
-      "side": "storagecabinet:blocks/storagecabinet",
-      "front": "storagecabinet:blocks/storagecabinetfront"
-    }
-  },
   "variants": {
-    "normal": {
-      "model": "orientable"
+    "facing=north": {
+      "model": "storagecabinet:storagecabinet"
     },
-    "inventory": {
-      "model": "orientable"
+    "facing=south": {
+      "model": "storagecabinet:storagecabinet",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "storagecabinet:storagecabinet",
+      "y": 270
+    },
+    "facing=east": {
+      "model": "storagecabinet:storagecabinet",
+      "y": 90
     }
   }
 }
+
