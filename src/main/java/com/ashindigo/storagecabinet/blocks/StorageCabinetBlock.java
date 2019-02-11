@@ -37,26 +37,12 @@ public class StorageCabinetBlock extends Block {
 
     @Override
     public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
-        this.setDefaultFacing(worldIn, pos, state);
-    }
-
-    @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if (!world.isRemote) {
-            if (!player.isSneaking()) {
-                player.openGui(StorageCabinetMod.instance, GuiHandler.CABINET, world, pos.getX(), pos.getY(), pos.getZ());
-            }
-        }
-        return true;
-    }
-
-    private void setDefaultFacing(World worldIn, BlockPos pos, IBlockState state) {
         if (!worldIn.isRemote) {
             IBlockState iblockstate = worldIn.getBlockState(pos.north());
             IBlockState iblockstate1 = worldIn.getBlockState(pos.south());
             IBlockState iblockstate2 = worldIn.getBlockState(pos.west());
             IBlockState iblockstate3 = worldIn.getBlockState(pos.east());
-            EnumFacing enumfacing = (EnumFacing) state.getValue(FACING);
+            EnumFacing enumfacing = state.getValue(FACING);
 
             if (enumfacing == EnumFacing.NORTH && iblockstate.isFullBlock() && !iblockstate1.isFullBlock()) {
                 enumfacing = EnumFacing.SOUTH;
@@ -67,9 +53,18 @@ public class StorageCabinetBlock extends Block {
             } else if (enumfacing == EnumFacing.EAST && iblockstate3.isFullBlock() && !iblockstate2.isFullBlock()) {
                 enumfacing = EnumFacing.WEST;
             }
-
             worldIn.setBlockState(pos, state.withProperty(FACING, enumfacing), 2);
         }
+    }
+
+    @Override
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+        if (!world.isRemote) {
+            if (!player.isSneaking()) {
+                player.openGui(StorageCabinetMod.instance, GuiHandler.CABINET, world, pos.getX(), pos.getY(), pos.getZ());
+            }
+        }
+        return true;
     }
 
     @Override
@@ -100,16 +95,28 @@ public class StorageCabinetBlock extends Block {
     @Override
     public int getMetaFromState(IBlockState state) {
 
-        return ((EnumFacing) state.getValue(FACING)).getIndex();
+        return state.getValue(FACING).getIndex();
     }
 
     @Override
-    public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
         return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing().getOpposite());
     }
 
     @Override
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, FACING);
+    }
+
+    @Override
+    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+        worldIn.setBlockState(pos, this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing().getOpposite()), 2);
+    }
+
+    @Override
+    public IBlockState getStateFromMeta(int meta) {
+        EnumFacing facing = EnumFacing.getFront(meta);
+        if (facing.getAxis() == EnumFacing.Axis.Y) facing = EnumFacing.NORTH;
+        return this.getDefaultState().withProperty(FACING, facing);
     }
 }
