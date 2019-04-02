@@ -28,7 +28,7 @@ public class ContainerStorageCabinet extends Container {
 
                     @Override
                     public void onSlotChanged() {
-                        cabinet.markDirty(); //
+                        cabinet.markDirty();
                     }
 
                     @Override

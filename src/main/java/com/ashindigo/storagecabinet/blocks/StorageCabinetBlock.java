@@ -94,7 +94,6 @@ public class StorageCabinetBlock extends Block {
 
     @Override
     public int getMetaFromState(IBlockState state) {
-
         return state.getValue(FACING).getIndex();
     }
 
