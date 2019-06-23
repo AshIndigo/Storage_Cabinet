@@ -1,72 +1,86 @@
 package com.ashindigo.storagecabinet;
 
-import com.ashindigo.storagecabinet.blocks.StorageCabinetBlock;
-import com.ashindigo.storagecabinet.tileentities.TileEntityStorageCabinet;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.material.MaterialColor;
+import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.ObjectHolder;
 
 import java.util.Objects;
 
-// TODO Make/Clean comments
-@Mod(modid = StorageCabinetMod.MODID, name = StorageCabinetMod.NAME, version = StorageCabinetMod.VERSION)
-public class StorageCabinetMod {
+import static com.ashindigo.storagecabinet.StorageCabinetMod.MODID;
 
-    @Mod.Instance
-    public static StorageCabinetMod instance;
+@Mod(MODID)
+public class StorageCabinetMod {
 
     static final String MODID = "storagecabinet";
     static final String NAME = "Storage Cabinet";
-    static final String VERSION = "1.0";
 
-    static Block storageCabinetBlock;
+    @ObjectHolder("storagecabinet:storagecabinet")
+    static ContainerType<ContainerStorageCabinet> cabinetType = null;
 
-    @SidedProxy(serverSide = "com.ashindigo.storagecabinet.CommonProxy", clientSide = "com.ashindigo.storagecabinet.ClientProxy")
-    private static CommonProxy proxy;
+    @ObjectHolder("storagecabinet:storagecabinet")
+    static Block storageCabinetBlock ;
 
-    @EventHandler
-    public void preInit(FMLPreInitializationEvent event) {
-        storageCabinetBlock = new StorageCabinetBlock(Material.IRON);
-        NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
-        MinecraftForge.EVENT_BUS.register(new RegistrationHandler());
-        GameRegistry.registerTileEntity(TileEntityStorageCabinet.class, new ResourceLocation(MODID, "storagecabinet"));
+    @ObjectHolder(MODID + ":" + MODID)
+    static TileEntityType<?> storageCabinetTileEntity;
+
+    private static CommonProxy proxy = DistExecutor.runForDist(() -> ClientProxy::new, () -> CommonProxy::new);
+
+    public StorageCabinetMod() {
+        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(Item.class, StorageCabinetMod::registerItems);
+        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(ContainerType.class, StorageCabinetMod::registerContainers);
+        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(TileEntityType.class, StorageCabinetMod::registerTileEntity);
+        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(Block.class, StorageCabinetMod::registerBlocks);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::config);
+        MinecraftForge.EVENT_BUS.register(this);
 
     }
 
-    @Mod.EventBusSubscriber
-    public static class RegistrationHandler {
-
-        @SubscribeEvent
-        public void registerBlocks(RegistryEvent.Register<Block> event) {
-            event.getRegistry().registerAll(storageCabinetBlock.setRegistryName(MODID, "storagecabinet"));
-        }
-
-        @SubscribeEvent
-        public void registerItems(RegistryEvent.Register<Item> event) {
-            event.getRegistry().registerAll(new ItemBlock(storageCabinetBlock).setRegistryName(Objects.requireNonNull(storageCabinetBlock.getRegistryName())));
-        }
-
-        @SubscribeEvent
-        public static void registerModels(ModelRegistryEvent event) {
-            proxy.registerItemRenderer(Item.getItemFromBlock(storageCabinetBlock), 0, "storagecabinet");
-        }
+    @SubscribeEvent
+    public static void registerTileEntity(RegistryEvent.Register<TileEntityType<?>> event) {
+        event.getRegistry().register(TileEntityType.Builder.func_223042_a(TileEntityStorageCabinet::new, storageCabinetBlock).build(null).setRegistryName(new ResourceLocation(MODID, MODID)));
     }
 
+    @SubscribeEvent
+    public static void registerBlocks(RegistryEvent.Register<Block> event) {
+        Block.Properties properties = Block.Properties.create(Material.IRON, MaterialColor.GRAY);
+        properties.hardnessAndResistance(3.0F);
+        event.getRegistry().registerAll(new StorageCabinetBlock(properties));
+    }
 
-    @EventHandler
-    public void init(FMLInitializationEvent event) {
+    @SubscribeEvent
+    public static void registerItems(RegistryEvent.Register<Item> event) {
+        event.getRegistry().registerAll(new BlockItem(storageCabinetBlock, new Item.Properties().group(ItemGroup.MISC)).setRegistryName(Objects.requireNonNull(storageCabinetBlock.getRegistryName())));
+    }
+
+    @SubscribeEvent
+    public static void registerContainers(RegistryEvent.Register<ContainerType<?>> event) {
+        event.getRegistry().register(IForgeContainerType.create(ContainerStorageCabinet::new).setRegistryName(MODID, MODID));
+    }
+
+    private void doClientStuff(final FMLClientSetupEvent event) {
+        proxy.registerGui();
+    }
+
+    @SubscribeEvent
+    public void config(ModConfig.ModConfigEvent event) {
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, StorageCabinetConfig.spec);
     }
 }

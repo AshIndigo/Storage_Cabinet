@@ -1,93 +1,102 @@
 package com.ashindigo.storagecabinet;
 
-import com.ashindigo.storagecabinet.tileentities.TileEntityStorageCabinet;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.Slot;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
+
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Objects;
 
 public class ContainerStorageCabinet extends Container {
 
     private IItemHandler inventoryCap;
 
-    ContainerStorageCabinet(InventoryPlayer playerInv, final TileEntityStorageCabinet cabinet) {
+    ContainerStorageCabinet(int id, PlayerInventory playerInv, PacketBuffer extraData) {
+        this(id, playerInv, (TileEntityStorageCabinet) Objects.requireNonNull(Minecraft.getInstance().world.getTileEntity(extraData.readBlockPos())));
+        for (int i1 = 0; i1 < 3; ++i1) {
+            for (int k1 = 0; k1 < 9; ++k1) {
+                super.addSlot(new Slot(playerInv.player.inventory, k1 + i1 * 9 + 9, 9 + k1 * 18, 118 + i1 * 18));
+            }
+        }
+        for (int j1 = 0; j1 < 9; ++j1) {
+            super.addSlot(new Slot(playerInv.player.inventory, j1, 9 + j1 * 18, 176));
+        }
+    }
 
-        inventoryCap = cabinet.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.NORTH);
+    ContainerStorageCabinet(int id, PlayerInventory playerInv, TileEntityStorageCabinet te) {
+        super(StorageCabinetMod.cabinetType, id);
+        inventoryCap = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElse(new ItemStackHandler(270)); // Something went wrong, lets just return an empty handler
 
-        // 30 * 9 is 270 the numb of slots in the cap
+         //30 * 9 is 270 the numb of slots in the cap
         for (int i = 0; i < 30; ++i) {
             for (int j = 0; j < 9; ++j) {
-                this.addSlotToContainer(new SlotItemHandler(inventoryCap, i * 9 + j, 9 + j * 18, 18 + i * 18) {
+                this.addSlot(new SlotItemHandler(inventoryCap, i * 9 + j, 9 + j * 18, 18 + i * 18) {
 
                     @Override
                     public void onSlotChanged() {
-                        cabinet.markDirty();
+                        te.markDirty();
                     }
 
                     @Override
-                    @SideOnly(Side.CLIENT)
+                    @OnlyIn(Dist.CLIENT)
                     public boolean isEnabled() {
-                        // Sets if slot's enabled based on whether or not it's in the gui bounds
                         return this.yPos < 91 && this.yPos > 0 && xPos < 154 && xPos > 0;
                     }
-
                 });
-
-            }
-        }
-        for (int l = 0; l < 3; ++l) {
-            for (int j1 = 0; j1 < 9; ++j1) {
-                this.addSlotToContainer(new Slot(playerInv, j1 + l * 9 + 9, 9 + j1 * 18, 118 + l * 18));
             }
         }
 
-        for (int k = 0; k < 9; ++k) {
-            this.addSlotToContainer(new Slot(playerInv, k, 9 + k * 18, 176)); // 112 orig
+        for (int i1 = 0; i1 < 3; ++i1) {
+            for (int k1 = 0; k1 < 9; ++k1) {
+                super.addSlot(new Slot(playerInv.player.inventory, k1 + i1 * 9 + 9, 9 + k1 * 18, 118 + i1 * 18));
+            }
+        }
+
+    for (int j1 = 0; j1 < 9; ++j1) {
+            super.addSlot(new Slot(playerInv.player.inventory, j1, 9 + j1 * 18, 176));
         }
     }
 
     @Override
-    public boolean canInteractWith(EntityPlayer player) {
+    @ParametersAreNonnullByDefault
+    public boolean canInteractWith(PlayerEntity playerIn) {
         return true;
     }
 
     @Override
-    public ItemStack transferStackInSlot(EntityPlayer player, int index) {
+    @Nonnull
+    public ItemStack transferStackInSlot(PlayerEntity p_82846_1_, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
-        Slot slot = inventorySlots.get(index);
+        Slot slot = this.inventorySlots.get(index);
 
         if (slot != null && slot.getHasStack()) {
             ItemStack itemstack1 = slot.getStack();
             itemstack = itemstack1.copy();
 
-            int containerSlots = inventorySlots.size() - player.inventory.mainInventory.size();
-
-            if (index < containerSlots) {
-                if (!this.mergeItemStack(itemstack1, containerSlots, inventorySlots.size(), true)) {
+            if (index < 270) {
+                if (!this.mergeItemStack(itemstack1, 270, this.inventorySlots.size(), true)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (!this.mergeItemStack(itemstack1, 0, containerSlots, false)) {
+            } else if (!this.mergeItemStack(itemstack1, 0, 270, false)) {
                 return ItemStack.EMPTY;
             }
 
-            if (itemstack1.getCount() == 0) {
+            if (itemstack1.isEmpty()) {
                 slot.putStack(ItemStack.EMPTY);
             } else {
                 slot.onSlotChanged();
             }
-
-            if (itemstack1.getCount() == itemstack.getCount()) {
-                return ItemStack.EMPTY;
-            }
-
-            slot.onTake(player, itemstack1);
         }
 
         return itemstack;
@@ -100,7 +109,6 @@ public class ContainerStorageCabinet extends Container {
         if (j < 0) {
             j = 0;
         }
-
         // Iterate through all slots
         for (int y = 0; y < 30; ++y) {
             for (int x = 0; x < 9; ++x) {
@@ -109,9 +117,7 @@ public class ContainerStorageCabinet extends Container {
                 } else {
                     inventorySlots.get(y * 9 + x).yPos = (18 + (y - j) * 18); // Orig 18 + (y * j) * 18
                 }
-
             }
         }
-
     }
 }

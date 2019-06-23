@@ -1,13 +1,11 @@
 package com.ashindigo.storagecabinet;
 
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.item.Item;
-import net.minecraftforge.client.model.ModelLoader;
+import net.minecraft.client.gui.ScreenManager;
 
 public class ClientProxy extends CommonProxy {
 
     @Override
-    public void registerItemRenderer(Item item, int meta, String id) {
-        ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(StorageCabinetMod.MODID + ":" + id, "inventory"));
+    public void registerGui() {
+        ScreenManager.registerFactory(StorageCabinetMod.cabinetType, GuiStorageCabinet::new);
     }
 }
