@@ -21,6 +21,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class StorageCabinetBlock extends Block {
@@ -74,12 +75,12 @@ public class StorageCabinetBlock extends Block {
 
     @Nullable
     @Override
-    public TileEntityStorageCabinet createTileEntity(World world, IBlockState state) {
+    public TileEntityStorageCabinet createTileEntity(@Nonnull World world, @Nonnull IBlockState state) {
         return new TileEntityStorageCabinet();
     }
 
     @Override
-    public void breakBlock(World world, BlockPos pos, IBlockState state) {
+    public void breakBlock(World world, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
         TileEntityStorageCabinet tile = (TileEntityStorageCabinet) world.getTileEntity(pos);
         IItemHandler itemHandler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.NORTH);
         for (int i = 0; i < itemHandler.getSlots(); i++) {
@@ -98,11 +99,13 @@ public class StorageCabinetBlock extends Block {
     }
 
     @Override
-    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
+    @Nonnull
+    public IBlockState getStateForPlacement(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
         return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing().getOpposite());
     }
 
     @Override
+    @Nonnull
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, FACING);
     }
@@ -113,6 +116,7 @@ public class StorageCabinetBlock extends Block {
     }
 
     @Override
+    @Nonnull
     public IBlockState getStateFromMeta(int meta) {
         EnumFacing facing = EnumFacing.getFront(meta);
         if (facing.getAxis() == EnumFacing.Axis.Y) facing = EnumFacing.NORTH;

@@ -10,5 +10,15 @@ public class StorageCabinetConfig {
     @Config.RequiresMcRestart
     public static boolean onlyNonStackables = false;
 
+    @Config.Comment("Enables the blacklist/whitelist function")
+    @Config.Name("Enable Blacklist/Whitelist")
+    @Config.RequiresMcRestart
+    public static boolean listEnabled = false;
+
+    @Config.Comment("True for blacklist, false for whitelist, see the wiki for instructions")
+    @Config.Name("Toggle white or black list")
+    @Config.RequiresMcRestart
+    public static boolean blackorwhitelist = true;
+
 
 }

@@ -15,21 +15,17 @@ public class GuiHandler implements IGuiHandler {
 
     @Override
     public Container getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-        switch (ID) {
-            case CABINET:
-                return new ContainerStorageCabinet(player.inventory, (TileEntityStorageCabinet) Objects.requireNonNull(world.getTileEntity(new BlockPos(x, y, z))));
-            default:
-                return null;
+        if (ID == CABINET) {
+            return new ContainerStorageCabinet(player.inventory, (TileEntityStorageCabinet) Objects.requireNonNull(world.getTileEntity(new BlockPos(x, y, z))));
         }
+        return null;
     }
 
     @Override
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-        switch (ID) {
-            case CABINET:
-                return new GuiStorageCabinet(getServerGuiElement(ID, player, world, x, y, z), player);
-            default:
-                return null;
+        if (ID == CABINET) {
+            return new GuiStorageCabinet(getServerGuiElement(ID, player, world, x, y, z), player);
         }
+        return null;
     }
 }

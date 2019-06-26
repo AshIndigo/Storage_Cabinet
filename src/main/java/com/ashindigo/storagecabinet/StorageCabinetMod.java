@@ -13,7 +13,6 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -21,7 +20,6 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import java.util.Objects;
 
-// TODO Make/Clean comments
 @Mod(modid = StorageCabinetMod.MODID, name = StorageCabinetMod.NAME, version = StorageCabinetMod.VERSION)
 public class StorageCabinetMod {
 
@@ -39,10 +37,14 @@ public class StorageCabinetMod {
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+        setupCabinetList();
         storageCabinetBlock = new StorageCabinetBlock(Material.IRON);
         NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
         MinecraftForge.EVENT_BUS.register(new RegistrationHandler());
         GameRegistry.registerTileEntity(TileEntityStorageCabinet.class, new ResourceLocation(MODID, "storagecabinet"));
+    }
+
+    private void setupCabinetList() {
 
     }
 
@@ -63,10 +65,5 @@ public class StorageCabinetMod {
         public static void registerModels(ModelRegistryEvent event) {
             proxy.registerItemRenderer(Item.getItemFromBlock(storageCabinetBlock), 0, "storagecabinet");
         }
-    }
-
-
-    @EventHandler
-    public void init(FMLInitializationEvent event) {
     }
 }

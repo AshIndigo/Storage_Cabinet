@@ -1,43 +1,3 @@
-/*
-package com.ashindigo.storagecabinet;
-
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.client.GuiScrollingList;
-
-public class GuiStorageCabinet extends GuiContainer {
-
-    private InventoryPlayer playerInv;
-
-    private static final ResourceLocation BG_TEXTURE = new ResourceLocation(StorageCabinetMod.MODID, "textures/gui/cabinet.png");
-
-    public GuiStorageCabinet(Container container, InventoryPlayer playerInv) {
-        super(container);
-        this.playerInv = playerInv;
-    }
-
-    @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        GlStateManager.color(1, 1, 1, 1);
-        mc.getTextureManager().bindTexture(BG_TEXTURE);
-        int x = (width - xSize) / 2;
-        int y = (height - ySize) / 2;
-        drawTexturedModalRect(x, y, 0, 0, xSize, ySize);
-
-    }
-
-    @Override
-    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        String name = I18n.format(StorageCabinetMod.storageCabinetBlock.getUnlocalizedName() + ".name");
-        fontRenderer.drawString(name, xSize / 2 - fontRenderer.getStringWidth(name) / 2, 6, 0x404040);
-        fontRenderer.drawString(playerInv.getDisplayName().getUnformattedText(), 8, ySize - 94, 0x404040);
-    }
-}
-*/
 package com.ashindigo.storagecabinet;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -86,7 +46,7 @@ public class GuiStorageCabinet extends GuiContainer {
         int j = this.guiTop + 18;
         int k = j + 112;
         this.mc.getTextureManager().bindTexture(CREATIVE_INVENTORY_TABS);
-        this.drawTexturedModalRect(i, j + (int) ((float) (k - j - 17) * this.currentScroll), 232 + (this.needsScrollBars() ? 0 : 12), 0, 12, 15);
+        this.drawTexturedModalRect(i, j + (int) ((float) (k - j - 17) * this.currentScroll), 232, 0, 12, 15);
     }
 
     // Draw labels
@@ -104,9 +64,7 @@ public class GuiStorageCabinet extends GuiContainer {
         Keyboard.enableRepeatEvents(true);
     }
 
-    private boolean needsScrollBars() {
-        return true;
-    }
+
 
 
     // Scrollbar magic
@@ -114,7 +72,7 @@ public class GuiStorageCabinet extends GuiContainer {
         super.handleMouseInput();
         int i = Mouse.getEventDWheel();
 
-        if (i != 0 && this.needsScrollBars()) {
+        if (i != 0) {
             // 270 Slots in the storage cabinet
             int j = (270 + 9 - 1) / 9 - 5;
 
@@ -144,7 +102,7 @@ public class GuiStorageCabinet extends GuiContainer {
         int j1 = l + 112;
 
         if (!this.wasClicking && flag && mouseX >= k && mouseY >= l && mouseX < i1 && mouseY < j1) {
-            this.isScrolling = this.needsScrollBars();
+            this.isScrolling = true;
         }
 
         if (!flag) {

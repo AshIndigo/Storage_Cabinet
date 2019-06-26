@@ -9,12 +9,13 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
+import javax.annotation.Nonnull;
+
 public class TileEntityStorageCabinet extends TileEntity {
 
     private ItemStackHandler inventory = new ItemStackHandler(270) {
-        // TODO Probably unoptimized - Especially that config check
         @Override
-        public boolean isItemValid(int slot, ItemStack stack) {
+        public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
             int e = 0;
             for (int i = 0; i < inventory.getSlots(); i++) {
                 if (inventory.getStackInSlot(i).isEmpty()) {
@@ -23,25 +24,16 @@ public class TileEntityStorageCabinet extends TileEntity {
             }
             if (e == 270) {
                 if (StorageCabinetConfig.onlyNonStackables) {
-                    if (stack.getMaxStackSize() == 1) {
-                        return true;
-                    } else {
-                        return false;
-                    }
+                    return stack.getMaxStackSize() == 1;
                 } else {
                     return true;
                 }
             } else {
                 for (int i = 0; i < inventory.getSlots(); i++) {
-
                     if (StorageCabinetConfig.onlyNonStackables) {
                         if (!inventory.getStackInSlot(i).isEmpty()) {
                             if (inventory.getStackInSlot(i).getItem().equals(stack.getItem())) {
-                                if (stack.getMaxStackSize() == 1) {
-                                    return true;
-                                } else {
-                                    return false;
-                                }
+                                return stack.getMaxStackSize() == 1;
                             }
                         }
                     } else {
@@ -58,7 +50,8 @@ public class TileEntityStorageCabinet extends TileEntity {
         }
 
         @Override
-        public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+        @Nonnull
+        public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
             if (isItemValid(slot, stack)) {
                 return super.insertItem(slot, stack, simulate);
             }
@@ -67,6 +60,7 @@ public class TileEntityStorageCabinet extends TileEntity {
     };
 
     @Override
+    @Nonnull
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         compound.setTag("inventory", inventory.serializeNBT());
         return super.writeToNBT(compound);
@@ -79,7 +73,7 @@ public class TileEntityStorageCabinet extends TileEntity {
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+    public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             return true;
         }
@@ -87,7 +81,7 @@ public class TileEntityStorageCabinet extends TileEntity {
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+    public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             return (T) inventory;
         }
