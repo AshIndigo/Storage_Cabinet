@@ -1,1 +1,0 @@
-Adds a storage cabinet to Minecraft

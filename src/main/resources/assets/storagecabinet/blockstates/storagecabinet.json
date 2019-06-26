@@ -1,18 +1,18 @@
 {
   "variants": {
     "facing=north": {
-      "model": "storagecabinet:storagecabinet"
+      "model": "storagecabinet:block/storagecabinet"
     },
     "facing=south": {
-      "model": "storagecabinet:storagecabinet",
+      "model": "storagecabinet:block/storagecabinet",
       "y": 180
     },
     "facing=west": {
-      "model": "storagecabinet:storagecabinet",
+      "model": "storagecabinet:block/storagecabinet",
       "y": 270
     },
     "facing=east": {
-      "model": "storagecabinet:storagecabinet",
+      "model": "storagecabinet:block/storagecabinet",
       "y": 90
     }
   }

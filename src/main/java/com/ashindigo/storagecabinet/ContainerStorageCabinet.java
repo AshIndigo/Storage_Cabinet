@@ -1,117 +1,102 @@
 package com.ashindigo.storagecabinet;
 
-import com.ashindigo.storagecabinet.tileentities.TileEntityStorageCabinet;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.Slot;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.container.Container;
+import net.minecraft.container.Slot;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.SlotItemHandler;
+
+import java.util.HashSet;
 
 public class ContainerStorageCabinet extends Container {
 
-    private IItemHandler inventoryCap;
+    private final TileEntityStorageCabinet inventory;
 
-    ContainerStorageCabinet(InventoryPlayer playerInv, final TileEntityStorageCabinet cabinet) {
-
-        inventoryCap = cabinet.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.NORTH);
-
-        // 30 * 9 is 270 the numb of slots in the cap
+    ContainerStorageCabinet(int id, PlayerInventory playerInv, TileEntityStorageCabinet te) {
+        super(null, id);
+        this.inventory = te;
         for (int i = 0; i < 30; ++i) {
             for (int j = 0; j < 9; ++j) {
-                this.addSlotToContainer(new SlotItemHandler(inventoryCap, i * 9 + j, 9 + j * 18, 18 + i * 18) {
-
-                    @Override
-                    public void onSlotChanged() {
-                        cabinet.markDirty();
+                this.addSlot(new Slot(te.inventory, i * 9 + j, 9 + j * 18, 18 + i * 18) {
+                    @Environment(EnvType.CLIENT)
+                    public boolean doDrawHoveringEffect() {
+                        return this.yPosition < 91 && this.yPosition > 0 && xPosition < 154 && xPosition > 0;
                     }
 
-                    @Override
-                    @SideOnly(Side.CLIENT)
-                    public boolean isEnabled() {
-                        // Sets if slot's enabled based on whether or not it's in the gui bounds
-                        return this.yPos < 91 && this.yPos > 0 && xPos < 154 && xPos > 0;
+                    public boolean canInsert(ItemStack stack) {
+                        boolean flag;
+                        flag = inventory.isInvEmpty();
+                        HashSet<Item> set = new HashSet<>();
+                        set.add(stack.getItem());
+                        if (inventory.containsAnyInInv(set)) {
+                            flag = true;
+                        }
+                        return flag;
                     }
-
                 });
-
             }
         }
-        for (int l = 0; l < 3; ++l) {
-            for (int j1 = 0; j1 < 9; ++j1) {
-                this.addSlotToContainer(new Slot(playerInv, j1 + l * 9 + 9, 9 + j1 * 18, 118 + l * 18));
+        for (int i1 = 0; i1 < 3; ++i1) {
+            for (int k1 = 0; k1 < 9; ++k1) {
+                super.addSlot(new Slot(playerInv.player.inventory, k1 + i1 * 9 + 9, 9 + k1 * 18, 118 + i1 * 18));
             }
         }
-
-        for (int k = 0; k < 9; ++k) {
-            this.addSlotToContainer(new Slot(playerInv, k, 9 + k * 18, 176)); // 112 orig
+        for (int j1 = 0; j1 < 9; ++j1) {
+            super.addSlot(new Slot(playerInv.player.inventory, j1, 9 + j1 * 18, 176));
         }
     }
 
     @Override
-    public boolean canInteractWith(EntityPlayer player) {
+    public boolean canUse(PlayerEntity playerIn) {
         return true;
     }
 
     @Override
-    public ItemStack transferStackInSlot(EntityPlayer player, int index) {
+    public ItemStack transferSlot(PlayerEntity p_82846_1_, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
-        Slot slot = inventorySlots.get(index);
+        Slot slot = this.getSlot(index);
 
-        if (slot != null && slot.getHasStack()) {
+        if (slot != null && slot.hasStack()) {
             ItemStack itemstack1 = slot.getStack();
             itemstack = itemstack1.copy();
 
-            int containerSlots = inventorySlots.size() - player.inventory.mainInventory.size();
-
-            if (index < containerSlots) {
-                if (!this.mergeItemStack(itemstack1, containerSlots, inventorySlots.size(), true)) {
+            if (index < 270) {
+                if (!this.insertItem(itemstack1, 270, this.inventory.inventory.getInvSize(), true)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (!this.mergeItemStack(itemstack1, 0, containerSlots, false)) {
+            } else if (!this.insertItem(itemstack1, 0, 270, false)) {
                 return ItemStack.EMPTY;
             }
 
-            if (itemstack1.getCount() == 0) {
-                slot.putStack(ItemStack.EMPTY);
+            if (itemstack1.isEmpty()) {
+                slot.setStack(ItemStack.EMPTY);
             } else {
-                slot.onSlotChanged();
+                slot.markDirty();
             }
-
-            if (itemstack1.getCount() == itemstack.getCount()) {
-                return ItemStack.EMPTY;
-            }
-
-            slot.onTake(player, itemstack1);
         }
 
         return itemstack;
     }
 
     void scrollTo(float pos) {
-        int i = (inventoryCap.getSlots() + 9 - 1) / 9 - 5; // 25.8888888889 for 270 slots
+        int i = (inventory.inventory.getInvSize() + 9 - 1) / 9 - 5; // 25.8888888889 for 270 slots
         int j = (int) ((double) (pos * (float) i) + 0.5D);
 
         if (j < 0) {
             j = 0;
         }
-
         // Iterate through all slots
         for (int y = 0; y < 30; ++y) {
             for (int x = 0; x < 9; ++x) {
                 if (j == 0) {
-                    inventorySlots.get(y * 9 + x).yPos = (18 + y * 18); // Orig 18 + y * 18
+                    slotList.get(y * 9 + x).yPosition = (18 + y * 18); // Orig 18 + y * 18
                 } else {
-                    inventorySlots.get(y * 9 + x).yPos = (18 + (y - j) * 18); // Orig 18 + (y * j) * 18
+                    slotList.get(y * 9 + x).yPosition = (18 + (y - j) * 18); // Orig 18 + (y * j) * 18
                 }
-
             }
         }
-
     }
 }

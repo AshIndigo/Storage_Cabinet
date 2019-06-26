@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "storagecabinet",
+  "version": "${version}",
+
+  "name": "Storage Cabinet",
+  "description": "Adds a storage cabinet to Minecraft",
+  "authors": [
+    "AshIndigo"
+  ],
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+
+  "license": "CC0-1.0",
+  "icon": "assets/storagecabinet/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.ashindigo.storagecabinet.StorageCabinetMod"
+    ],
+    "client": [
+      "com.ashindigo.storagecabinet.StorageCabinetModClient"
+    ]
+  },
+  "mixins": [
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.4.0",
+    "fabric": "*"
+  },
+  "suggests": {
+    "flamingo": "*"
+  }
+}

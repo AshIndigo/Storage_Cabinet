@@ -7,19 +7,16 @@
   "key": {
     "A": [
       {
-        "item": "minecraft:iron_ingot",
-        "data": 0
+        "item": "minecraft:iron_ingot"
       }
     ],
     "C": [
       {
-        "item": "minecraft:chest",
-        "data": 0
+        "item": "minecraft:chest"
       }
     ]
   },
   "result": {
-    "item": "storagecabinet:storagecabinet",
-    "data": 0
+    "item": "storagecabinet:storagecabinet"
   }
 }
