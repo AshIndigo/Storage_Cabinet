@@ -32,7 +32,12 @@ public class StorageCabinetBlock extends BlockWithEntity {
 
     @Override
     public BlockState getPlacementState(ItemPlacementContext context) {
-        return this.getDefaultState().with(FACING, context.getPlayerLookDirection().getOpposite());
+        try {
+            return this.getDefaultState().with(FACING, context.getPlayerLookDirection().getOpposite());
+        } catch (IllegalArgumentException e) {
+            //e.printStackTrace(); // It ain't stupid if it works
+        }
+        return this.getDefaultState();
     }
 
     @Override

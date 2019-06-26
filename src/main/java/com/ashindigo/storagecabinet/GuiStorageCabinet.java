@@ -86,6 +86,7 @@ public class GuiStorageCabinet extends AbstractContainerScreen<ContainerStorageC
     // Draw labels
     @Override
     protected void drawForeground(int mouseX, int mouseY) {
+        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         font.draw(I18n.translate("block.storagecabinet.storagecabinet"), containerWidth / 2 - font.getStringWidth(I18n.translate("block.storagecabinet.storagecabinet")) / 2, 6, 0x404040);
         font.draw(playerInv.getDisplayName().getString(), 8, containerWidth - 87, 0x404040);
     }
@@ -94,6 +95,7 @@ public class GuiStorageCabinet extends AbstractContainerScreen<ContainerStorageC
     public void init() {
         super.init();
         this.buttons.clear();
+        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         Objects.requireNonNull(this.minecraft).keyboard.enableRepeatEvents(true);
     }
 
