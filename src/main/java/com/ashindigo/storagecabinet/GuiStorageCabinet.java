@@ -45,7 +45,7 @@ import net.minecraft.client.Mouse;
 import net.minecraft.client.gui.screen.ingame.AbstractContainerScreen;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
@@ -62,7 +62,7 @@ public class GuiStorageCabinet extends AbstractContainerScreen<ContainerStorageC
     private final ContainerStorageCabinet container;
 
     GuiStorageCabinet(ContainerStorageCabinet container, PlayerInventory inventory) {
-        super(container, inventory, new TranslatableComponent("block.storagecabinet.storagecabinet"));
+        super(container, inventory, new TranslatableText("block.storagecabinet.storagecabinet"));
         this.passEvents = true;
         containerHeight = 200;
         containerWidth = 195;

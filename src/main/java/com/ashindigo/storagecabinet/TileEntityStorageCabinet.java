@@ -11,13 +11,12 @@ import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 
 public class TileEntityStorageCabinet extends BlockEntity implements InventoryProvider, NameableContainerProvider {
-
 
     TileEntityStorageCabinet() {
         super(StorageCabinetMod.storageCabinetTileEntity);
@@ -26,8 +25,8 @@ public class TileEntityStorageCabinet extends BlockEntity implements InventoryPr
     final StorageCabinetInventory inventory = new StorageCabinetInventory();
 
     @Override
-    public Component getDisplayName() {
-        return new TranslatableComponent("tile.storagecabinet.name");
+    public Text getDisplayName() {
+        return new TranslatableText("tile.storagecabinet.name");
     }
 
     @Override

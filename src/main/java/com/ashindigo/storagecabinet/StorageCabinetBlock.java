@@ -5,10 +5,10 @@ import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.state.StateFactory;
 import net.minecraft.state.property.DirectionProperty;
+import net.minecraft.state.property.Properties;
 import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.Hand;
@@ -23,7 +23,11 @@ import java.util.Objects;
 
 public class StorageCabinetBlock extends BlockWithEntity {
 
-    public static final DirectionProperty  FACING = HorizontalFacingBlock.FACING;
+     private static final DirectionProperty FACING;
+
+    static {
+        FACING = Properties.HORIZONTAL_FACING;
+    }
 
     public StorageCabinetBlock(Settings settings) {
         super(settings);
@@ -32,12 +36,7 @@ public class StorageCabinetBlock extends BlockWithEntity {
 
     @Override
     public BlockState getPlacementState(ItemPlacementContext context) {
-        try {
-            return this.getDefaultState().with(FACING, context.getPlayerLookDirection().getOpposite());
-        } catch (IllegalArgumentException e) {
-            //e.printStackTrace(); // It ain't stupid if it works
-        }
-        return this.getDefaultState();
+        return this.getDefaultState().with(FACING, context.getPlayerFacing().getOpposite());
     }
 
     @Override
@@ -63,7 +62,7 @@ public class StorageCabinetBlock extends BlockWithEntity {
     @Override
     public boolean activate(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hitResult) {
         if (!world.isClient) {
-            ContainerProviderRegistry.INSTANCE.openContainer(new Identifier(StorageCabinetMod.modid, StorageCabinetMod.modid), player, (buf)-> buf.writeBlockPos(pos));
+            ContainerProviderRegistry.INSTANCE.openContainer(new Identifier(StorageCabinetMod.modid, StorageCabinetMod.modid), player, (buf) -> buf.writeBlockPos(pos));
         }
         return true;
     }
@@ -71,7 +70,7 @@ public class StorageCabinetBlock extends BlockWithEntity {
     @Override
     public void onBlockRemoved(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
         if (state.getBlock() != newState.getBlock()) {
-          StorageCabinetInventory inventory = ((TileEntityStorageCabinet) Objects.requireNonNull(worldIn.getBlockEntity(pos))).inventory;
+            StorageCabinetInventory inventory = ((TileEntityStorageCabinet) Objects.requireNonNull(worldIn.getBlockEntity(pos))).inventory;
             for (int i = 0; i < inventory.getInvSize(); i++) {
                 worldIn.spawnEntity(new ItemEntity(worldIn, pos.getX(), pos.getY(), pos.getZ(), inventory.getInvStack(i)));
             }
