@@ -3,9 +3,12 @@ package com.ashindigo.storagecabinet;
 import net.fabricmc.fabric.api.container.ContainerProviderRegistry;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.HopperBlockEntity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.*;
+import net.minecraft.inventory.SidedInventory;
+import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateFactory;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
@@ -17,11 +20,12 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 
 import java.util.Objects;
 
-public class StorageCabinetBlock extends BlockWithEntity {
+public class StorageCabinetBlock extends BlockWithEntity implements InventoryProvider {
 
      private static final DirectionProperty FACING;
 
@@ -82,5 +86,10 @@ public class StorageCabinetBlock extends BlockWithEntity {
 
     protected void appendProperties(StateFactory.Builder<Block, BlockState> builder) {
         builder.add(FACING);
+    }
+
+    @Override
+    public SidedInventory getInventory(BlockState blockState, IWorld iWorld, BlockPos pos) {
+        return ((InventoryProvider) iWorld.getBlockEntity(pos)).getInventory(blockState, iWorld, pos);
     }
 }
