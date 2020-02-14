@@ -1,0 +1,8 @@
+{
+    "block.storagecabinet.storagecabinet_wood": "Wood Storage Cabinet",
+    "block.storagecabinet.storagecabinet_iron": "Iron Storage Cabinet",
+    "block.storagecabinet.storagecabinet_gold": "Gold Storage Cabinet",
+    "block.storagecabinet.storagecabinet_diamond": "Diamond Storage Cabinet",
+    "block.storagecabinet.storagecabinet_emerald": "Emerald Storage Cabinet",
+    "config.storagecabinet.onlynonstackables": "Enable Blacklist/Whitelist"
+}
