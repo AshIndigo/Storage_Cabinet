@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "storagecabinet:block/storagecabinet_iron"
+    },
+    "facing=south": {
+      "model": "storagecabinet:block/storagecabinet_iron",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "storagecabinet:block/storagecabinet_iron",
+      "y": 270
+    },
+    "facing=east": {
+      "model": "storagecabinet:block/storagecabinet_iron",
+      "y": 90
+    }
+  }
+}
+

@@ -1,157 +1,109 @@
 package com.ashindigo.storagecabinet.blocks;
 
-import com.ashindigo.storagecabinet.GuiHandler;
-import com.ashindigo.storagecabinet.StorageCabinetMod;
-import com.ashindigo.storagecabinet.tileentities.TileEntityStorageCabinet;
-import net.minecraft.block.BlockContainer;
-import net.minecraft.block.BlockHorizontal;
-import net.minecraft.block.ITileEntityProvider;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
+import com.ashindigo.storagecabinet.StorageCabinet;
+import com.ashindigo.storagecabinet.StorageCabinetEntity;
+import net.fabricmc.fabric.api.container.ContainerProviderRegistry;
+import net.minecraft.block.*;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.state.StateManager;
+import net.minecraft.state.property.DirectionProperty;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.*;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.util.Objects;
 
-public class StorageCabinetBlock extends BlockContainer implements ITileEntityProvider {
+public class StorageCabinetBlock extends BlockWithEntity {
 
-    private static final PropertyDirection FACING = BlockHorizontal.FACING;
+    private static final DirectionProperty FACING;
 
-    public StorageCabinetBlock(Material materialIn) {
-        super(materialIn);
-        setCreativeTab(CreativeTabs.DECORATIONS);
-        setUnlocalizedName("storagecabinet");
-        setHardness(3.0F);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
+    static {
+        FACING = HorizontalFacingBlock.FACING;
+    }
+
+    private int tier;
+
+    public StorageCabinetBlock(Block.Settings settings, int tier) {
+        super(settings);
+        this.tier = tier;
+        System.out.println("Tier: " + tier + " Size: " + Manager.getSize(tier));
+        this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.NORTH));
     }
 
     @Override
-    public EnumBlockRenderType getRenderType(IBlockState state)
-    {
-        return EnumBlockRenderType.MODEL;
+    public BlockState getPlacementState(ItemPlacementContext context) {
+        return this.getDefaultState().with(FACING, context.getPlayerFacing().getOpposite());
     }
 
     @Override
-    public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
-        if (!worldIn.isRemote) {
-            IBlockState iblockstate = worldIn.getBlockState(pos.north());
-            IBlockState iblockstate1 = worldIn.getBlockState(pos.south());
-            IBlockState iblockstate2 = worldIn.getBlockState(pos.west());
-            IBlockState iblockstate3 = worldIn.getBlockState(pos.east());
-            EnumFacing enumfacing = state.getValue(FACING);
+    public BlockRenderType getRenderType(BlockState state) {
+        return BlockRenderType.MODEL;
+    }
 
-            if (enumfacing == EnumFacing.NORTH && iblockstate.isFullBlock() && !iblockstate1.isFullBlock()) {
-                enumfacing = EnumFacing.SOUTH;
-            } else if (enumfacing == EnumFacing.SOUTH && iblockstate1.isFullBlock() && !iblockstate.isFullBlock()) {
-                enumfacing = EnumFacing.NORTH;
-            } else if (enumfacing == EnumFacing.WEST && iblockstate2.isFullBlock() && !iblockstate3.isFullBlock()) {
-                enumfacing = EnumFacing.EAST;
-            } else if (enumfacing == EnumFacing.EAST && iblockstate3.isFullBlock() && !iblockstate2.isFullBlock()) {
-                enumfacing = EnumFacing.WEST;
+    @Override
+    public BlockState rotate(BlockState state, BlockRotation rot) {
+        return state.with(FACING, rot.rotate(state.get(FACING)));
+    }
+
+    @Override
+    public BlockState mirror(BlockState state, BlockMirror mirrorIn) {
+        return state.rotate(mirrorIn.getRotation(state.get(FACING)));
+    }
+
+    @Override
+    public BlockEntity createBlockEntity(BlockView blockView) {
+        return new StorageCabinetEntity().setTier(tier);
+    }
+
+    @Override
+    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hitResult) {
+        if (!world.isClient) {
+            ContainerProviderRegistry.INSTANCE.openContainer(new Identifier(StorageCabinet.modid, StorageCabinet.modid), player, (buffer) -> { buffer.writeBlockPos(pos); buffer.writeInt(Manager.getWidth()); buffer.writeInt(Manager.getHeight(tier)); buffer.writeInt(Manager.getMaximum(tier)); buffer.writeText(new TranslatableText(this.getTranslationKey())); });
+        }
+        return ActionResult.SUCCESS;
+    }
+
+    @Override
+    public void onBlockRemoved(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+        if (state.getBlock() != newState.getBlock()) {
+            StorageCabinetEntity inventory = ((StorageCabinetEntity) Objects.requireNonNull(worldIn.getBlockEntity(pos)));
+            for (int i = 0; i < inventory.getInvSize(); i++) {
+                worldIn.spawnEntity(new ItemEntity(worldIn, pos.getX(), pos.getY(), pos.getZ(), inventory.getInvStack(i)));
             }
-            worldIn.setBlockState(pos, state.withProperty(FACING, enumfacing), 2);
-            if (worldIn.getTileEntity(pos) != null) {
-                worldIn.setTileEntity(pos, worldIn.getTileEntity(pos));
-            }
+            worldIn.updateNeighbors(pos, this);
+            super.onBlockRemoved(state, worldIn, pos, newState, isMoving);
         }
     }
 
-    @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if (!world.isRemote) {
-            if (!player.isSneaking()) {
-                player.openGui(StorageCabinetMod.instance, GuiHandler.CABINET, world, pos.getX(), pos.getY(), pos.getZ());
+    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+        builder.add(FACING);
+    }
+
+    public static class Manager {
+        public static int getWidth() {
+            return 9;
+        }
+
+        public static int getHeight(int tier) {
+            return 8 * (tier + 1);
+        }
+
+        public static int getSize(int tier) {
+            return getWidth() * getHeight(tier);
+        }
+
+        public static int getMaximum(int tier) {
+            switch (tier) {
+                default:
+                    return 64;
             }
         }
-        return true;
-    }
-
-//    @Override
-//    public static void setState(boolean active, World worldIn, BlockPos pos) {
-//        TileEntity tileentity = worldIn.getTileEntity(pos);
-//        if (tileentity != null) {
-//            tileentity.validate();
-//            worldIn.setTileEntity(pos, tileentity);
-//        }
-//    }
-
-    @Override
-    public void breakBlock(World world, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
-        TileEntityStorageCabinet tile = (TileEntityStorageCabinet) world.getTileEntity(pos);
-        IItemHandler itemHandler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.NORTH);
-        for (int i = 0; i < itemHandler.getSlots(); i++) {
-            ItemStack stack = itemHandler.getStackInSlot(i);
-            if (!stack.isEmpty()) {
-                EntityItem item = new EntityItem(world, pos.getX(), pos.getY(), pos.getZ(), stack);
-                world.spawnEntity(item);
-            }
-        }
-        super.breakBlock(world, pos, state);
-    }
-
-    @Override
-    public int getMetaFromState(IBlockState state) {
-        return state.getValue(FACING).getIndex();
-    }
-
-    @Override
-    @Nonnull
-    public IBlockState getStateForPlacement(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
-        return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing().getOpposite());
-    }
-
-    @Override
-    @Nonnull
-    protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, FACING);
-    }
-
-    @Override
-    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-        worldIn.setBlockState(pos, this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing().getOpposite()), 2);
-    }
-
-    @Override
-    public IBlockState withRotation(IBlockState state, Rotation rot) {
-        return state.withProperty(FACING, rot.rotate(state.getValue(FACING)));
-    }
-
-    @Override
-    public IBlockState withMirror(IBlockState state, Mirror mirrorIn) {
-        return state.withRotation(mirrorIn.toRotation(state.getValue(FACING)));
-    }
-
-    @Override
-    @Nonnull
-    public IBlockState getStateFromMeta(int meta) {
-        EnumFacing facing = EnumFacing.getFront(meta);
-        if (facing.getAxis() == EnumFacing.Axis.Y) facing = EnumFacing.NORTH;
-        return this.getDefaultState().withProperty(FACING, facing);
-    }
-
-    @Override
-    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis) {
-        TileEntityStorageCabinet te = (TileEntityStorageCabinet) world.getTileEntity(pos);
-        boolean flag = super.rotateBlock(world, pos, axis);
-        world.getTileEntity(pos).deserializeNBT(te.serializeNBT());
-        return flag;
-    }
-
-    @Nullable
-    @Override
-    public TileEntity createNewTileEntity(World worldIn, int meta) {
-        return new TileEntityStorageCabinet();
     }
 }
