@@ -33,7 +33,7 @@ public class StorageCabinetBlock extends BlockWithEntity {
     public StorageCabinetBlock(Block.Settings settings, int tier) {
         super(settings);
         this.tier = tier;
-        System.out.println("Tier: " + tier + " Size: " + Manager.getSize(tier));
+        //System.out.println("Tier: " + tier + " Size: " + Manager.getSize(tier));
         this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.NORTH));
     }
 
@@ -65,7 +65,7 @@ public class StorageCabinetBlock extends BlockWithEntity {
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hitResult) {
         if (!world.isClient) {
-            ContainerProviderRegistry.INSTANCE.openContainer(new Identifier(StorageCabinet.modid, StorageCabinet.modid), player, (buffer) -> { buffer.writeBlockPos(pos); buffer.writeInt(Manager.getWidth()); buffer.writeInt(Manager.getHeight(tier)); buffer.writeInt(Manager.getMaximum(tier)); buffer.writeText(new TranslatableText(this.getTranslationKey())); });
+            ContainerProviderRegistry.INSTANCE.openContainer(new Identifier(StorageCabinet.modid, StorageCabinet.modid), player, (buffer) -> { buffer.writeBlockPos(pos); buffer.writeInt(Manager.getWidth()); buffer.writeInt(Manager.getHeight(tier)); buffer.writeInt(Manager.getMaximum()); buffer.writeText(new TranslatableText(this.getTranslationKey())); });
         }
         return ActionResult.SUCCESS;
     }
@@ -86,24 +86,25 @@ public class StorageCabinetBlock extends BlockWithEntity {
         builder.add(FACING);
     }
 
+    public int getTier() {
+        return tier;
+    }
+
     public static class Manager {
         public static int getWidth() {
             return 9;
         }
 
         public static int getHeight(int tier) {
-            return 8 * (tier + 1);
+            return 10 * (tier + 1);
         }
 
         public static int getSize(int tier) {
             return getWidth() * getHeight(tier);
         }
 
-        public static int getMaximum(int tier) {
-            switch (tier) {
-                default:
-                    return 64;
-            }
+        public static int getMaximum() {
+            return 64;
         }
     }
 }
