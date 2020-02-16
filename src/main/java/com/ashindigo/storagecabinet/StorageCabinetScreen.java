@@ -12,7 +12,7 @@ import spinnery.widget.api.Size;
 
 public class StorageCabinetScreen extends BaseContainerScreen<StorageCabinetContainer> {
 
-    public StorageCabinetScreen(Text name, StorageCabinetContainer linkedContainer, PlayerEntity player, int x, int y, int m) {
+    public StorageCabinetScreen(Text name, StorageCabinetContainer linkedContainer, PlayerEntity player, int x, int y) {
         super(name, linkedContainer, player);
         WInterface mainInterface = getInterface();
         WPanel mainPanel = mainInterface.createChild(WPanel.class, Position.of(mainInterface), Size.of((9 * 18) + 24, 162 + (5 * 18) + 18));

@@ -19,7 +19,7 @@ public class StorageCabinetClient implements ClientModInitializer {
                     int y = buf.readInt();
                     int m = buf.readInt();
                     Text text = buf.readText();
-                    return new StorageCabinetScreen(text, new StorageCabinetContainer(id, player.inventory, pos, x, y, m), player, x, y, m);
+                    return new StorageCabinetScreen(text, new StorageCabinetContainer(id, player.inventory, pos, x, y, m), player, x, y);
                 });
     }
 }

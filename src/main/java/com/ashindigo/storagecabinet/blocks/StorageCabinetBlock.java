@@ -8,6 +8,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.text.TranslatableText;
@@ -33,7 +34,6 @@ public class StorageCabinetBlock extends BlockWithEntity {
     public StorageCabinetBlock(Block.Settings settings, int tier) {
         super(settings);
         this.tier = tier;
-        //System.out.println("Tier: " + tier + " Size: " + Manager.getSize(tier));
         this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.NORTH));
     }
 
@@ -63,7 +63,7 @@ public class StorageCabinetBlock extends BlockWithEntity {
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hitResult) {
+    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         if (!world.isClient) {
             ContainerProviderRegistry.INSTANCE.openContainer(new Identifier(StorageCabinet.modid, StorageCabinet.modid), player, (buffer) -> { buffer.writeBlockPos(pos); buffer.writeInt(Manager.getWidth()); buffer.writeInt(Manager.getHeight(tier)); buffer.writeInt(Manager.getMaximum()); buffer.writeText(new TranslatableText(this.getTranslationKey())); });
         }
@@ -71,15 +71,16 @@ public class StorageCabinetBlock extends BlockWithEntity {
     }
 
     @Override
-    public void onBlockRemoved(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
-        if (state.getBlock() != newState.getBlock()) {
-            StorageCabinetEntity inventory = ((StorageCabinetEntity) Objects.requireNonNull(worldIn.getBlockEntity(pos)));
+    public void afterBreak(World world, PlayerEntity player, BlockPos pos, BlockState state, BlockEntity blockEntity, ItemStack stack) {
+        if (state.getBlock() != state.getBlock()) {
+            StorageCabinetEntity inventory = ((StorageCabinetEntity) Objects.requireNonNull(world.getBlockEntity(pos)));
             for (int i = 0; i < inventory.getInvSize(); i++) {
-                worldIn.spawnEntity(new ItemEntity(worldIn, pos.getX(), pos.getY(), pos.getZ(), inventory.getInvStack(i)));
+                world.spawnEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), inventory.getInvStack(i)));
             }
-            worldIn.updateNeighbors(pos, this);
-            super.onBlockRemoved(state, worldIn, pos, newState, isMoving);
+            world.updateNeighbors(pos, this);
+            super.afterBreak(world, player, pos, state, blockEntity, stack);
         }
+
     }
 
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {

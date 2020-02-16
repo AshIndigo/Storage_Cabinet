@@ -4,5 +4,10 @@
     "block.storagecabinet.storagecabinet_gold": "Gold Storage Cabinet",
     "block.storagecabinet.storagecabinet_diamond": "Diamond Storage Cabinet",
     "block.storagecabinet.storagecabinet_emerald": "Emerald Storage Cabinet",
+    "block.storagecabinet.storagecabinet_wood_upgrade": "Wood Storage Cabinet Upgrade",
+    "block.storagecabinet.storagecabinet_iron_upgrade": "Iron Storage Cabinet Upgrade",
+    "block.storagecabinet.storagecabinet_gold_upgrade": "Gold Storage Cabinet Upgrade",
+    "block.storagecabinet.storagecabinet_diamond_upgrade": "Diamond Storage Cabinet Upgrade",
+    "block.storagecabinet.storagecabinet_emerald_upgrade": "Emerald Storage Cabinet Upgrade",
     "config.storagecabinet.onlynonstackables": "Enable Blacklist/Whitelist"
 }
