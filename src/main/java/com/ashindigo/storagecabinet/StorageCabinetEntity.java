@@ -5,6 +5,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.InventoryListener;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.DefaultedList;
@@ -12,6 +13,7 @@ import spinnery.util.InventoryUtilities;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 public class StorageCabinetEntity extends BlockEntity implements BlockEntityClientSerializable, Inventory, InventoryListener {
@@ -65,9 +67,23 @@ public class StorageCabinetEntity extends BlockEntity implements BlockEntityClie
 
     @Override
     public void setInvStack(int slot, ItemStack stack) {
-        markDirty();
-        stacks.set(slot, stack);
-        onInvChange(this);
+        if (isValidInvStack(slot, stack) || stack == ItemStack.EMPTY) {
+            markDirty();
+            stacks.set(slot, stack);
+            onInvChange(this);
+        }
+    }
+
+    @Override
+    public boolean isValidInvStack(int slot, ItemStack stack) {
+        boolean flag;
+        flag = isInvEmpty();
+        HashSet<Item> set = new HashSet<>();
+        set.add(stack.getItem());
+        if (containsAnyInInv(set)) {
+            flag = true;
+        }
+        return flag;
     }
 
     @Override

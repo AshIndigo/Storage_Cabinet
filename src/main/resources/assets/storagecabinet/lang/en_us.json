@@ -9,5 +9,6 @@
     "item.storagecabinet.storagecabinet_gold_upgrade": "Gold Storage Cabinet Upgrade",
     "item.storagecabinet.storagecabinet_diamond_upgrade": "Diamond Storage Cabinet Upgrade",
     "item.storagecabinet.storagecabinet_emerald_upgrade": "Emerald Storage Cabinet Upgrade",
+    "itemGroup.storagecabinet.storagecabinet": "Storage Cabinet",
     "config.storagecabinet.onlynonstackables": "Enable Blacklist/Whitelist"
 }
