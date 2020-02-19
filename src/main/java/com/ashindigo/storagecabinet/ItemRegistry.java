@@ -23,7 +23,7 @@ public class ItemRegistry {
 
     public static StorageCabinetUpgrade addCabinetUpgrade(int tier, String suffix) {
         StorageCabinetUpgrade upgradeItem = new StorageCabinetUpgrade(new Item.Settings().group(StorageCabinet.CABINET_GROUP), tier);
-        Registry.register(Registry.ITEM, new Identifier(StorageCabinet.modid, StorageCabinet.modid + "_" + suffix + "_upgrade"), upgradeItem);
+        Registry.register(Registry.ITEM, new Identifier(StorageCabinet.MODID, StorageCabinet.MODID + "_" + suffix + "_upgrade"), upgradeItem);
         return upgradeItem;
     }
 }

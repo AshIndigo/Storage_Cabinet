@@ -65,7 +65,7 @@ public class StorageCabinetBlock extends BlockWithEntity {
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         if (!world.isClient) {
-            ContainerProviderRegistry.INSTANCE.openContainer(new Identifier(StorageCabinet.modid, StorageCabinet.modid), player, (buffer) -> { buffer.writeBlockPos(pos); buffer.writeInt(Manager.getWidth()); buffer.writeInt(Manager.getHeight(tier)); buffer.writeInt(Manager.getMaximum()); buffer.writeText(new TranslatableText(this.getTranslationKey())); });
+            ContainerProviderRegistry.INSTANCE.openContainer(new Identifier(StorageCabinet.MODID, StorageCabinet.MODID), player, (buffer) -> { buffer.writeBlockPos(pos); buffer.writeInt(Manager.getWidth()); buffer.writeInt(Manager.getHeight(tier)); buffer.writeInt(Manager.getMaximum()); buffer.writeText(new TranslatableText(this.getTranslationKey())); });
         }
         return ActionResult.SUCCESS;
     }

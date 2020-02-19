@@ -10,7 +10,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
-import static com.ashindigo.storagecabinet.StorageCabinet.modid;
+import static com.ashindigo.storagecabinet.StorageCabinet.MODID;
 
 public class StorageCabinetUpgrade extends Item {
 
@@ -41,15 +41,15 @@ public class StorageCabinetUpgrade extends Item {
         switch (tier) {
             default:
             case 0:
-                return (StorageCabinetBlock) Registry.BLOCK.get(new Identifier(modid, modid + "_wood"));
+                return (StorageCabinetBlock) Registry.BLOCK.get(new Identifier(MODID, MODID + "_wood"));
             case 1:
-                return (StorageCabinetBlock) Registry.BLOCK.get(new Identifier(modid, modid + "_iron"));
+                return (StorageCabinetBlock) Registry.BLOCK.get(new Identifier(MODID, MODID + "_iron"));
             case 2:
-                return (StorageCabinetBlock) Registry.BLOCK.get(new Identifier(modid, modid + "_gold"));
+                return (StorageCabinetBlock) Registry.BLOCK.get(new Identifier(MODID, MODID + "_gold"));
             case 3:
-                return (StorageCabinetBlock) Registry.BLOCK.get(new Identifier(modid, modid + "_diamond"));
+                return (StorageCabinetBlock) Registry.BLOCK.get(new Identifier(MODID, MODID + "_diamond"));
             case 4:
-                return (StorageCabinetBlock) Registry.BLOCK.get(new Identifier(modid, modid + "_emerald"));
+                return (StorageCabinetBlock) Registry.BLOCK.get(new Identifier(MODID, MODID + "_emerald"));
         }
     }
 

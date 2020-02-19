@@ -11,17 +11,19 @@ import net.minecraft.util.registry.Registry;
 
 public class StorageCabinet implements ModInitializer {
 
-    public static final String modid = "storagecabinet";
+    public static final String MODID = "storagecabinet";
     public static BlockEntityType<?> storageCabinetEntity;
     public static ItemGroup CABINET_GROUP;
-    //  cabinet functionality
+    // TODO As per usual hoppers are acting up
+    // TODO Recipes for upgrades
+    // TODO -1 Tier cabinet that has two slots?
 
     @Override
     public void onInitialize() {
-        CABINET_GROUP = FabricItemGroupBuilder.build(new Identifier(modid, modid), () -> new ItemStack(BlockRegistry.IRON_CABINET));
+        CABINET_GROUP = FabricItemGroupBuilder.build(new Identifier(MODID, MODID), () -> new ItemStack(BlockRegistry.IRON_CABINET));
         BlockRegistry.init();
         ItemRegistry.init();
-        ContainerProviderRegistry.INSTANCE.registerFactory(new Identifier(modid, modid), (syncId, id, player, buffer) -> new StorageCabinetContainer(syncId, player.inventory, buffer.readBlockPos(), buffer.readInt(), buffer.readInt(), buffer.readInt()));
-        storageCabinetEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, modid + ":" + modid, BlockEntityType.Builder.create(StorageCabinetEntity::new, BlockRegistry.WOOD_CABINET).build(null));
+        ContainerProviderRegistry.INSTANCE.registerFactory(new Identifier(MODID, MODID), (syncId, id, player, buffer) -> new StorageCabinetContainer(syncId, player.inventory, buffer.readBlockPos(), buffer.readInt(), buffer.readInt(), buffer.readInt()));
+        storageCabinetEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, MODID + ":" + MODID, BlockEntityType.Builder.create(StorageCabinetEntity::new, BlockRegistry.WOOD_CABINET).build(null));
     }
 }

@@ -6,13 +6,13 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
-import static com.ashindigo.storagecabinet.StorageCabinet.modid;
+import static com.ashindigo.storagecabinet.StorageCabinet.MODID;
 
 public class StorageCabinetClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        ScreenProviderRegistry.INSTANCE.registerFactory(new Identifier(modid, modid),
+        ScreenProviderRegistry.INSTANCE.registerFactory(new Identifier(MODID, MODID),
                 (id, identifier, player, buf) -> {
                     BlockPos pos = buf.readBlockPos();
                     int x = buf.readInt();

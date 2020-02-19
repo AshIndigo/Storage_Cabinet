@@ -27,8 +27,8 @@ public class BlockRegistry {
 
     public static StorageCabinetBlock addCabinet(int tier, Block.Settings settings, String suffix) {
         StorageCabinetBlock storageCabinetBlock = new StorageCabinetBlock(settings.strength(5.0F, 6.0F), tier);
-        Registry.register(Registry.BLOCK, new Identifier(StorageCabinet.modid, StorageCabinet.modid + "_" + suffix), storageCabinetBlock);
-        Registry.register(Registry.ITEM, new Identifier(StorageCabinet.modid, StorageCabinet.modid + "_" + suffix), new BlockItem(storageCabinetBlock, new Item.Settings().group(StorageCabinet.CABINET_GROUP)));
+        Registry.register(Registry.BLOCK, new Identifier(StorageCabinet.MODID, StorageCabinet.MODID + "_" + suffix), storageCabinetBlock);
+        Registry.register(Registry.ITEM, new Identifier(StorageCabinet.MODID, StorageCabinet.MODID + "_" + suffix), new BlockItem(storageCabinetBlock, new Item.Settings().group(StorageCabinet.CABINET_GROUP)));
         return storageCabinetBlock;
     }
 

@@ -1,20 +1,23 @@
 package com.ashindigo.storagecabinet;
 
+import com.google.common.collect.Sets;
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.data.server.ItemTagsProvider;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.InventoryListener;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.tag.ItemTags;
+import net.minecraft.tag.Tag;
 import net.minecraft.util.DefaultedList;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import spinnery.util.InventoryUtilities;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class StorageCabinetEntity extends BlockEntity implements BlockEntityClientSerializable, Inventory, InventoryListener {
 
@@ -67,23 +70,27 @@ public class StorageCabinetEntity extends BlockEntity implements BlockEntityClie
 
     @Override
     public void setInvStack(int slot, ItemStack stack) {
-        if (isValidInvStack(slot, stack) || stack == ItemStack.EMPTY) {
-            markDirty();
-            stacks.set(slot, stack);
-            onInvChange(this);
-        }
+        markDirty();
+        stacks.set(slot, stack);
+        onInvChange(this);
     }
 
     @Override
     public boolean isValidInvStack(int slot, ItemStack stack) {
-        boolean flag;
-        flag = isInvEmpty();
-        HashSet<Item> set = new HashSet<>();
-        set.add(stack.getItem());
-        if (containsAnyInInv(set)) {
-            flag = true;
+        if (isInvEmpty()) {
+            return true;
+        } else {
+            Collection<Identifier> idList = ItemTags.getContainer().getTagsFor(stack.getItem());
+            if (idList.isEmpty()) {
+                return containsAnyInInv(Collections.singleton(stack.getItem()));
+            } else {
+                for (Identifier id : idList) {
+                    Tag<Item> tag = ItemTags.getContainer().get(id);
+                    return stacks.stream().anyMatch(stack2 -> tag.contains(stack2.getItem()));
+                }
+            }
         }
-        return flag;
+        return false;
     }
 
     @Override

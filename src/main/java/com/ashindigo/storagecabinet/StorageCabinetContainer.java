@@ -12,13 +12,18 @@ public class StorageCabinetContainer extends BaseContainer {
 
     StorageCabinetEntity cabinetEntity;
 
-    public StorageCabinetContainer(int synchronizationID, PlayerInventory playerInventory, BlockPos pos, int x, int y, int m) {
+    public StorageCabinetContainer(int synchronizationID, PlayerInventory playerInventory, BlockPos pos, int arrayWidth, int arrayHeight, int m) {
         super(synchronizationID, playerInventory);
         cabinetEntity = ((StorageCabinetEntity) getWorld().getBlockEntity(pos));
         WInterface mainInterface = getInterface();
         getInventories().put(INVENTORY, cabinetEntity);
         cabinetEntity.addListener(this::onContentChanged);
-        WSlot.addHeadlessArray(mainInterface, 0, INVENTORY, x, y);
+        //WSlot.addHeadlessArray(mainInterface, 0, INVENTORY, x, y);
+        for (int y = 0; y < arrayHeight; ++y) {
+            for (int x = 0; x < arrayWidth; ++x) {
+                mainInterface.createChild(WSlotCabinet.class).setSlotNumber(y * arrayWidth + x).setInventoryNumber(INVENTORY).setWhitelist();
+            }
+        }
         WSlot.addHeadlessPlayerInventory(mainInterface);
     }
 }

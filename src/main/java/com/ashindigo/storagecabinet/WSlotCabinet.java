@@ -1,0 +1,22 @@
+package com.ashindigo.storagecabinet;
+
+import net.minecraft.item.ItemStack;
+import spinnery.widget.WSlot;
+
+import java.util.Arrays;
+
+/**
+ * A quick hack to make it so it uses my isValidInvStack codde
+ */
+public class WSlotCabinet extends WSlot {
+
+    @Override
+    public boolean accepts(ItemStack... stacks) {
+        if (isWhitelist) {
+            return Arrays.stream(stacks).allMatch(stack -> this.getLinkedInventory().isValidInvStack(0, stack));
+        } else {
+            return Arrays.stream(stacks).noneMatch(stack -> (denyItems.contains(stack.getItem()) || denyTags.stream().anyMatch(tag -> tag.contains(stack.getItem()))));
+        }
+    }
+
+}
