@@ -9,6 +9,8 @@
     "item.storagecabinet.storagecabinet_gold_upgrade": "Gold Storage Cabinet Upgrade",
     "item.storagecabinet.storagecabinet_diamond_upgrade": "Diamond Storage Cabinet Upgrade",
     "item.storagecabinet.storagecabinet_emerald_upgrade": "Emerald Storage Cabinet Upgrade",
+    "item.storagecabinet.dolly": "Storage Cabinet Dolly",
     "itemGroup.storagecabinet.storagecabinet": "Storage Cabinet",
+    "text.storagecabinet.dollyhas":"Contains cabinet",
     "config.storagecabinet.onlynonstackables": "Enable Blacklist/Whitelist"
 }

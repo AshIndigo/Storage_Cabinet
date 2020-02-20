@@ -1,9 +1,7 @@
 package com.ashindigo.storagecabinet;
 
-import com.google.common.collect.Sets;
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.data.server.ItemTagsProvider;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.InventoryListener;
@@ -14,7 +12,6 @@ import net.minecraft.tag.ItemTags;
 import net.minecraft.tag.Tag;
 import net.minecraft.util.DefaultedList;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 import spinnery.util.InventoryUtilities;
 
 import java.util.*;

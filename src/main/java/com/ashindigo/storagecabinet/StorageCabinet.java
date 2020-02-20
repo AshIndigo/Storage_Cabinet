@@ -14,9 +14,6 @@ public class StorageCabinet implements ModInitializer {
     public static final String MODID = "storagecabinet";
     public static BlockEntityType<?> storageCabinetEntity;
     public static ItemGroup CABINET_GROUP;
-    // TODO As per usual hoppers are acting up
-    // TODO Recipes for upgrades
-    // TODO -1 Tier cabinet that has two slots?
 
     @Override
     public void onInitialize() {

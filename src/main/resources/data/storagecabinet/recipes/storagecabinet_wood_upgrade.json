@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " A ",
+    "ACA",
+    " A "
+  ],
+  "key": {
+    "A": [
+      {
+        "tag": "minecraft:planks"
+      }
+    ],
+    "C": [
+      {
+        "item": "minecraft:chest"
+      }
+    ]
+  },
+  "result": {
+    "item": "storagecabinet:storagecabinet_wood_upgrade"
+  }
+}

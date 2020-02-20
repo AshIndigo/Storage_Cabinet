@@ -2,6 +2,7 @@ package com.ashindigo.storagecabinet;
 
 import com.ashindigo.storagecabinet.blocks.StorageCabinetBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Material;
 import net.minecraft.block.MaterialColor;
 import net.minecraft.item.BlockItem;
@@ -32,4 +33,14 @@ public class BlockRegistry {
         return storageCabinetBlock;
     }
 
+    public static StorageCabinetBlock getByTier(int tier) {
+        switch (tier) {
+            case 0: return WOOD_CABINET;
+            case 1: return IRON_CABINET;
+            case 2: return GOLD_CABINET;
+            case 3: return DIAMOND_CABINET;
+            case 4: return EMERALD_CABINET;
+            default: return WOOD_CABINET;
+        }
+    }
 }
