@@ -10,7 +10,7 @@
   ],
   "contact": {
     "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "sources": "https://github.com/AshIndigo/Filing_Cabinet"
   },
 
   "license": "CC0-1.0",
@@ -30,7 +30,8 @@
 
   "depends": {
     "fabricloader": ">=0.4.0",
-    "fabric": "*"
+    "fabric": "*",
+    "spinnery": ">=2.0.17+fabric-20w06a"
   },
   "suggests": {
   }

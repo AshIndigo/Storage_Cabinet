@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "  A",
+    " PA",
+    "AAA"
+  ],
+  "key": {
+    "A": [
+      {
+        "item": "minecraft:iron_ingot"
+      }
+    ],
+    "P": [
+      {
+        "tag": "minecraft:planks"
+      }
+    ]
+  },
+  "result": {
+    "item": "storagecabinet:dolly"
+  }
+}
