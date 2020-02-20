@@ -29,6 +29,5 @@ public class StorageCabinetScreen extends BaseContainerScreen<StorageCabinetCont
             }
         }
         WSlot.addPlayerInventory(Position.of(mainPanel).add(6, 162 + 27, 1), Size.of(18, 18), mainPanel);
-//       WSlot.addArray(Position.of(panel, 6, 1, 1), Size.of(18, 18), panel, 0, StorageCabinetContainer.INVENTORY, x, y);
     }
 }

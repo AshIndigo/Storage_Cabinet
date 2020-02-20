@@ -6,7 +6,7 @@ import spinnery.widget.WSlot;
 import java.util.Arrays;
 
 /**
- * A quick hack to make it so it uses my isValidInvStack codde
+ * A quick hack to make it so it uses my isValidInvStack code
  */
 public class WSlotCabinet extends WSlot {
 

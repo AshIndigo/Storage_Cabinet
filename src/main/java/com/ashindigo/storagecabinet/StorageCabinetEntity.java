@@ -77,7 +77,7 @@ public class StorageCabinetEntity extends BlockEntity implements BlockEntityClie
 
     @Override
     public boolean isValidInvStack(int slot, ItemStack stack) {
-        if (isInvEmpty()) {
+        if (isInvEmpty() || stack.isEmpty()) {
             return true;
         } else {
             Collection<Identifier> idList = ItemTags.getContainer().getTagsFor(stack.getItem());
