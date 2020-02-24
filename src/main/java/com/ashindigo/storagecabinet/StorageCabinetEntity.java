@@ -1,5 +1,6 @@
 package com.ashindigo.storagecabinet;
 
+import com.google.common.collect.Lists;
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -77,7 +78,7 @@ public class StorageCabinetEntity extends BlockEntity implements BlockEntityClie
         if (isInvEmpty() || stack.isEmpty()) {
             return true;
         } else {
-            Collection<Identifier> idList = ItemTags.getContainer().getTagsFor(stack.getItem());
+            Collection<Identifier> idList = getTagsFor(stack.getItem());
             if (idList.isEmpty()) {
                 return containsAnyInInv(Collections.singleton(stack.getItem()));
             } else {
@@ -88,6 +89,18 @@ public class StorageCabinetEntity extends BlockEntity implements BlockEntityClie
             }
         }
         return false;
+    }
+
+    public Collection<Identifier> getTagsFor(Item object) {
+        List<Identifier> list = Lists.newArrayList();
+
+        for (Map.Entry<Identifier, Tag<Item>> entry : ItemTags.getContainer().getEntries().entrySet()) {
+            if (entry.getValue().contains(object)) {
+                list.add(entry.getKey());
+            }
+        }
+
+        return list;
     }
 
     @Override

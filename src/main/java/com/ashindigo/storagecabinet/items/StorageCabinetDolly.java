@@ -16,7 +16,6 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.world.World;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 public class StorageCabinetDolly extends Item {
@@ -51,7 +50,7 @@ public class StorageCabinetDolly extends Item {
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
+    public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
         if (stack.hasTag()) {
             tooltip.add(new TranslatableText("text.storagecabinet.dollyhas"));
         }
