@@ -13,7 +13,7 @@ public class WSlotCabinet extends WSlot {
     @Override
     public boolean accepts(ItemStack... stacks) {
         if (isWhitelist) {
-            return Arrays.stream(stacks).allMatch(stack -> this.getLinkedInventory().isValidInvStack(0, stack));
+            return Arrays.stream(stacks).allMatch(stack -> this.getLinkedInventory().isValid(0, stack));
         } else {
             return Arrays.stream(stacks).noneMatch(stack -> (denyItems.contains(stack.getItem()) || denyTags.stream().anyMatch(tag -> tag.contains(stack.getItem()))));
         }

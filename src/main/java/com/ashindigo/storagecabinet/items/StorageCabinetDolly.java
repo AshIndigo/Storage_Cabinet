@@ -41,7 +41,7 @@ public class StorageCabinetDolly extends Item {
                 context.getWorld().setBlockState(context.getBlockPos().offset(context.getSide()), BlockRegistry.getByTier(context.getStack().getTag().getInt("tier")).getDefaultState().with(HorizontalFacingBlock.FACING, context.getPlayerFacing().getOpposite()));
                 StorageCabinetBlock block = (StorageCabinetBlock) context.getWorld().getBlockState(context.getBlockPos().offset(context.getSide())).getBlock();
                 BlockEntity ent =  block.createBlockEntity(null);
-                ent.fromTag(context.getStack().getTag());
+                ent.fromTag(context.getWorld().getBlockState(context.getBlockPos()), context.getStack().getTag());
                 context.getWorld().setBlockEntity(context.getBlockPos().offset(context.getSide()), ent);
                 context.getStack().setTag(null);
             }

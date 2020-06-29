@@ -2,28 +2,29 @@ package com.ashindigo.storagecabinet;
 
 import com.google.common.collect.Lists;
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.InventoryListener;
+import net.minecraft.inventory.InventoryChangedListener;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tag.ItemTags;
 import net.minecraft.tag.Tag;
-import net.minecraft.util.DefaultedList;
 import net.minecraft.util.Identifier;
-import spinnery.util.InventoryUtilities;
+import net.minecraft.util.collection.DefaultedList;
+import spinnery.common.utility.InventoryUtilities;
 
 import java.util.*;
 
-public class StorageCabinetEntity extends BlockEntity implements BlockEntityClientSerializable, Inventory, InventoryListener {
+public class StorageCabinetEntity extends BlockEntity implements BlockEntityClientSerializable, Inventory, InventoryChangedListener {
 
     public int tier = 0;
 
     DefaultedList<ItemStack> stacks;
 
-    List<InventoryListener> listeners = new ArrayList<>();
+    List<InventoryChangedListener> listeners = new ArrayList<>();
 
     public StorageCabinetEntity() {
         super(StorageCabinet.storageCabinetEntity);
@@ -31,64 +32,8 @@ public class StorageCabinetEntity extends BlockEntity implements BlockEntityClie
 
     public StorageCabinetEntity setTier(int tier) {
         this.tier = tier;
-        this.stacks = DefaultedList.ofSize(getInvSize(), ItemStack.EMPTY);
+        this.stacks = DefaultedList.ofSize(size(), ItemStack.EMPTY);
         return this;
-    }
-
-    @Override
-    public int getInvSize() {
-        return (tier + 1) * 90;
-    }
-
-    @Override
-    public boolean isInvEmpty() {
-        return stacks.stream().allMatch(ItemStack::isEmpty);
-    }
-
-    @Override
-    public ItemStack getInvStack(int slot) {
-        return stacks.get(slot);
-    }
-
-    @Override
-    public ItemStack takeInvStack(int slot, int amount) {
-        markDirty();
-        ItemStack stack = stacks.get(slot).split(amount);
-        onInvChange(this);
-        return stack;
-    }
-
-    @Override
-    public ItemStack removeInvStack(int slot) {
-        markDirty();
-        ItemStack stack = stacks.remove(slot);
-        onInvChange(this);
-        return stack;
-    }
-
-    @Override
-    public void setInvStack(int slot, ItemStack stack) {
-        markDirty();
-        stacks.set(slot, stack);
-        onInvChange(this);
-    }
-
-    @Override
-    public boolean isValidInvStack(int slot, ItemStack stack) {
-        if (isInvEmpty() || stack.isEmpty()) {
-            return true;
-        } else {
-            Collection<Identifier> idList = getTagsFor(stack.getItem());
-            if (idList.isEmpty()) {
-                return containsAnyInInv(Collections.singleton(stack.getItem()));
-            } else {
-                for (Identifier id : idList) {
-                    Tag<Item> tag = ItemTags.getContainer().get(id);
-                    return stacks.stream().anyMatch(stack2 -> tag.contains(stack2.getItem()));
-                }
-            }
-        }
-        return false;
     }
 
     public Collection<Identifier> getTagsFor(Item object) {
@@ -104,22 +49,17 @@ public class StorageCabinetEntity extends BlockEntity implements BlockEntityClie
     }
 
     @Override
-    public boolean canPlayerUseInv(PlayerEntity player) {
-        return true;
-    }
-
-    @Override
     public void clear() {
         markDirty();
         stacks.clear();
     }
 
     @Override
-    public void fromTag(CompoundTag tag) {
-        super.fromTag(tag);
+    public void fromTag(BlockState state, CompoundTag tag) {
+        super.fromTag(state, tag);
         this.tier = tag.getInt("tier");
         setTier(tier);
-        InventoryUtilities.read(this, tag);
+        InventoryUtilities.read(tag);
     }
 
     @Override
@@ -132,10 +72,10 @@ public class StorageCabinetEntity extends BlockEntity implements BlockEntityClie
 
     @Override
     public void fromClientTag(CompoundTag tag) {
-        super.fromTag(tag);
+        //super.fromTag(tag);
         this.tier = tag.getInt("tier");
         setTier(tier);
-        InventoryUtilities.read(this, tag);
+        InventoryUtilities.read(tag);
     }
 
     @Override
@@ -146,19 +86,79 @@ public class StorageCabinetEntity extends BlockEntity implements BlockEntityClie
         return tag;
     }
 
-
-    @Override
-    public void onInvChange(Inventory inventory) {
-        if (world != null && !world.isClient) {
-            listeners.forEach(inventoryListener -> inventoryListener.onInvChange(inventory));
-        }
-    }
-
-    public void addListener(InventoryListener... listeners) {
+    public void addListener(InventoryChangedListener... listeners) {
         this.listeners.addAll(Arrays.asList(listeners));
     }
 
-    public void removeListener(InventoryListener... listeners) {
+    public void removeListener(InventoryChangedListener... listeners) {
         this.listeners.removeAll(Arrays.asList(listeners));
+    }
+
+    @Override
+    public int size() {
+        return (tier + 1) * 90;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return stacks.stream().allMatch(ItemStack::isEmpty);
+    }
+
+    @Override
+    public ItemStack getStack(int slot) {
+        return stacks.get(slot);
+    }
+
+    @Override
+    public ItemStack removeStack(int slot, int amount) {
+        markDirty();
+        ItemStack stack = stacks.get(slot).split(amount);
+        onInventoryChanged(this);
+        return stack;
+    }
+
+    @Override
+    public ItemStack removeStack(int slot) {
+        markDirty();
+        ItemStack stack = stacks.remove(slot);
+        onInventoryChanged(this);
+        return stack;
+    }
+
+    @Override
+    public void setStack(int slot, ItemStack stack) {
+        markDirty();
+        stacks.set(slot, stack);
+        onInventoryChanged(this);
+    }
+
+    @Override
+    public boolean canPlayerUse(PlayerEntity player) {
+        return true;
+    }
+
+    @Override
+    public void onInventoryChanged(Inventory sender) {
+        if (world != null && !world.isClient) {
+            listeners.forEach(inventoryListener -> inventoryListener.onInventoryChanged(sender));
+        }
+    }
+
+    @Override
+    public boolean isValid(int slot, ItemStack stack) {
+        if (isEmpty() || stack.isEmpty()) {
+            return true;
+        } else {
+            Collection<Identifier> idList = getTagsFor(stack.getItem());
+            if (idList.isEmpty()) {
+                return containsAny(Collections.singleton(stack.getItem()));
+            } else {
+                for (Identifier id : idList) {
+                    Tag<Item> tag = ItemTags.getContainer().get(id);
+                    return stacks.stream().anyMatch(stack2 -> tag.contains(stack2.getItem()));
+                }
+            }
+        }
+        return false;
     }
 }

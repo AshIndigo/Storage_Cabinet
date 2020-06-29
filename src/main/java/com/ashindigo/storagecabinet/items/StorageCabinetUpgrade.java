@@ -54,9 +54,9 @@ public class StorageCabinetUpgrade extends Item {
     }
 
     public void copyItems(Inventory source, Inventory target) {
-        if (source.getInvSize() <= target.getInvSize()) {
-            for (int i = 0; i < source.getInvSize(); i++) {
-                target.setInvStack(i, source.getInvStack(i));
+        if (source.size() <= target.size()) {
+            for (int i = 0; i < source.size(); i++) {
+                target.setStack(i, source.getStack(i));
             }
         }
     }

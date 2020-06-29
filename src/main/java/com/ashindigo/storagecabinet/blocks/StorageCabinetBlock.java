@@ -2,23 +2,34 @@ package com.ashindigo.storagecabinet.blocks;
 
 import com.ashindigo.storagecabinet.StorageCabinet;
 import com.ashindigo.storagecabinet.StorageCabinetEntity;
-import net.fabricmc.fabric.api.container.ContainerProviderRegistry;
+import io.netty.buffer.Unpooled;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
+import net.fabricmc.fabric.impl.screenhandler.ExtendedScreenHandlerType;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.screen.ScreenHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
+import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.BlockMirror;
+import net.minecraft.util.BlockRotation;
+import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class StorageCabinetBlock extends BlockWithEntity {
@@ -65,7 +76,28 @@ public class StorageCabinetBlock extends BlockWithEntity {
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         if (!world.isClient) {
-            ContainerProviderRegistry.INSTANCE.openContainer(new Identifier(StorageCabinet.MODID, StorageCabinet.MODID), player, (buffer) -> { buffer.writeBlockPos(pos); buffer.writeInt(Manager.getWidth()); buffer.writeInt(Manager.getHeight(tier)); buffer.writeInt(Manager.getMaximum()); buffer.writeText(new TranslatableText(this.getTranslationKey())); });
+            player.openHandledScreen(new ExtendedScreenHandlerFactory(){
+                @Override
+                public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
+                    buf.writeBlockPos(pos);
+                    buf.writeInt(Manager.getHeight(tier));
+                    buf.writeInt(Manager.getWidth());
+                }
+
+                @Override
+                public Text getDisplayName() {
+                    return new TranslatableText(getTranslationKey());
+                }
+
+                @Nullable
+                @Override
+                public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
+                    PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer()); // TODO Is this even proper
+                    writeScreenOpeningData((ServerPlayerEntity) player, buf);
+                    return StorageCabinet.cabinetScreenHandler.create(syncId, inv, buf);
+                }
+            });
+            //ContainerProviderRegistry.INSTANCE.openContainer(new Identifier(StorageCabinet.MODID, StorageCabinet.MODID), player, (buffer) -> { buffer.writeBlockPos(pos); buffer.writeInt(Manager.getWidth()); buffer.writeInt(Manager.getHeight(tier)); buffer.writeInt(Manager.getMaximum()); buffer.writeText(new TranslatableText(this.getTranslationKey())); });
         }
         return ActionResult.SUCCESS;
     }
@@ -74,8 +106,8 @@ public class StorageCabinetBlock extends BlockWithEntity {
     public void afterBreak(World world, PlayerEntity player, BlockPos pos, BlockState state, BlockEntity blockEntity, ItemStack stack) {
         if (state.getBlock() != state.getBlock()) {
             StorageCabinetEntity inventory = ((StorageCabinetEntity) Objects.requireNonNull(world.getBlockEntity(pos)));
-            for (int i = 0; i < inventory.getInvSize(); i++) {
-                world.spawnEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), inventory.getInvStack(i)));
+            for (int i = 0; i < inventory.size(); i++) {
+                world.spawnEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), inventory.getStack(i)));
             }
             world.updateNeighbors(pos, this);
             super.afterBreak(world, player, pos, state, blockEntity, stack);

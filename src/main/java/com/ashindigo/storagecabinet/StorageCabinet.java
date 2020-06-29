@@ -2,7 +2,8 @@ package com.ashindigo.storagecabinet;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
-import net.fabricmc.fabric.api.container.ContainerProviderRegistry;
+import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
+import net.fabricmc.fabric.impl.screenhandler.ExtendedScreenHandlerType;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -14,13 +15,18 @@ public class StorageCabinet implements ModInitializer {
     public static final String MODID = "storagecabinet";
     public static BlockEntityType<?> storageCabinetEntity;
     public static ItemGroup CABINET_GROUP;
+    public static ExtendedScreenHandlerType<StorageCabinetContainer> cabinetScreenHandler;
+
+    // TODO
+    // Scrolling is fucked up
+    // Inv saving is broken
 
     @Override
     public void onInitialize() {
         CABINET_GROUP = FabricItemGroupBuilder.build(new Identifier(MODID, MODID), () -> new ItemStack(BlockRegistry.IRON_CABINET));
         BlockRegistry.init();
         ItemRegistry.init();
-        ContainerProviderRegistry.INSTANCE.registerFactory(new Identifier(MODID, MODID), (syncId, id, player, buffer) -> new StorageCabinetContainer(syncId, player.inventory, buffer.readBlockPos(), buffer.readInt(), buffer.readInt(), buffer.readInt()));
+        cabinetScreenHandler = (ExtendedScreenHandlerType<StorageCabinetContainer>) ScreenHandlerRegistry.registerExtended(new Identifier(MODID, MODID), StorageCabinetContainer::new);
         storageCabinetEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, MODID + ":" + MODID, BlockEntityType.Builder.create(StorageCabinetEntity::new, BlockRegistry.WOOD_CABINET).build(null));
     }
 }
