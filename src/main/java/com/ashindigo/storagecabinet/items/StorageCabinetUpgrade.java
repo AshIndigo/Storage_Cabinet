@@ -26,12 +26,10 @@ public class StorageCabinetUpgrade extends Item {
         BlockState state = context.getWorld().getBlockState(context.getBlockPos());
         if (state.getBlock() instanceof StorageCabinetBlock) {
             if (((StorageCabinetBlock) state.getBlock()).getTier() < tier) {
-                //if (!context.getWorld().isClient) {
                 StorageCabinetEntity oldCabinet = (StorageCabinetEntity) context.getWorld().getBlockEntity(context.getBlockPos());
                 context.getWorld().setBlockState(context.getBlockPos(), getCabinet(tier).getDefaultState());
                 copyItems(oldCabinet, (Inventory) context.getWorld().getBlockEntity(context.getBlockPos()));
                 context.getStack().decrement(1);
-                //}
             }
         }
         return super.useOnBlock(context);

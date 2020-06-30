@@ -18,15 +18,14 @@ public class StorageCabinet implements ModInitializer {
     public static ExtendedScreenHandlerType<StorageCabinetContainer> cabinetScreenHandler;
 
     // TODO
-    // Scrolling is fucked up
-    // Inv saving is broken
+    // Crash when shift clciking
 
     @Override
     public void onInitialize() {
         CABINET_GROUP = FabricItemGroupBuilder.build(new Identifier(MODID, MODID), () -> new ItemStack(BlockRegistry.IRON_CABINET));
         BlockRegistry.init();
         ItemRegistry.init();
-        cabinetScreenHandler = (ExtendedScreenHandlerType<StorageCabinetContainer>) ScreenHandlerRegistry.registerExtended(new Identifier(MODID, MODID), StorageCabinetContainer::new);
+        cabinetScreenHandler = (ExtendedScreenHandlerType<StorageCabinetContainer>) ScreenHandlerRegistry.registerExtended(new Identifier(MODID, MODID), (syncId, inventory, buf) -> new StorageCabinetContainer(syncId, inventory, buf.readBlockPos()));
         storageCabinetEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, MODID + ":" + MODID, BlockEntityType.Builder.create(StorageCabinetEntity::new, BlockRegistry.WOOD_CABINET).build(null));
     }
 }

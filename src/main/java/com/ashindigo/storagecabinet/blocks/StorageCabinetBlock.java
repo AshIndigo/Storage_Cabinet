@@ -1,10 +1,9 @@
 package com.ashindigo.storagecabinet.blocks;
 
-import com.ashindigo.storagecabinet.StorageCabinet;
+import com.ashindigo.storagecabinet.BlockRegistry;
+import com.ashindigo.storagecabinet.StorageCabinetContainer;
 import com.ashindigo.storagecabinet.StorageCabinetEntity;
-import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
-import net.fabricmc.fabric.impl.screenhandler.ExtendedScreenHandlerType;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.ItemEntity;
@@ -29,7 +28,6 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class StorageCabinetBlock extends BlockWithEntity {
@@ -76,28 +74,23 @@ public class StorageCabinetBlock extends BlockWithEntity {
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         if (!world.isClient) {
-            player.openHandledScreen(new ExtendedScreenHandlerFactory(){
+            player.openHandledScreen(new ExtendedScreenHandlerFactory() {
                 @Override
                 public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
                     buf.writeBlockPos(pos);
-                    buf.writeInt(Manager.getHeight(tier));
-                    buf.writeInt(Manager.getWidth());
                 }
 
                 @Override
                 public Text getDisplayName() {
-                    return new TranslatableText(getTranslationKey());
+                    return new TranslatableText(BlockRegistry.getByTier(tier).getTranslationKey());
                 }
 
-                @Nullable
                 @Override
                 public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
-                    PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer()); // TODO Is this even proper
-                    writeScreenOpeningData((ServerPlayerEntity) player, buf);
-                    return StorageCabinet.cabinetScreenHandler.create(syncId, inv, buf);
+                    return new StorageCabinetContainer(syncId, inv, pos);
                 }
             });
-            //ContainerProviderRegistry.INSTANCE.openContainer(new Identifier(StorageCabinet.MODID, StorageCabinet.MODID), player, (buffer) -> { buffer.writeBlockPos(pos); buffer.writeInt(Manager.getWidth()); buffer.writeInt(Manager.getHeight(tier)); buffer.writeInt(Manager.getMaximum()); buffer.writeText(new TranslatableText(this.getTranslationKey())); });
+
         }
         return ActionResult.SUCCESS;
     }

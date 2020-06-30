@@ -1,8 +1,9 @@
 package com.ashindigo.storagecabinet;
 
+import com.ashindigo.storagecabinet.blocks.StorageCabinetBlock;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandlerType;
+import net.minecraft.util.math.BlockPos;
 import spinnery.common.container.BaseContainer;
 import spinnery.widget.WInterface;
 import spinnery.widget.WSlot;
@@ -15,14 +16,14 @@ public class StorageCabinetContainer extends BaseContainer {
     int arrayHeight;
     int arrayWidth; // Isn't it always 9.
 
-    public StorageCabinetContainer(int synchronizationID, PlayerInventory playerInventory, PacketByteBuf buf) {
+    public StorageCabinetContainer(int synchronizationID, PlayerInventory playerInventory, BlockPos pos) {
         super(synchronizationID, playerInventory);
-        cabinetEntity = ((StorageCabinetEntity) getWorld().getBlockEntity(buf.readBlockPos()));
+        cabinetEntity = ((StorageCabinetEntity) getWorld().getBlockEntity(pos));
         WInterface mainInterface = getInterface();
         getInventories().put(INVENTORY, cabinetEntity);
         cabinetEntity.addListener(this::onContentChanged);
-        arrayHeight = buf.readInt();
-        arrayWidth = buf.readInt();
+        arrayHeight = StorageCabinetBlock.Manager.getHeight(cabinetEntity.tier);
+        arrayWidth = StorageCabinetBlock.Manager.getWidth();
         for (int y = 0; y < arrayHeight; ++y) {
             for (int x = 0; x < arrayWidth; ++x) {
                 mainInterface.createChild(WSlotCabinet::new).setSlotNumber(y * arrayWidth + x).setInventoryNumber(INVENTORY).setWhitelist();

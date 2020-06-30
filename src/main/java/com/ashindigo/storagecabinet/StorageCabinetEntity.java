@@ -14,6 +14,7 @@ import net.minecraft.tag.ItemTags;
 import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
+import spinnery.common.inventory.BaseInventory;
 import spinnery.common.utility.InventoryUtilities;
 
 import java.util.*;
@@ -38,7 +39,6 @@ public class StorageCabinetEntity extends BlockEntity implements BlockEntityClie
 
     public Collection<Identifier> getTagsFor(Item object) {
         List<Identifier> list = Lists.newArrayList();
-
         for (Map.Entry<Identifier, Tag<Item>> entry : ItemTags.getContainer().getEntries().entrySet()) {
             if (entry.getValue().contains(object)) {
                 list.add(entry.getKey());
@@ -59,7 +59,10 @@ public class StorageCabinetEntity extends BlockEntity implements BlockEntityClie
         super.fromTag(state, tag);
         this.tier = tag.getInt("tier");
         setTier(tier);
-        InventoryUtilities.read(tag);
+        BaseInventory inv = InventoryUtilities.read(tag);
+        for (int i = 0; i < inv.size(); i++) {
+            setStack(i, inv.getStack(i));
+        }
     }
 
     @Override
@@ -72,10 +75,13 @@ public class StorageCabinetEntity extends BlockEntity implements BlockEntityClie
 
     @Override
     public void fromClientTag(CompoundTag tag) {
-        //super.fromTag(tag);
+        super.fromTag(getCachedState(), tag);
         this.tier = tag.getInt("tier");
         setTier(tier);
-        InventoryUtilities.read(tag);
+        BaseInventory inv = InventoryUtilities.read(tag);
+        for (int i = 0; i < inv.size(); i++) {
+            setStack(i, inv.getStack(i));
+        }
     }
 
     @Override
@@ -162,3 +168,4 @@ public class StorageCabinetEntity extends BlockEntity implements BlockEntityClie
         return false;
     }
 }
+

@@ -2,7 +2,6 @@ package com.ashindigo.storagecabinet;
 
 import com.ashindigo.storagecabinet.blocks.StorageCabinetBlock;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
 import net.minecraft.block.Material;
 import net.minecraft.block.MaterialColor;
 import net.minecraft.item.BlockItem;
