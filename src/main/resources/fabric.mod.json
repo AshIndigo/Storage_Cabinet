@@ -26,12 +26,13 @@
     ]
   },
   "mixins": [
+    "storagecabinet.mixins.json"
   ],
 
   "depends": {
     "fabricloader": ">=0.4.0",
     "fabric": "*",
-    "spinnery": ">=2.0.17+fabric-20w06a"
+    "spinnery": ">=3.0.48+fabric-1.16.x"
   },
   "suggests": {
   }

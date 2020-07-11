@@ -1,6 +1,8 @@
 package com.ashindigo.storagecabinet;
 
+import com.ashindigo.storagecabinet.blocks.CabinetManagerBlock;
 import com.ashindigo.storagecabinet.blocks.StorageCabinetBlock;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Material;
 import net.minecraft.block.MaterialColor;
@@ -16,6 +18,7 @@ public class BlockRegistry {
     public static StorageCabinetBlock GOLD_CABINET;
     public static StorageCabinetBlock DIAMOND_CABINET;
     public static StorageCabinetBlock EMERALD_CABINET;
+    public static CabinetManagerBlock CABINET_MANAGER;
 
     public static void init() {
         WOOD_CABINET = addCabinet(0, Block.Settings.of(Material.WOOD, MaterialColor.WOOD), "wood");
@@ -23,6 +26,10 @@ public class BlockRegistry {
         GOLD_CABINET = addCabinet(2, Block.Settings.of(Material.METAL, MaterialColor.GOLD), "gold");
         DIAMOND_CABINET = addCabinet(3, Block.Settings.of(Material.METAL, MaterialColor.DIAMOND), "diamond");
         EMERALD_CABINET = addCabinet(4, Block.Settings.of(Material.METAL, MaterialColor.EMERALD), "emerald");
+        CABINET_MANAGER = new CabinetManagerBlock(AbstractBlock.Settings.of(Material.METAL, MaterialColor.IRON).strength(5, 6));
+        Registry.register(Registry.BLOCK, new Identifier(StorageCabinet.MODID, "cabinet_manager"), CABINET_MANAGER);
+        Registry.register(Registry.ITEM, new Identifier(StorageCabinet.MODID, "cabinet_manager"), new BlockItem(CABINET_MANAGER, new Item.Settings().group(StorageCabinet.CABINET_GROUP)));
+
     }
 
     public static StorageCabinetBlock addCabinet(int tier, Block.Settings settings, String suffix) {

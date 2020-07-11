@@ -1,7 +1,7 @@
 package com.ashindigo.storagecabinet.items;
 
 import com.ashindigo.storagecabinet.BlockRegistry;
-import com.ashindigo.storagecabinet.StorageCabinetEntity;
+import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
 import com.ashindigo.storagecabinet.blocks.StorageCabinetBlock;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.HorizontalFacingBlock;

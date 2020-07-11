@@ -1,5 +1,6 @@
-package com.ashindigo.storagecabinet;
+package com.ashindigo.storagecabinet.entity;
 
+import com.ashindigo.storagecabinet.StorageCabinet;
 import com.google.common.collect.Lists;
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.minecraft.block.BlockState;
@@ -12,12 +13,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tag.ItemTags;
 import net.minecraft.tag.Tag;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import spinnery.common.inventory.BaseInventory;
 import spinnery.common.utility.InventoryUtilities;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 public class StorageCabinetEntity extends BlockEntity implements BlockEntityClientSerializable, Inventory, InventoryChangedListener {
 
@@ -163,6 +166,21 @@ public class StorageCabinetEntity extends BlockEntity implements BlockEntityClie
                     Tag<Item> tag = ItemTags.getContainer().get(id);
                     return stacks.stream().anyMatch(stack2 -> tag.contains(stack2.getItem()));
                 }
+            }
+        }
+        return false;
+    }
+
+    public ItemStack getMainItemStack() {
+        return stacks.stream().filter(stack -> !stack.isEmpty()).findAny().get();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof StorageCabinetEntity) {
+            StorageCabinetEntity cabinet = (StorageCabinetEntity) obj;
+            if (cabinet.getPos().equals(this.getPos())) {
+                return true;
             }
         }
         return false;

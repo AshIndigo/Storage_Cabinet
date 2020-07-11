@@ -1,5 +1,7 @@
-package com.ashindigo.storagecabinet;
+package com.ashindigo.storagecabinet.screen;
 
+import com.ashindigo.storagecabinet.container.StorageCabinetContainer;
+import com.ashindigo.storagecabinet.WSlotCabinet;
 import net.minecraft.client.gui.screen.ingame.ScreenHandlerProvider;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
@@ -11,7 +13,7 @@ import spinnery.widget.WVerticalScrollableContainer;
 import spinnery.widget.api.Position;
 import spinnery.widget.api.Size;
 
-import static com.ashindigo.storagecabinet.StorageCabinetContainer.INVENTORY;
+import static com.ashindigo.storagecabinet.container.StorageCabinetContainer.INVENTORY;
 
 public class StorageCabinetScreen extends BaseContainerScreen<StorageCabinetContainer> implements ScreenHandlerProvider<StorageCabinetContainer> {
 
