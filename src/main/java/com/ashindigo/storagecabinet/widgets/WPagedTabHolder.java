@@ -11,6 +11,7 @@ import java.util.ArrayList;
 /**
  * A tab holder that splits tabs into pages, only works with item/sprite icons as far as I know
  */
+@SuppressWarnings({"unchecked"})
 public class WPagedTabHolder extends WTabHolder {
 
     int page = 0;

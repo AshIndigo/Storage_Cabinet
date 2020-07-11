@@ -13,14 +13,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tag.ItemTags;
 import net.minecraft.tag.Tag;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import spinnery.common.inventory.BaseInventory;
 import spinnery.common.utility.InventoryUtilities;
 
 import java.util.*;
-import java.util.function.Predicate;
 
 public class StorageCabinetEntity extends BlockEntity implements BlockEntityClientSerializable, Inventory, InventoryChangedListener {
 
@@ -179,9 +177,7 @@ public class StorageCabinetEntity extends BlockEntity implements BlockEntityClie
     public boolean equals(Object obj) {
         if (obj instanceof StorageCabinetEntity) {
             StorageCabinetEntity cabinet = (StorageCabinetEntity) obj;
-            if (cabinet.getPos().equals(this.getPos())) {
-                return true;
-            }
+            return cabinet.getPos().equals(this.getPos());
         }
         return false;
     }

@@ -124,13 +124,5 @@ public class StorageCabinetBlock extends BlockWithEntity {
         public static int getHeight(int tier) {
             return 10 * (tier + 1);
         }
-
-        public static int getSize(int tier) {
-            return getWidth() * getHeight(tier);
-        }
-
-        public static int getMaximum() {
-            return 64;
-        }
     }
 }

@@ -2,7 +2,6 @@ package com.ashindigo.storagecabinet.blocks;
 
 import com.ashindigo.storagecabinet.BlockRegistry;
 import com.ashindigo.storagecabinet.container.CabinetManagerContainer;
-import com.ashindigo.storagecabinet.container.StorageCabinetContainer;
 import com.ashindigo.storagecabinet.entity.CabinetManagerEntity;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.BlockState;
