@@ -10,13 +10,13 @@ import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
-import spinnery.common.container.BaseContainer;
+import spinnery.common.handler.BaseScreenHandler;
 import spinnery.widget.WInterface;
 import spinnery.widget.WSlot;
 
 import java.util.ArrayList;
 
-public class CabinetManagerContainer extends BaseContainer {
+public class CabinetManagerContainer extends BaseScreenHandler {
 
     public final CabinetManagerEntity managerEntity;
 
@@ -45,7 +45,7 @@ public class CabinetManagerContainer extends BaseContainer {
         }
     }
 
-    private void checkSurroundingCabinets(ArrayList<StorageCabinetEntity> cabinetList, BlockPos pos, World world) { // TODO Probably do max range
+    private void checkSurroundingCabinets(ArrayList<StorageCabinetEntity> cabinetList, BlockPos pos, World world) {
         for (Direction direction : Direction.values()) { // 1.
             if (world.getBlockEntity(pos.offset(direction)) instanceof StorageCabinetEntity) {
                 if (!cabinetList.contains(world.getBlockEntity(pos.offset(direction)))) {

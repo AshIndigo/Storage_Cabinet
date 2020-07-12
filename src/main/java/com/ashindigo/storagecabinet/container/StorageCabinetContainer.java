@@ -7,11 +7,11 @@ import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.math.BlockPos;
-import spinnery.common.container.BaseContainer;
+import spinnery.common.handler.BaseScreenHandler;
 import spinnery.widget.WInterface;
 import spinnery.widget.WSlot;
 
-public class StorageCabinetContainer extends BaseContainer {
+public class StorageCabinetContainer extends BaseScreenHandler {
 
     public static final int INVENTORY = 1;
 

@@ -5,11 +5,12 @@ import net.minecraft.client.util.math.MatrixStack;
 import spinnery.widget.*;
 import spinnery.widget.api.Position;
 import spinnery.widget.api.Size;
-
 import java.util.ArrayList;
 
 /**
  * A tab holder that splits tabs into pages, only works with item/sprite icons as far as I know
+ *
+ * @author Ash Indigo
  */
 @SuppressWarnings({"unchecked"})
 public class WPagedTabHolder extends WTabHolder {
@@ -83,8 +84,7 @@ public class WPagedTabHolder extends WTabHolder {
     }
 
     @Override
-    public void draw(MatrixStack matrices, VertexConsumerProvider.Immediate provider) {
-
+    public void draw(MatrixStack matrices, VertexConsumerProvider provider) {
         if (isHidden()) {
             return;
         }
@@ -95,11 +95,12 @@ public class WPagedTabHolder extends WTabHolder {
         }
 
         for (WTab tab : tabs) {
-            tab.getToggle().draw(matrices, provider);
+            tab.draw(matrices, provider);
         }
 
+
         for (WTab tab : tabs) {
-            tab.draw(matrices, provider);
+            tab.getToggle().draw(matrices, provider);
         }
     }
 
@@ -114,4 +115,5 @@ public class WPagedTabHolder extends WTabHolder {
     public int getTabsPerPage() {
         return (int) (getWidth() / 24);
     }
+
 }
