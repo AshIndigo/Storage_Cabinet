@@ -6,6 +6,7 @@ import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.*;
+import net.minecraft.block.entity.BarrelBlockEntity;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -15,8 +16,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
+import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.DirectionProperty;
+import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.*;
@@ -27,13 +31,16 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
 import java.util.Objects;
+import java.util.Random;
 
 public class StorageCabinetBlock extends BlockWithEntity {
 
     private static final DirectionProperty FACING;
+    public static final BooleanProperty OPEN;
 
     static {
         FACING = HorizontalFacingBlock.FACING;
+        OPEN = Properties.OPEN;
     }
 
     private final int tier;
@@ -41,12 +48,21 @@ public class StorageCabinetBlock extends BlockWithEntity {
     public StorageCabinetBlock(FabricBlockSettings settings, int tier) {
         super(settings);
         this.tier = tier;
-        this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.NORTH));
+        this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.NORTH).with(OPEN, false));
+    }
+
+    @Override
+    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
+        BlockEntity blockEntity = world.getBlockEntity(pos);
+        if (blockEntity instanceof StorageCabinetEntity) {
+            ((StorageCabinetEntity) blockEntity).tick();
+        }
+
     }
 
     @Override
     public BlockState getPlacementState(ItemPlacementContext context) {
-        return this.getDefaultState().with(FACING, context.getPlayerFacing().getOpposite());
+        return this.getDefaultState().with(FACING, context.getPlayerFacing().getOpposite()).with(OPEN, false);
     }
 
     @Override
@@ -62,6 +78,11 @@ public class StorageCabinetBlock extends BlockWithEntity {
     @Override
     public BlockState mirror(BlockState state, BlockMirror mirrorIn) {
         return state.rotate(mirrorIn.getRotation(state.get(FACING)));
+    }
+
+    @Override
+    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+        builder.add(FACING, OPEN);
     }
 
     @Override
@@ -106,21 +127,17 @@ public class StorageCabinetBlock extends BlockWithEntity {
         }
     }
 
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
-    }
-
     public int getTier() {
         return tier;
     }
 
-    public static class Manager {
-        public static int getWidth() { // TODO Just remove? It's always 9
-            return 9;
-        }
-
-        public static int getHeight(int tier) {
-            return 10 * (tier + 1);
-        }
+public static class Manager {
+    public static int getWidth() { // TODO Just remove? It's always 9
+        return 9;
     }
+
+    public static int getHeight(int tier) {
+        return 10 * (tier + 1);
+    }
+}
 }

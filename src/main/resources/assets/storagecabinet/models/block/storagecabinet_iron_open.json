@@ -1,0 +1,10 @@
+{
+  "parent": "block/orientable",
+  "textures": {
+    "top": "storagecabinet:block/storagecabinet_iron",
+    "side": "storagecabinet:block/storagecabinet_iron",
+    "front": "storagecabinet:block/storagecabinetfront_iron_open"
+  }
+}
+
+

@@ -1,6 +1,8 @@
 package com.ashindigo.storagecabinet.entity;
 
+import com.ashindigo.storagecabinet.BlockRegistry;
 import com.ashindigo.storagecabinet.StorageCabinet;
+import com.ashindigo.storagecabinet.blocks.StorageCabinetBlock;
 import com.google.common.collect.Lists;
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.minecraft.block.BlockState;
@@ -22,6 +24,7 @@ import java.util.*;
 
 public class StorageCabinetEntity extends BlockEntity implements BlockEntityClientSerializable, Inventory, InventoryChangedListener {
 
+    private int viewerCount;
     public int tier = 0;
 
     DefaultedList<ItemStack> stacks;
@@ -181,6 +184,47 @@ public class StorageCabinetEntity extends BlockEntity implements BlockEntityClie
             return cabinet.getPos().equals(this.getPos());
         }
         return false;
+    }
+
+    @Override
+    public void onOpen(PlayerEntity player) {
+        BlockState blockState = this.getCachedState();
+        boolean bl = blockState.get(StorageCabinetBlock.OPEN);
+        if (!bl) {
+            this.world.setBlockState(this.getPos(), blockState.with(StorageCabinetBlock.OPEN, true), 3);
+        }
+        this.world.getBlockTickScheduler().schedule(this.getPos(), this.getCachedState().getBlock(), 5);
+        viewerCount++;
+    }
+
+
+    public void tick() {
+        int i = this.pos.getX();
+        int j = this.pos.getY();
+        int k = this.pos.getZ();
+       // this.viewerCount = ChestBlockEntity.countViewers(this.world, this, i, j, k);
+        if (this.viewerCount > 0) {
+            this.world.getBlockTickScheduler().schedule(this.getPos(), this.getCachedState().getBlock(), 5);
+        } else {
+            BlockState blockState = this.getCachedState();
+            if (!blockState.isOf(BlockRegistry.getByTier(tier))) {
+                this.markRemoved();
+                return;
+            }
+
+            boolean bl = blockState.get(StorageCabinetBlock.OPEN);
+            if (bl) {
+                this.world.setBlockState(this.getPos(), blockState.with(StorageCabinetBlock.OPEN, false), 3);
+            }
+        }
+    }
+
+    @Override
+    public void onClose(PlayerEntity player) {
+        if (!player.isSpectator()) {
+            --this.viewerCount;
+        }
+
     }
 }
 

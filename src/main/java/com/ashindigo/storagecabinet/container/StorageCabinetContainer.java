@@ -4,6 +4,7 @@ import com.ashindigo.storagecabinet.StorageCabinet;
 import com.ashindigo.storagecabinet.WSlotCabinet;
 import com.ashindigo.storagecabinet.blocks.StorageCabinetBlock;
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.math.BlockPos;
@@ -22,6 +23,7 @@ public class StorageCabinetContainer extends BaseScreenHandler {
     public StorageCabinetContainer(int synchronizationID, PlayerInventory playerInventory, BlockPos pos) {
         super(synchronizationID, playerInventory);
         cabinetEntity = ((StorageCabinetEntity) getWorld().getBlockEntity(pos));
+        cabinetEntity.onOpen(playerInventory.player);
         WInterface mainInterface = getInterface();
         getInventories().put(INVENTORY, cabinetEntity);
         cabinetEntity.addListener(this::onContentChanged);
@@ -38,5 +40,11 @@ public class StorageCabinetContainer extends BaseScreenHandler {
     @Override
     public ScreenHandlerType<?> getType() {
         return StorageCabinet.cabinetScreenHandler;
+    }
+
+    @Override
+    public void close(PlayerEntity player) {
+        super.close(player);
+        cabinetEntity.onClose(player);
     }
 }
