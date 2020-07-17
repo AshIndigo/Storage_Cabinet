@@ -1,12 +1,12 @@
 package com.ashindigo.storagecabinet.screen;
 
-import com.ashindigo.storagecabinet.WSlotCabinet;
+import com.ashindigo.storagecabinet.BlockRegistry;
+import com.ashindigo.storagecabinet.widgets.WSlotCabinet;
 import com.ashindigo.storagecabinet.blocks.StorageCabinetBlock;
 import com.ashindigo.storagecabinet.container.CabinetManagerContainer;
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
 import com.ashindigo.storagecabinet.widgets.WPagedTabHolder;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
@@ -38,7 +38,7 @@ public class CabinetManagerScreen extends BaseHandledScreen<CabinetManagerContai
             addCabinet(tabHolder, cabinetEntity, i[0]);
             i[0]++;
         });
-        WSlot.addPlayerInventory(Position.of(tabHolder).add(6, 162 + (18 * 2), 1), Size.of(18, 18), mainInterface);
+        WSlot.addPlayerInventory(Position.of(tabHolder).add(6, 162 + (18 * 2) + 6, 1), Size.of(18, 18), mainInterface);
     }
 
     private void checkSurroundingCabinets(ArrayList<StorageCabinetEntity> cabinetList, BlockPos pos, World world) {
@@ -54,8 +54,9 @@ public class CabinetManagerScreen extends BaseHandledScreen<CabinetManagerContai
 
     private void addCabinet(WTabHolder tabHolder, StorageCabinetEntity cabinetEntity, int invNumb) {
         WTabHolder.WTab tab = tabHolder.addTab(cabinetEntity.isEmpty() ? Items.AIR : cabinetEntity.getMainItemStack().getItem());
-        WVerticalScrollableContainer panel = tab.getBody().createChild(WVerticalScrollableContainer::new, Position.ofBottomLeft(tabHolder).add(4, -(162 + (5 * 18) + 8), 1), Size.of((10 * 18) + 18, 162));
+        WVerticalScrollableContainer panel = tab.getBody().createChild(WVerticalScrollableContainer::new, Position.ofBottomLeft(tabHolder).add(4, -(162 + (5 * 18) -4), 1), Size.of((10 * 18) + 18, 162));
         panel.setInterface(getInterface());
+        tab.getBody().setLabel(new TranslatableText(BlockRegistry.getByTier(cabinetEntity.tier).getTranslationKey()));
         Size size = Size.of(18, 18);
         Position position = Position.of(panel, 6, 1, 0);
         for (int y = 0; y < StorageCabinetBlock.Manager.getHeight(cabinetEntity.tier); ++y) {

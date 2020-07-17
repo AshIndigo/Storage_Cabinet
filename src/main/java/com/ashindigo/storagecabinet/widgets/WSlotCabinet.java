@@ -1,4 +1,4 @@
-package com.ashindigo.storagecabinet;
+package com.ashindigo.storagecabinet.widgets;
 
 import net.minecraft.item.ItemStack;
 import spinnery.widget.WSlot;

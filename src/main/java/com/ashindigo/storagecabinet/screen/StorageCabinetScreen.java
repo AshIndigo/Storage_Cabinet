@@ -1,6 +1,6 @@
 package com.ashindigo.storagecabinet.screen;
 
-import com.ashindigo.storagecabinet.WSlotCabinet;
+import com.ashindigo.storagecabinet.widgets.WSlotCabinet;
 import com.ashindigo.storagecabinet.container.StorageCabinetContainer;
 import net.minecraft.client.gui.screen.ingame.ScreenHandlerProvider;
 import net.minecraft.entity.player.PlayerInventory;

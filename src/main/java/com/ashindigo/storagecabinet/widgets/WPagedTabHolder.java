@@ -24,7 +24,7 @@ public class WPagedTabHolder extends WTabHolder {
     public <W extends WAbstractWidget> W setInterface(WInterface linkedInterface) {
         this.linkedInterface = linkedInterface;
         next = getInterface().createChild(WButton::new).setLabel(">").setSize(Size.of(10, 10)).setOnMouseClicked((widget, mouseX, mouseY, mouseButton) -> {
-            page = Math.min(getPageCount(), page + 1);
+            page = Math.min(getPageCount()-1, page + 1);
             updateTabs();
         });
         back = getInterface().createChild(WButton::new).setLabel("<").setSize(Size.of(10, 10)).setOnMouseClicked((widget, mouseX, mouseY, mouseButton) -> {
@@ -37,7 +37,7 @@ public class WPagedTabHolder extends WTabHolder {
     @Override
     protected void updateTabs() {
         if (next != null && back != null) {
-            if (getPageCount() >= 1) {
+            if (getPageCount() > 1) {
                 hasButtons = true;
                 next.setPosition(Position.of(this, getWidth() - 10, -10, 0)).setHidden(false);
                 back.setPosition(Position.of(this, getWidth() - 20, -10, 0)).setHidden(false);

@@ -1,7 +1,7 @@
 package com.ashindigo.storagecabinet.container;
 
 import com.ashindigo.storagecabinet.StorageCabinet;
-import com.ashindigo.storagecabinet.WSlotCabinet;
+import com.ashindigo.storagecabinet.widgets.WSlotCabinet;
 import com.ashindigo.storagecabinet.blocks.StorageCabinetBlock;
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
 import net.minecraft.entity.player.PlayerEntity;
