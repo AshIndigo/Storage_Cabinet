@@ -2,8 +2,8 @@ package com.ashindigo.storagecabinet;
 
 import com.ashindigo.storagecabinet.blocks.CabinetManagerBlock;
 import com.ashindigo.storagecabinet.blocks.StorageCabinetBlock;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
+import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags;
 import net.minecraft.block.Material;
 import net.minecraft.block.MaterialColor;
 import net.minecraft.item.BlockItem;
@@ -20,20 +20,21 @@ public class BlockRegistry {
     public static StorageCabinetBlock EMERALD_CABINET;
     public static CabinetManagerBlock CABINET_MANAGER;
 
+    // TODO Note: Mining levels are currently not functional, and if fixed may require diamond tier+ tools to mine. Will have to fix when I can actually test
     public static void init() {
-        WOOD_CABINET = addCabinet(0, Block.Settings.of(Material.WOOD, MaterialColor.WOOD), "wood");
-        IRON_CABINET = addCabinet(1, Block.Settings.of(Material.METAL, MaterialColor.IRON), "iron");
-        GOLD_CABINET = addCabinet(2, Block.Settings.of(Material.METAL, MaterialColor.GOLD), "gold");
-        DIAMOND_CABINET = addCabinet(3, Block.Settings.of(Material.METAL, MaterialColor.DIAMOND), "diamond");
-        EMERALD_CABINET = addCabinet(4, Block.Settings.of(Material.METAL, MaterialColor.EMERALD), "emerald");
-        CABINET_MANAGER = new CabinetManagerBlock(AbstractBlock.Settings.of(Material.METAL, MaterialColor.IRON).strength(5, 6));
+        WOOD_CABINET = addCabinet(0, FabricBlockSettings.of(Material.WOOD, MaterialColor.WOOD).breakByTool(FabricToolTags.AXES), "wood");
+        IRON_CABINET = addCabinet(1, FabricBlockSettings.of(Material.METAL, MaterialColor.IRON).breakByTool(FabricToolTags.PICKAXES, 2), "iron");
+        GOLD_CABINET = addCabinet(2, FabricBlockSettings.of(Material.METAL, MaterialColor.GOLD).breakByTool(FabricToolTags.PICKAXES, 3), "gold");
+        DIAMOND_CABINET = addCabinet(3, FabricBlockSettings.of(Material.METAL, MaterialColor.DIAMOND).breakByTool(FabricToolTags.PICKAXES, 3), "diamond");
+        EMERALD_CABINET = addCabinet(4, FabricBlockSettings.of(Material.METAL, MaterialColor.EMERALD).breakByTool(FabricToolTags.PICKAXES, 3), "emerald");
+        CABINET_MANAGER = new CabinetManagerBlock(FabricBlockSettings.of(Material.METAL, MaterialColor.IRON).requiresTool().breakByTool(FabricToolTags.PICKAXES, 3).breakByHand(false).strength(3, 5));
         Registry.register(Registry.BLOCK, new Identifier(StorageCabinet.MODID, "cabinet_manager"), CABINET_MANAGER);
         Registry.register(Registry.ITEM, new Identifier(StorageCabinet.MODID, "cabinet_manager"), new BlockItem(CABINET_MANAGER, new Item.Settings().group(StorageCabinet.CABINET_GROUP)));
 
     }
 
-    public static StorageCabinetBlock addCabinet(int tier, Block.Settings settings, String suffix) {
-        StorageCabinetBlock storageCabinetBlock = new StorageCabinetBlock(settings.strength(5.0F, 6.0F), tier);
+    public static StorageCabinetBlock addCabinet(int tier, FabricBlockSettings settings, String suffix) {
+        StorageCabinetBlock storageCabinetBlock = new StorageCabinetBlock(settings.strength(3.0F, 5.0F).breakByHand(false).requiresTool(), tier);
         Registry.register(Registry.BLOCK, new Identifier(StorageCabinet.MODID, StorageCabinet.MODID + "_" + suffix), storageCabinetBlock);
         Registry.register(Registry.ITEM, new Identifier(StorageCabinet.MODID, StorageCabinet.MODID + "_" + suffix), new BlockItem(storageCabinetBlock, new Item.Settings().group(StorageCabinet.CABINET_GROUP)));
         return storageCabinetBlock;

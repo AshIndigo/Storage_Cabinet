@@ -15,13 +15,12 @@ public class StorageCabinetContainer extends BaseScreenHandler {
 
     public static final int INVENTORY = 1;
 
-    StorageCabinetEntity cabinetEntity;
-    public int arrayHeight;
-    public int arrayWidth; // Isn't it always 9.
+    final StorageCabinetEntity cabinetEntity;
+    public final int arrayHeight;
+    public final int arrayWidth; // Isn't it always 9.
 
     public StorageCabinetContainer(int synchronizationID, PlayerInventory playerInventory, BlockPos pos) {
         super(synchronizationID, playerInventory);
-
         cabinetEntity = ((StorageCabinetEntity) getWorld().getBlockEntity(pos));
         WInterface mainInterface = getInterface();
         getInventories().put(INVENTORY, cabinetEntity);

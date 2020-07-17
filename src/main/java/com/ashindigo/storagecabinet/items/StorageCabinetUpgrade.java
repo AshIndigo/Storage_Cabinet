@@ -14,7 +14,7 @@ import static com.ashindigo.storagecabinet.StorageCabinet.MODID;
 
 public class StorageCabinetUpgrade extends Item {
 
-    private int tier;
+    private final int tier;
 
     public StorageCabinetUpgrade(Settings settings, int tier) {
         super(settings);

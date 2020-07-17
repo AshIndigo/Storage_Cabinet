@@ -23,13 +23,6 @@ public class StorageCabinet implements ModInitializer {
     public static ExtendedScreenHandlerType<StorageCabinetContainer> cabinetScreenHandler;
     public static ExtendedScreenHandlerType<? extends CabinetManagerContainer> managerScreenHandler;
 
-    // TODO
-    // Crash when shift clicking - Only when on SP? - Spinnery Issue, fixed on my end with a Mixin
-    // Texture/Model for cabinet manager, and recipe
-    // Also make it give available items from all cabinets, to bad fabric doesn't have an ae2 or rs like mod
-    // Random idea: Cabinet's display their item on the front
-
-
     @Override
     public void onInitialize() {
         CABINET_GROUP = FabricItemGroupBuilder.build(new Identifier(MODID, MODID), () -> new ItemStack(BlockRegistry.IRON_CABINET));

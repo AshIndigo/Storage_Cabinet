@@ -3,6 +3,7 @@ package com.ashindigo.storagecabinet.blocks;
 import com.ashindigo.storagecabinet.BlockRegistry;
 import com.ashindigo.storagecabinet.container.StorageCabinetContainer;
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
+import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
@@ -18,10 +19,7 @@ import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.BlockMirror;
-import net.minecraft.util.BlockRotation;
-import net.minecraft.util.Hand;
+import net.minecraft.util.*;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -38,9 +36,9 @@ public class StorageCabinetBlock extends BlockWithEntity {
         FACING = HorizontalFacingBlock.FACING;
     }
 
-    private int tier;
+    private final int tier;
 
-    public StorageCabinetBlock(Block.Settings settings, int tier) {
+    public StorageCabinetBlock(FabricBlockSettings settings, int tier) {
         super(settings);
         this.tier = tier;
         this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.NORTH));
@@ -95,17 +93,17 @@ public class StorageCabinetBlock extends BlockWithEntity {
         return ActionResult.SUCCESS;
     }
 
+    @SuppressWarnings("deprecation") // onStateReplaced is deprecated for whatever reason
     @Override
-    public void afterBreak(World world, PlayerEntity player, BlockPos pos, BlockState state, BlockEntity blockEntity, ItemStack stack) {
-        if (state.getBlock() != state.getBlock()) {
-            StorageCabinetEntity inventory = ((StorageCabinetEntity) Objects.requireNonNull(world.getBlockEntity(pos)));
-            for (int i = 0; i < inventory.size(); i++) {
-                world.spawnEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), inventory.getStack(i)));
+    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
+        if (!state.isOf(newState.getBlock())) {
+            BlockEntity blockEntity = world.getBlockEntity(pos);
+            if (blockEntity instanceof StorageCabinetEntity) {
+                ItemScatterer.spawn(world, pos, (StorageCabinetEntity) blockEntity);
+                world.updateComparators(pos, this);
             }
-            world.updateNeighbors(pos, this);
-            super.afterBreak(world, player, pos, state, blockEntity, stack);
+            super.onStateReplaced(state, world, pos, newState, moved);
         }
-
     }
 
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
@@ -117,7 +115,7 @@ public class StorageCabinetBlock extends BlockWithEntity {
     }
 
     public static class Manager {
-        public static int getWidth() {
+        public static int getWidth() { // TODO Just remove? It's always 9
             return 9;
         }
 

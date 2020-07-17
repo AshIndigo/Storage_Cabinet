@@ -26,7 +26,7 @@ public class StorageCabinetEntity extends BlockEntity implements BlockEntityClie
 
     DefaultedList<ItemStack> stacks;
 
-    List<InventoryChangedListener> listeners = new ArrayList<>();
+    final List<InventoryChangedListener> listeners = new ArrayList<>();
 
     public StorageCabinetEntity() {
         super(StorageCabinet.storageCabinetEntity);
@@ -97,6 +97,7 @@ public class StorageCabinetEntity extends BlockEntity implements BlockEntityClie
         this.listeners.addAll(Arrays.asList(listeners));
     }
 
+    @SuppressWarnings("unused") // Keeping for potential use later
     public void removeListener(InventoryChangedListener... listeners) {
         this.listeners.removeAll(Arrays.asList(listeners));
     }
