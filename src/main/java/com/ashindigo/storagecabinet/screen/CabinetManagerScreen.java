@@ -6,16 +6,15 @@ import com.ashindigo.storagecabinet.container.CabinetManagerContainer;
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
 import com.ashindigo.storagecabinet.widgets.WPagedTabHolder;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import spinnery.client.screen.BaseHandledScreen;
-import spinnery.widget.WInterface;
-import spinnery.widget.WSlot;
-import spinnery.widget.WTabHolder;
-import spinnery.widget.WVerticalScrollableContainer;
+import spinnery.widget.*;
 import spinnery.widget.api.Position;
 import spinnery.widget.api.Size;
 
@@ -31,6 +30,10 @@ public class CabinetManagerScreen extends BaseHandledScreen<CabinetManagerContai
         ArrayList<StorageCabinetEntity> cabinetList = new ArrayList<>();
         final int[] i = {1};
         checkSurroundingCabinets(cabinetList, linkedContainer.managerEntity.getPos(), getHandler().getWorld());
+        if (cabinetList.isEmpty()) { // In case no cabinet's are attached
+            WTabHolder.WTab wTab = tabHolder.addTab(Items.AIR, new TranslatableText("text.storagecabinet.nocabinets"));
+            wTab.getBody().add(new WStaticText().setText(new TranslatableText("desc.storagecabinet.nocabinets")).setMaxWidth((10 * 18) + 20).setPosition(Position.of(wTab.getBody()).add(4, 6, 0)));
+        }
         cabinetList.forEach(cabinetEntity -> {
             addCabinet(tabHolder, cabinetEntity, i[0]);
             i[0]++;

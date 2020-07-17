@@ -12,5 +12,7 @@
     "item.storagecabinet.storagecabinet_emerald_upgrade": "Emerald Storage Cabinet Upgrade",
     "item.storagecabinet.dolly": "Storage Cabinet Dolly",
     "itemGroup.storagecabinet.storagecabinet": "Storage Cabinet",
-    "text.storagecabinet.dollyhas":"Contains cabinet"
+    "text.storagecabinet.dollyhas":"Contains cabinet",
+    "text.storagecabinet.nocabinets": "No Cabinets",
+    "desc.storagecabinet.nocabinets": "No cabinets are currently attached to the manager"
 }

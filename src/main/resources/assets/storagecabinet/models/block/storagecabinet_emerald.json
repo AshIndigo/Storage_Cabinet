@@ -1,9 +1,9 @@
 {
   "parent": "block/orientable",
   "textures": {
-    "top": "storagecabinet:block/storagecabinet_emerald",
+    "top": "storagecabinet:block/storagecabinet_emerald_top",
     "side": "storagecabinet:block/storagecabinet_emerald",
-    "front": "storagecabinet:block/storagecabinetfront_emerald"
+    "front": "storagecabinet:block/storagecabinet_emerald_front"
   }
 }
 
