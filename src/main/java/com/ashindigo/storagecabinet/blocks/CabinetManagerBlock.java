@@ -13,7 +13,6 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
@@ -25,8 +24,6 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
-
-import javax.annotation.Nullable;
 
 public class CabinetManagerBlock extends BlockWithEntity {
 
@@ -61,7 +58,6 @@ public class CabinetManagerBlock extends BlockWithEntity {
     }
 
 
-    @Nullable
     @Override
     public BlockEntity createBlockEntity(BlockView world) {
         return new CabinetManagerEntity();

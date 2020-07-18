@@ -6,13 +6,10 @@ import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.*;
-import net.minecraft.block.entity.BarrelBlockEntity;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -30,7 +27,6 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
-import java.util.Objects;
 import java.util.Random;
 
 public class StorageCabinetBlock extends BlockWithEntity {
@@ -57,7 +53,6 @@ public class StorageCabinetBlock extends BlockWithEntity {
         if (blockEntity instanceof StorageCabinetEntity) {
             ((StorageCabinetEntity) blockEntity).tick();
         }
-
     }
 
     @Override
@@ -114,30 +109,28 @@ public class StorageCabinetBlock extends BlockWithEntity {
         return ActionResult.SUCCESS;
     }
 
-    @SuppressWarnings("deprecation") // onStateReplaced is deprecated for whatever reason
     @Override
-    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
-        if (!state.isOf(newState.getBlock())) {
-            BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof StorageCabinetEntity) {
-                ItemScatterer.spawn(world, pos, (StorageCabinetEntity) blockEntity);
-                world.updateComparators(pos, this);
-            }
-            super.onStateReplaced(state, world, pos, newState, moved);
+    public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+        BlockEntity blockEntity = world.getWorld().getBlockEntity(pos);
+        if (blockEntity instanceof StorageCabinetEntity) {
+            ItemScatterer.spawn(world.getWorld(), pos, (StorageCabinetEntity) blockEntity);
+            world.getWorld().updateComparators(pos, this);
         }
+        super.onBreak(world, pos, state, player);
     }
+
 
     public int getTier() {
         return tier;
     }
 
-public static class Manager {
-    public static int getWidth() { // TODO Just remove? It's always 9
-        return 9;
-    }
+    public static class Manager {
+        public static int getWidth() { // TODO Just remove? It's always 9
+            return 9;
+        }
 
-    public static int getHeight(int tier) {
-        return 10 * (tier + 1);
+        public static int getHeight(int tier) {
+            return 10 * (tier + 1);
+        }
     }
-}
 }

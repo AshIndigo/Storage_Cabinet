@@ -46,7 +46,7 @@ public class CabinetManagerContainer extends BaseScreenHandler {
     }
 
     private void checkSurroundingCabinets(ArrayList<StorageCabinetEntity> cabinetList, BlockPos pos, World world) {
-        for (Direction direction : Direction.values()) { // 1.
+        for (Direction direction : Direction.values()) {
             if (world.getBlockEntity(pos.offset(direction)) instanceof StorageCabinetEntity) {
                 if (!cabinetList.contains(world.getBlockEntity(pos.offset(direction)))) {
                     cabinetList.add((StorageCabinetEntity) world.getBlockEntity(pos.offset(direction)));
