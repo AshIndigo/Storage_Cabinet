@@ -1,13 +1,16 @@
 package com.ashindigo.storagecabinet.blocks;
 
 import com.ashindigo.storagecabinet.BlockRegistry;
+import com.ashindigo.storagecabinet.ManagerInventory;
 import com.ashindigo.storagecabinet.container.CabinetManagerContainer;
 import com.ashindigo.storagecabinet.entity.CabinetManagerEntity;
+import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
@@ -22,10 +25,14 @@ import net.minecraft.util.BlockRotation;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldAccess;
 
-public class CabinetManagerBlock extends BlockWithEntity {
+import java.util.ArrayList;
+
+public class CabinetManagerBlock extends BlockWithEntity implements InventoryProvider {
 
     private static final DirectionProperty FACING;
 
@@ -90,5 +97,23 @@ public class CabinetManagerBlock extends BlockWithEntity {
     @Override
     public BlockRenderType getRenderType(BlockState state) {
         return BlockRenderType.MODEL;
+    }
+
+    @Override
+    public SidedInventory getInventory(BlockState state, WorldAccess world, BlockPos pos) {
+        ArrayList<StorageCabinetEntity> list = new ArrayList<>();
+        checkSurroundingCabinets(list, pos, world.getWorld());
+        return new ManagerInventory(list);
+    }
+
+    private void checkSurroundingCabinets(ArrayList<StorageCabinetEntity> cabinetList, BlockPos pos, World world) {
+        for (Direction direction : Direction.values()) {
+            if (world.getBlockEntity(pos.offset(direction)) instanceof StorageCabinetEntity) {
+                if (!cabinetList.contains(world.getBlockEntity(pos.offset(direction)))) {
+                    cabinetList.add((StorageCabinetEntity) world.getBlockEntity(pos.offset(direction)));
+                    checkSurroundingCabinets(cabinetList, pos.offset(direction), world);
+                }
+            }
+        }
     }
 }
