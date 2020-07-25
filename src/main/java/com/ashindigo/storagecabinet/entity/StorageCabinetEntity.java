@@ -15,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tag.ItemTags;
 import net.minecraft.tag.Tag;
+import net.minecraft.tag.TagContainers;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import spinnery.common.inventory.BaseInventory;
@@ -43,7 +44,7 @@ public class StorageCabinetEntity extends BlockEntity implements BlockEntityClie
 
     public Collection<Identifier> getTagsFor(Item object) {
         List<Identifier> list = Lists.newArrayList();
-        for (Map.Entry<Identifier, Tag<Item>> entry : ItemTags.getContainer().getEntries().entrySet()) {
+        for (Map.Entry<Identifier, Tag<Item>> entry : TagContainers.instance().items().getEntries().entrySet()) {
             if (entry.getValue().contains(object)) {
                 list.add(entry.getKey());
             }

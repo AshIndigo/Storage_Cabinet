@@ -30,6 +30,7 @@ public class CabinetManagerContainer extends BaseScreenHandler {
         checkSurroundingCabinets(cabinetList, managerEntity.getPos(), getWorld());
         cabinetList.forEach(cabinetEntity -> {
             addCabinet(mainInterface, cabinetEntity, i[0]);
+            cabinetEntity.addListener(this::onContentChanged); // TODO Useless?
             i[0]++;
         });
 

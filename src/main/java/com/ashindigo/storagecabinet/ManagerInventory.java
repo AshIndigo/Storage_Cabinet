@@ -34,6 +34,19 @@ public class ManagerInventory implements SidedInventory { // The methods involvi
     }
 
     @Override
+    public boolean isValid(int slot, ItemStack stack) {
+        int temp = slot;
+        for (StorageCabinetEntity cabinet : cabinets) {
+            if (cabinet.size() - 1 >= temp) {
+                return cabinet.isValid(temp, stack);
+            } else {
+                temp -= cabinet.size();
+            }
+        }
+        return false;
+    }
+
+    @Override
     public boolean canExtract(int slot, ItemStack stack, Direction dir) {
         return true;
     }
@@ -105,6 +118,7 @@ public class ManagerInventory implements SidedInventory { // The methods involvi
         for (StorageCabinetEntity cabinet : cabinets) {
             if (cabinet.size() - 1 >= temp) {
                cabinet.setStack(temp, stack);
+               return;
             } else {
                 temp -= cabinet.size();
             }
