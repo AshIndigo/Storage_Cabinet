@@ -106,6 +106,10 @@ public class StorageCabinetEntity extends BlockEntity implements BlockEntityClie
         this.listeners.removeAll(Arrays.asList(listeners));
     }
 
+    public void clearListeners() {
+        listeners.clear();
+    }
+
     @Override
     public int size() {
         return (tier + 1) * 90;
@@ -200,10 +204,6 @@ public class StorageCabinetEntity extends BlockEntity implements BlockEntityClie
 
 
     public void tick() {
-        int i = this.pos.getX();
-        int j = this.pos.getY();
-        int k = this.pos.getZ();
-       // this.viewerCount = ChestBlockEntity.countViewers(this.world, this, i, j, k);
         if (this.viewerCount > 0) {
             this.world.getBlockTickScheduler().schedule(this.getPos(), this.getCachedState().getBlock(), 5);
         } else {

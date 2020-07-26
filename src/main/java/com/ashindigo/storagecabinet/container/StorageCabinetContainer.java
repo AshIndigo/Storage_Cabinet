@@ -46,5 +46,7 @@ public class StorageCabinetContainer extends BaseScreenHandler {
     public void close(PlayerEntity player) {
         super.close(player);
         cabinetEntity.onClose(player);
+        cabinetEntity.clearListeners();
+        //cabinetEntity.removeListener(this::onContentChanged);
     }
 }

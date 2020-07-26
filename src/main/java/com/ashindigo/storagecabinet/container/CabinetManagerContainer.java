@@ -5,6 +5,7 @@ import com.ashindigo.storagecabinet.widgets.WSlotCabinet;
 import com.ashindigo.storagecabinet.blocks.StorageCabinetBlock;
 import com.ashindigo.storagecabinet.entity.CabinetManagerEntity;
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.math.BlockPos;
@@ -19,13 +20,13 @@ import java.util.ArrayList;
 public class CabinetManagerContainer extends BaseScreenHandler {
 
     public final CabinetManagerEntity managerEntity;
+    ArrayList<StorageCabinetEntity> cabinetList = new ArrayList<>();
 
     public CabinetManagerContainer(int synchronizationID, PlayerInventory playerInventory, BlockPos pos) {
         super(synchronizationID, playerInventory);
         WInterface mainInterface = getInterface();
         WSlot.addHeadlessPlayerInventory(mainInterface);
         managerEntity = (CabinetManagerEntity) world.getBlockEntity(pos);
-        ArrayList<StorageCabinetEntity> cabinetList = new ArrayList<>();
         final int[] i = {1};
         checkSurroundingCabinets(cabinetList, managerEntity.getPos(), getWorld());
         cabinetList.forEach(cabinetEntity -> {
@@ -61,5 +62,11 @@ public class CabinetManagerContainer extends BaseScreenHandler {
     @Override
     public ScreenHandlerType<?> getType() {
         return StorageCabinet.managerScreenHandler;
+    }
+
+    @Override
+    public void close(PlayerEntity player) {
+         cabinetList.forEach(storageCabinetEntity -> storageCabinetEntity.clearListeners());
+         super.close(player);
     }
 }
