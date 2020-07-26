@@ -1,5 +1,6 @@
 package com.ashindigo.storagecabinet;
 
+import com.ashindigo.storagecabinet.entity.CabinetManagerEntity;
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.SidedInventory;
@@ -12,9 +13,11 @@ import java.util.stream.IntStream;
 
 public class ManagerInventory implements SidedInventory { // The methods involving "temp" scare me
 
+    private CabinetManagerEntity entity;
     private List<StorageCabinetEntity> cabinets;
 
-    public ManagerInventory(List<StorageCabinetEntity> cabinets) {
+    public ManagerInventory(CabinetManagerEntity entity, List<StorageCabinetEntity> cabinets) {
+        this.entity = entity;
         this.cabinets = cabinets;
     }
 
@@ -73,7 +76,6 @@ public class ManagerInventory implements SidedInventory { // The methods involvi
     @Override
     public ItemStack getStack(int slot) {
         int temp = slot;
-        ItemStack stack = ItemStack.EMPTY;
         for (StorageCabinetEntity cabinet : cabinets) {
             if (cabinet.size() - 1 >= temp) {
                return cabinet.getStack(temp);
@@ -81,13 +83,12 @@ public class ManagerInventory implements SidedInventory { // The methods involvi
                 temp -= cabinet.size();
             }
         }
-        return stack;
+        return ItemStack.EMPTY;
     }
 
     @Override
     public ItemStack removeStack(int slot, int amount) {
         int temp = slot;
-        ItemStack stack = ItemStack.EMPTY;
         for (StorageCabinetEntity cabinet : cabinets) {
             if (cabinet.size() - 1 >= temp) {
                return cabinet.removeStack(temp, amount);
@@ -95,13 +96,12 @@ public class ManagerInventory implements SidedInventory { // The methods involvi
                 temp -= cabinet.size();
             }
         }
-        return stack;
+        return ItemStack.EMPTY;
     }
 
     @Override
     public ItemStack removeStack(int slot) {
         int temp = slot;
-        ItemStack stack = ItemStack.EMPTY;
         for (StorageCabinetEntity cabinet : cabinets) {
             if (cabinet.size() - 1 >= temp) {
                 return cabinet.removeStack(temp);
@@ -109,7 +109,7 @@ public class ManagerInventory implements SidedInventory { // The methods involvi
                 temp -= cabinet.size();
             }
         }
-        return stack;
+        return ItemStack.EMPTY;
     }
 
     @Override
@@ -127,6 +127,7 @@ public class ManagerInventory implements SidedInventory { // The methods involvi
 
     @Override
     public void markDirty() {
+        entity.markDirty();
         for (StorageCabinetEntity cabinet : cabinets) {
             cabinet.markDirty();
         }

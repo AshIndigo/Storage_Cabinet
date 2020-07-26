@@ -30,7 +30,6 @@ public class CabinetManagerContainer extends BaseScreenHandler {
         checkSurroundingCabinets(cabinetList, managerEntity.getPos(), getWorld());
         cabinetList.forEach(cabinetEntity -> {
             addCabinet(mainInterface, cabinetEntity, i[0]);
-            cabinetEntity.addListener(this::onContentChanged); // TODO Useless?
             i[0]++;
         });
 
@@ -38,6 +37,7 @@ public class CabinetManagerContainer extends BaseScreenHandler {
 
     private void addCabinet(WInterface mainInterface, StorageCabinetEntity cabinetEntity, int i) {
         getInventories().put(i, cabinetEntity);
+        cabinetEntity.addListener(sender -> sendContentUpdates()); // TODO Useless?
         cabinetEntity.addListener(this::onContentChanged);
         for (int y = 0; y < StorageCabinetBlock.Manager.getHeight(cabinetEntity.tier); ++y) {
             for (int x = 0; x < StorageCabinetBlock.Manager.getWidth(); ++x) {

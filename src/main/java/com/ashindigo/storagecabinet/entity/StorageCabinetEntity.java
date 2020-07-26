@@ -55,8 +55,8 @@ public class StorageCabinetEntity extends BlockEntity implements BlockEntityClie
 
     @Override
     public void clear() {
-        markDirty();
         stacks.clear();
+        markDirty();
     }
 
     @Override
@@ -123,24 +123,24 @@ public class StorageCabinetEntity extends BlockEntity implements BlockEntityClie
 
     @Override
     public ItemStack removeStack(int slot, int amount) {
-        markDirty();
         ItemStack stack = stacks.get(slot).split(amount);
+        markDirty();
         onInventoryChanged(this);
         return stack;
     }
 
     @Override
     public ItemStack removeStack(int slot) {
-        markDirty();
         ItemStack stack = stacks.remove(slot);
+        markDirty();
         onInventoryChanged(this);
         return stack;
     }
 
     @Override
     public void setStack(int slot, ItemStack stack) {
-        markDirty();
         stacks.set(slot, stack);
+        markDirty();
         onInventoryChanged(this);
     }
 
