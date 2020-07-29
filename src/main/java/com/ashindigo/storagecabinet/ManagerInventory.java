@@ -9,7 +9,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -30,7 +29,7 @@ public class ManagerInventory implements SidedInventory { // The methods involvi
     }
 
     @Override
-    public boolean canInsert(int slot, ItemStack stack, @Nullable Direction dir) {
+    public boolean canInsert(int slot, ItemStack stack, Direction dir) {
         for (StorageCabinetEntity cabinet : cabinets) {
             if (cabinet.isValid(slot, stack)) {
                 return true;

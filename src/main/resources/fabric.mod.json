@@ -13,7 +13,7 @@
     "sources": "https://github.com/AshIndigo/Filing_Cabinet"
   },
 
-  "license": "CC0-1.0",
+  "license": "MIT",
   "icon": "assets/storagecabinet/icon.png",
 
   "environment": "*",
