@@ -10,7 +10,6 @@ import spinnery.client.screen.BaseHandledScreen;
 import spinnery.widget.WInterface;
 import spinnery.widget.WPanel;
 import spinnery.widget.WSlot;
-import spinnery.widget.WVerticalScrollableContainer;
 import spinnery.widget.api.Position;
 import spinnery.widget.api.Size;
 
@@ -24,9 +23,8 @@ public class StorageCabinetScreen extends BaseHandledScreen<StorageCabinetContai
         WPanel mainPanel = mainInterface.createChild(WPanel::new, Position.of(mainInterface), Size.of((10 * 18) + 28, 162 + (5 * 18) + 18));
         mainPanel.center();
         mainPanel.setLabel(name);
-        WVerticalScrollableContainerModified panel = mainInterface.createChild(WVerticalScrollableContainerModified::new, Position.of(mainPanel).add(4, 18, 1), Size.of((10 * 18) + 18, 162)).setDivisionSpace(0);
+        WVerticalScrollableContainerModified panel = mainInterface.createChild(WVerticalScrollableContainerModified::new, Position.of(mainPanel).add(6, 18, 1), Size.of((10 * 18) + 18, 162)).setDivisionSpace(0);
         Size size = Size.of(18, 18);
-        Position position = Position.of(panel, 6, 1, 1);
         for (int y = 0; y < linkedContainer.arrayHeight; ++y) {
             WSlotCabinet[] slotArr = new WSlotCabinet[linkedContainer.arrayWidth];
             for (int x = 0; x < linkedContainer.arrayWidth; ++x) {

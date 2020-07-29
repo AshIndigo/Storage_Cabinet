@@ -66,7 +66,7 @@ public class CabinetManagerContainer extends BaseScreenHandler {
 
     @Override
     public void close(PlayerEntity player) {
-         cabinetList.forEach(storageCabinetEntity -> storageCabinetEntity.clearListeners());
+         cabinetList.forEach(StorageCabinetEntity::clearListeners);
          super.close(player);
     }
 }

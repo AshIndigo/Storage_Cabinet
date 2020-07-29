@@ -55,7 +55,7 @@ public class CabinetManagerScreen extends BaseHandledScreen<CabinetManagerContai
 
     private void addCabinet(WTabHolder tabHolder, StorageCabinetEntity cabinetEntity, int invNumb) {
         WTabHolder.WTab tab = tabHolder.addTab(cabinetEntity.isEmpty() ? Items.AIR : cabinetEntity.getMainItemStack().getItem());
-        WVerticalScrollableContainerModified panel = tab.getBody().createChild(WVerticalScrollableContainerModified::new, Position.ofBottomLeft(tabHolder).add(4, -(162 + (5 * 18) -4), 1), Size.of((10 * 18) + 18, 162)).setDivisionSpace(0);
+        WVerticalScrollableContainerModified panel = tab.getBody().createChild(WVerticalScrollableContainerModified::new, Position.ofBottomLeft(tabHolder).add(6, -(162 + (5 * 18) -4), 1), Size.of((10 * 18) + 18, 162)).setDivisionSpace(0);
         panel.setInterface(getInterface());
         tab.getBody().setLabel(new TranslatableText(BlockRegistry.getByTier(cabinetEntity.tier).getTranslationKey()));
         Size size = Size.of(18, 18);
