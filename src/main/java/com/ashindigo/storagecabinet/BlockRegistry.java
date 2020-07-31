@@ -20,14 +20,13 @@ public class BlockRegistry {
     public static StorageCabinetBlock EMERALD_CABINET;
     public static CabinetManagerBlock CABINET_MANAGER;
 
-    // TODO Note: Mining levels are currently not functional, and if fixed may require diamond tier+ tools to mine. Will have to fix when I can actually test
     public static void init() {
         WOOD_CABINET = addCabinet(0, FabricBlockSettings.of(Material.WOOD, MaterialColor.WOOD).breakByTool(FabricToolTags.AXES), "wood");
         IRON_CABINET = addCabinet(1, FabricBlockSettings.of(Material.METAL, MaterialColor.IRON).breakByTool(FabricToolTags.PICKAXES, 2), "iron");
-        GOLD_CABINET = addCabinet(2, FabricBlockSettings.of(Material.METAL, MaterialColor.GOLD).breakByTool(FabricToolTags.PICKAXES, 3), "gold");
-        DIAMOND_CABINET = addCabinet(3, FabricBlockSettings.of(Material.METAL, MaterialColor.DIAMOND).breakByTool(FabricToolTags.PICKAXES, 3), "diamond");
-        EMERALD_CABINET = addCabinet(4, FabricBlockSettings.of(Material.METAL, MaterialColor.EMERALD).breakByTool(FabricToolTags.PICKAXES, 3), "emerald");
-        CABINET_MANAGER = new CabinetManagerBlock(FabricBlockSettings.of(Material.METAL, MaterialColor.IRON).requiresTool().breakByTool(FabricToolTags.PICKAXES, 3).breakByHand(false).strength(3, 5));
+        GOLD_CABINET = addCabinet(2, FabricBlockSettings.of(Material.METAL, MaterialColor.GOLD).breakByTool(FabricToolTags.PICKAXES, 2), "gold");
+        DIAMOND_CABINET = addCabinet(3, FabricBlockSettings.of(Material.METAL, MaterialColor.DIAMOND).breakByTool(FabricToolTags.PICKAXES, 2), "diamond");
+        EMERALD_CABINET = addCabinet(4, FabricBlockSettings.of(Material.METAL, MaterialColor.EMERALD).breakByTool(FabricToolTags.PICKAXES, 2), "emerald");
+        CABINET_MANAGER = new CabinetManagerBlock(FabricBlockSettings.of(Material.METAL, MaterialColor.IRON).requiresTool().breakByTool(FabricToolTags.PICKAXES, 2).breakByHand(false).strength(3, 5));
         Registry.register(Registry.BLOCK, new Identifier(StorageCabinet.MODID, "cabinet_manager"), CABINET_MANAGER);
         Registry.register(Registry.ITEM, new Identifier(StorageCabinet.MODID, "cabinet_manager"), new BlockItem(CABINET_MANAGER, new Item.Settings().group(StorageCabinet.CABINET_GROUP)));
 

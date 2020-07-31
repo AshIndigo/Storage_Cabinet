@@ -1,6 +1,7 @@
 package com.ashindigo.storagecabinet.items;
 
 import com.ashindigo.storagecabinet.BlockRegistry;
+import com.ashindigo.storagecabinet.StorageCabinet;
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
 import com.ashindigo.storagecabinet.blocks.StorageCabinetBlock;
 import net.minecraft.block.Blocks;
@@ -19,8 +20,8 @@ import net.minecraft.world.World;
 import java.util.List;
 
 public class StorageCabinetDolly extends Item {
-    public StorageCabinetDolly(Settings settings) {
-        super(settings);
+    public StorageCabinetDolly() {
+        super(new Item.Settings().group(StorageCabinet.CABINET_GROUP));
     }
 
     @Override

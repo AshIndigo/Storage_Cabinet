@@ -31,7 +31,7 @@ import java.util.Random;
 
 public class StorageCabinetBlock extends BlockWithEntity {
 
-    private static final DirectionProperty FACING;
+    public static final DirectionProperty FACING;
     public static final BooleanProperty OPEN;
 
     static {

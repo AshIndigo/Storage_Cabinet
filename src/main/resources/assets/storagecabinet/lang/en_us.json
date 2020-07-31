@@ -11,6 +11,7 @@
     "item.storagecabinet.storagecabinet_diamond_upgrade": "Diamond Storage Cabinet Upgrade",
     "item.storagecabinet.storagecabinet_emerald_upgrade": "Emerald Storage Cabinet Upgrade",
     "item.storagecabinet.dolly": "Storage Cabinet Dolly",
+    "item.storagecabinet.key": "Cabinet Key",
     "itemGroup.storagecabinet.storagecabinet": "Storage Cabinet",
     "text.storagecabinet.dollyhas":"Contains cabinet",
     "text.storagecabinet.nocabinets": "No Cabinets",

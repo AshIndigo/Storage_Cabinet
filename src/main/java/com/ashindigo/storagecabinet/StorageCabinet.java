@@ -17,7 +17,7 @@ import net.minecraft.util.registry.Registry;
 public class StorageCabinet implements ModInitializer {
 
     public static final String MODID = "storagecabinet";
-    public static BlockEntityType<?> storageCabinetEntity;
+    public static BlockEntityType<StorageCabinetEntity> storageCabinetEntity;
     public static BlockEntityType<CabinetManagerEntity> cabinetManagerEntity;
     public static ItemGroup CABINET_GROUP;
     public static ExtendedScreenHandlerType<StorageCabinetContainer> cabinetScreenHandler;
@@ -30,7 +30,7 @@ public class StorageCabinet implements ModInitializer {
         ItemRegistry.init();
         cabinetScreenHandler = (ExtendedScreenHandlerType<StorageCabinetContainer>) ScreenHandlerRegistry.registerExtended(new Identifier(MODID, MODID), (syncId, inventory, buf) -> new StorageCabinetContainer(syncId, inventory, buf.readBlockPos()));
         managerScreenHandler = (ExtendedScreenHandlerType<CabinetManagerContainer>) ScreenHandlerRegistry.registerExtended(new Identifier(MODID, "cabinet_manager"), (syncId, inventory, buf) -> new CabinetManagerContainer(syncId, inventory, buf.readBlockPos()));
-        storageCabinetEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, MODID + ":" + MODID, BlockEntityType.Builder.create(StorageCabinetEntity::new, BlockRegistry.WOOD_CABINET).build(null));
+        storageCabinetEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, MODID + ":" + MODID, BlockEntityType.Builder.create(StorageCabinetEntity::new, BlockRegistry.WOOD_CABINET, BlockRegistry.IRON_CABINET, BlockRegistry.GOLD_CABINET, BlockRegistry.DIAMOND_CABINET, BlockRegistry.EMERALD_CABINET).build(null));
         cabinetManagerEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, MODID + ":" + "cabinet_manager", BlockEntityType.Builder.create(CabinetManagerEntity::new, BlockRegistry.CABINET_MANAGER).build(null));
     }
 }

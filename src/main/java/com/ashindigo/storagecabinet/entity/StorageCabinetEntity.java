@@ -12,12 +12,15 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.InventoryChangedListener;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tag.ItemTags;
 import net.minecraft.tag.Tag;
 import net.minecraft.tag.TagContainers;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.registry.Registry;
+import org.lwjgl.system.CallbackI;
 import spinnery.common.inventory.BaseInventory;
 import spinnery.common.utility.InventoryUtilities;
 
@@ -26,7 +29,9 @@ import java.util.*;
 public class StorageCabinetEntity extends BlockEntity implements BlockEntityClientSerializable, Inventory, InventoryChangedListener {
 
     private int viewerCount;
+    public boolean locked = false;
     public int tier = 0;
+    public Item item = Items.AIR;
 
     DefaultedList<ItemStack> stacks;
 
@@ -63,6 +68,8 @@ public class StorageCabinetEntity extends BlockEntity implements BlockEntityClie
     public void fromTag(BlockState state, CompoundTag tag) {
         super.fromTag(state, tag);
         this.tier = tag.getInt("tier");
+        this.locked = tag.getBoolean("locked");
+        this.item = Registry.ITEM.get(Identifier.tryParse(tag.getString("item")));
         setTier(tier);
         BaseInventory inv = InventoryUtilities.read(tag);
         for (int i = 0; i < inv.size(); i++) {
@@ -74,6 +81,8 @@ public class StorageCabinetEntity extends BlockEntity implements BlockEntityClie
     public CompoundTag toTag(CompoundTag tag) {
         InventoryUtilities.write(this, tag);
         tag.putInt("tier", tier);
+        tag.putBoolean("locked", locked);
+        tag.putString("item", Registry.ITEM.getId(item).toString());
         super.toTag(tag);
         return tag;
     }
@@ -82,6 +91,8 @@ public class StorageCabinetEntity extends BlockEntity implements BlockEntityClie
     public void fromClientTag(CompoundTag tag) {
         super.fromTag(getCachedState(), tag);
         this.tier = tag.getInt("tier");
+        this.locked = tag.getBoolean("locked");
+        this.item = Registry.ITEM.get(Identifier.tryParse(tag.getString("item")));
         setTier(tier);
         BaseInventory inv = InventoryUtilities.read(tag);
         for (int i = 0; i < inv.size(); i++) {
@@ -93,6 +104,8 @@ public class StorageCabinetEntity extends BlockEntity implements BlockEntityClie
     public CompoundTag toClientTag(CompoundTag tag) {
         InventoryUtilities.write(this, tag);
         tag.putInt("tier", tier);
+        tag.putBoolean("locked", locked);
+        tag.putString("item", Registry.ITEM.getId(item).toString());
         super.toTag(tag);
         return tag;
     }
@@ -158,20 +171,40 @@ public class StorageCabinetEntity extends BlockEntity implements BlockEntityClie
         if (world != null && !world.isClient) {
             listeners.forEach(inventoryListener -> inventoryListener.onInventoryChanged(sender));
         }
+        if (item.equals(Items.AIR)) {
+            item = getMainItemStack().getItem();
+        }
     }
 
     @Override
     public boolean isValid(int slot, ItemStack stack) {
-        if (isEmpty() || stack.isEmpty()) {
-            return true;
+        if (!locked) {
+            if (isEmpty() || stack.isEmpty()) {
+                return true;
+            } else {
+                Collection<Identifier> idList = getTagsFor(stack.getItem());
+                if (idList.isEmpty()) {
+                    return containsAny(Collections.singleton(stack.getItem()));
+                } else {
+                    for (Identifier id : idList) {
+                        Tag<Item> tag = ItemTags.getContainer().get(id);
+                        return stacks.stream().anyMatch(stack2 -> tag.contains(stack2.getItem()));
+                    }
+                }
+            }
         } else {
-            Collection<Identifier> idList = getTagsFor(stack.getItem());
+            if (item.equals(Items.AIR)) {
+                return true;
+            }
+            Collection<Identifier> idList = getTagsFor(item);
             if (idList.isEmpty()) {
-                return containsAny(Collections.singleton(stack.getItem()));
+                return stack.getItem().equals(item);
             } else {
                 for (Identifier id : idList) {
-                    Tag<Item> tag = ItemTags.getContainer().get(id);
-                    return stacks.stream().anyMatch(stack2 -> tag.contains(stack2.getItem()));
+                    Tag<Item> itemTag = ItemTags.getContainer().get(id);
+                    if (itemTag.contains(stack.getItem())) {
+                        return true;
+                    }
                 }
             }
         }
@@ -179,7 +212,10 @@ public class StorageCabinetEntity extends BlockEntity implements BlockEntityClie
     }
 
     public ItemStack getMainItemStack() {
-        return stacks.stream().filter(stack -> !stack.isEmpty()).findAny().get();
+        if (locked) {
+            return new ItemStack(item);
+        }
+        return stacks.stream().filter(stack -> !stack.isEmpty()).findAny().orElse(ItemStack.EMPTY);
     }
 
     @Override
