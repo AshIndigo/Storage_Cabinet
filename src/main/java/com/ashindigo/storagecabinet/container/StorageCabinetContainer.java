@@ -16,7 +16,7 @@ public class StorageCabinetContainer extends BaseScreenHandler {
 
     public static final int INVENTORY = 1;
 
-    final StorageCabinetEntity cabinetEntity;
+    public final StorageCabinetEntity cabinetEntity;
     public final int arrayHeight;
     public final int arrayWidth; // Isn't it always 9.
 

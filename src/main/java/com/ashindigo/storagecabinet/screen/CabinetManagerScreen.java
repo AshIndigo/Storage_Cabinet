@@ -1,6 +1,5 @@
 package com.ashindigo.storagecabinet.screen;
 
-import com.ashindigo.storagecabinet.BlockRegistry;
 import com.ashindigo.storagecabinet.widgets.WSlotCabinet;
 import com.ashindigo.storagecabinet.blocks.StorageCabinetBlock;
 import com.ashindigo.storagecabinet.container.CabinetManagerContainer;
@@ -57,7 +56,7 @@ public class CabinetManagerScreen extends BaseHandledScreen<CabinetManagerContai
         WTabHolder.WTab tab = tabHolder.addTab(cabinetEntity.isEmpty() ? Items.AIR : cabinetEntity.getMainItemStack().getItem());
         WVerticalScrollableContainerModified panel = tab.getBody().createChild(WVerticalScrollableContainerModified::new, Position.ofBottomLeft(tabHolder).add(6, -(162 + (5 * 18) -4), 1), Size.of((10 * 18) + 18, 162)).setDivisionSpace(0);
         panel.setInterface(getInterface());
-        tab.getBody().setLabel(new TranslatableText(BlockRegistry.getByTier(cabinetEntity.tier).getTranslationKey()));
+        tab.getBody().setLabel(cabinetEntity.getName());
         Size size = Size.of(18, 18);
         for (int y = 0; y < StorageCabinetBlock.Manager.getHeight(cabinetEntity.tier); ++y) {
             WSlotCabinet[] slotArr = new WSlotCabinet[StorageCabinetBlock.Manager.getWidth()];

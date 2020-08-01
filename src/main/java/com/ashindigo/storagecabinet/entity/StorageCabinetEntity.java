@@ -17,10 +17,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tag.ItemTags;
 import net.minecraft.tag.Tag;
 import net.minecraft.tag.TagContainers;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.registry.Registry;
-import org.lwjgl.system.CallbackI;
 import spinnery.common.inventory.BaseInventory;
 import spinnery.common.utility.InventoryUtilities;
 
@@ -36,6 +37,7 @@ public class StorageCabinetEntity extends BlockEntity implements BlockEntityClie
     DefaultedList<ItemStack> stacks;
 
     final List<InventoryChangedListener> listeners = new ArrayList<>();
+    private Text customName;
 
     public StorageCabinetEntity() {
         super(StorageCabinet.storageCabinetEntity);
@@ -75,6 +77,9 @@ public class StorageCabinetEntity extends BlockEntity implements BlockEntityClie
         for (int i = 0; i < inv.size(); i++) {
             setStack(i, inv.getStack(i));
         }
+        if (tag.contains("CustomName", 8)) {
+            this.customName = Text.Serializer.fromJson(tag.getString("CustomName"));
+        }
     }
 
     @Override
@@ -83,6 +88,9 @@ public class StorageCabinetEntity extends BlockEntity implements BlockEntityClie
         tag.putInt("tier", tier);
         tag.putBoolean("locked", locked);
         tag.putString("item", Registry.ITEM.getId(item).toString());
+        if (this.customName != null) {
+            tag.putString("CustomName", Text.Serializer.toJson(this.customName));
+        }
         super.toTag(tag);
         return tag;
     }
@@ -98,6 +106,9 @@ public class StorageCabinetEntity extends BlockEntity implements BlockEntityClie
         for (int i = 0; i < inv.size(); i++) {
             setStack(i, inv.getStack(i));
         }
+        if (tag.contains("CustomName", 8)) {
+            this.customName = Text.Serializer.fromJson(tag.getString("CustomName"));
+        }
     }
 
     @Override
@@ -106,6 +117,9 @@ public class StorageCabinetEntity extends BlockEntity implements BlockEntityClie
         tag.putInt("tier", tier);
         tag.putBoolean("locked", locked);
         tag.putString("item", Registry.ITEM.getId(item).toString());
+        if (this.customName != null) {
+            tag.putString("CustomName", Text.Serializer.toJson(this.customName));
+        }
         super.toTag(tag);
         return tag;
     }
@@ -262,6 +276,22 @@ public class StorageCabinetEntity extends BlockEntity implements BlockEntityClie
             --this.viewerCount;
         }
 
+    }
+
+    public Text getName() {
+        return hasCustomName() ? getCustomName() : new TranslatableText(BlockRegistry.getByTier(tier).getTranslationKey());
+    }
+
+    public boolean hasCustomName() {
+        return customName != null;
+    }
+
+    public void setCustomName(Text customName) {
+        this.customName = customName;
+    }
+
+    public Text getCustomName() {
+        return customName;
     }
 }
 
