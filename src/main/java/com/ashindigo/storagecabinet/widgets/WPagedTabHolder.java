@@ -104,6 +104,10 @@ public class WPagedTabHolder extends WTabHolder {
         }
     }
 
+    /**
+     * Gets how many pages the tab holder will have
+     * @return Number of pages in this holder
+     */
     public int getPageCount() {
         int initSize = tabs.size() / getTabsPerPage();
         if (tabs.size() % getTabsPerPage() > 0) {

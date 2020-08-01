@@ -3,17 +3,23 @@ package com.ashindigo.storagecabinet.entity;
 import com.ashindigo.storagecabinet.BlockRegistry;
 import com.ashindigo.storagecabinet.StorageCabinet;
 import com.ashindigo.storagecabinet.blocks.StorageCabinetBlock;
+import com.ashindigo.storagecabinet.container.StorageCabinetContainer;
 import com.google.common.collect.Lists;
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.InventoryChangedListener;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.screen.ScreenHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.tag.ItemTags;
 import net.minecraft.tag.Tag;
 import net.minecraft.tag.TagContainers;
@@ -27,7 +33,7 @@ import spinnery.common.utility.InventoryUtilities;
 
 import java.util.*;
 
-public class StorageCabinetEntity extends BlockEntity implements BlockEntityClientSerializable, Inventory, InventoryChangedListener {
+public class StorageCabinetEntity extends BlockEntity implements BlockEntityClientSerializable, Inventory, InventoryChangedListener, ExtendedScreenHandlerFactory {
 
     private int viewerCount;
     public boolean locked = false;
@@ -278,10 +284,6 @@ public class StorageCabinetEntity extends BlockEntity implements BlockEntityClie
 
     }
 
-    public Text getName() {
-        return hasCustomName() ? getCustomName() : new TranslatableText(BlockRegistry.getByTier(tier).getTranslationKey());
-    }
-
     public boolean hasCustomName() {
         return customName != null;
     }
@@ -292,6 +294,21 @@ public class StorageCabinetEntity extends BlockEntity implements BlockEntityClie
 
     public Text getCustomName() {
         return customName;
+    }
+
+    @Override
+    public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
+        buf.writeBlockPos(pos);
+    }
+
+    @Override
+    public Text getDisplayName() {
+        return hasCustomName() ? getCustomName() : new TranslatableText(BlockRegistry.getByTier(tier).getTranslationKey());
+    }
+
+    @Override
+    public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
+        return new StorageCabinetContainer(syncId, inv, pos);
     }
 }
 

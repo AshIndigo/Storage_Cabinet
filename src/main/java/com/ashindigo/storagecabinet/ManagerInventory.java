@@ -15,8 +15,8 @@ import java.util.stream.IntStream;
 
 public class ManagerInventory implements SidedInventory { // The methods involving "temp" scare me
 
-    private CabinetManagerEntity entity;
-    private List<StorageCabinetEntity> cabinets;
+    private final CabinetManagerEntity entity;
+    private final List<StorageCabinetEntity> cabinets;
 
     public ManagerInventory(CabinetManagerEntity entity, List<StorageCabinetEntity> cabinets) {
         this.entity = entity;

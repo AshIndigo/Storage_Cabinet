@@ -22,7 +22,7 @@ public class StorageCabinetScreen extends BaseHandledScreen<StorageCabinetContai
         WInterface mainInterface = getInterface();
         WPanel mainPanel = mainInterface.createChild(WPanel::new, Position.of(mainInterface), Size.of((10 * 18) + 28, 162 + (5 * 18) + 18));
         mainPanel.center();
-        mainPanel.setLabel(linkedContainer.cabinetEntity.getName());
+        mainPanel.setLabel(name);
         WVerticalScrollableContainerModified panel = mainInterface.createChild(WVerticalScrollableContainerModified::new, Position.of(mainPanel).add(6, 18, 1), Size.of((10 * 18) + 18, 162)).setDivisionSpace(0);
         Size size = Size.of(18, 18);
         for (int y = 0; y < linkedContainer.arrayHeight; ++y) {

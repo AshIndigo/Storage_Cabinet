@@ -1,7 +1,5 @@
 package com.ashindigo.storagecabinet.blocks;
 
-import com.ashindigo.storagecabinet.BlockRegistry;
-import com.ashindigo.storagecabinet.container.StorageCabinetContainer;
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
@@ -9,19 +7,13 @@ import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.*;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -90,22 +82,7 @@ public class StorageCabinetBlock extends BlockWithEntity {
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         if (!world.isClient) {
-            player.openHandledScreen(new ExtendedScreenHandlerFactory() {
-                @Override
-                public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
-                    buf.writeBlockPos(pos);
-                }
-
-                @Override
-                public Text getDisplayName() {
-                    return new TranslatableText(BlockRegistry.getByTier(tier).getTranslationKey());
-                }
-
-                @Override
-                public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
-                    return new StorageCabinetContainer(syncId, inv, pos);
-                }
-            });
+            player.openHandledScreen((ExtendedScreenHandlerFactory) world.getBlockEntity(pos));
 
         }
         return ActionResult.SUCCESS;
