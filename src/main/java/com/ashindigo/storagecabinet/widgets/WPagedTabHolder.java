@@ -20,6 +20,7 @@ public class WPagedTabHolder extends WTabHolder {
     WButton next;
     WButton back;
 
+    /// Also adds in the buttons to swap pages
     @Override
     public <W extends WAbstractWidget> W setInterface(WInterface linkedInterface) {
         this.linkedInterface = linkedInterface;
@@ -116,6 +117,10 @@ public class WPagedTabHolder extends WTabHolder {
         return initSize;
     }
 
+    /**
+     * Gets how many tabs can be on a page
+     * @return Tabs per singular page
+     */
     public int getTabsPerPage() {
         return (int) (getWidth() / 24);
     }

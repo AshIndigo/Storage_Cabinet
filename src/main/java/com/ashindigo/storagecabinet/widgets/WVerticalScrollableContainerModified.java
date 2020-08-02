@@ -15,6 +15,9 @@ import spinnery.widget.api.Size;
 
 import java.util.Arrays;
 
+/**
+ * A rather dirty hack to allow for division spaces of 0, and so allows me to control positioning more
+ */
 public class WVerticalScrollableContainerModified extends WVerticalScrollableContainer {
 
     @Override

@@ -18,6 +18,10 @@ public class ItemStackMixin {
     @Shadow
     private Item item;
 
+    /**
+     * Quick hack to make the game happy/less crash
+     * @author Ash Indigo
+     */
     @Overwrite()
     public Item getItem() {
         if (this.empty || this.item == null) {
