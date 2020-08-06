@@ -3,7 +3,7 @@ package com.ashindigo.storagecabinet.entity;
 import com.ashindigo.storagecabinet.BlockRegistry;
 import com.ashindigo.storagecabinet.StorageCabinet;
 import com.ashindigo.storagecabinet.blocks.StorageCabinetBlock;
-import com.ashindigo.storagecabinet.container.StorageCabinetContainer;
+import com.ashindigo.storagecabinet.handler.StorageCabinetHandler;
 import com.google.common.collect.Lists;
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
@@ -308,7 +308,7 @@ public class StorageCabinetEntity extends BlockEntity implements BlockEntityClie
 
     @Override
     public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
-        return new StorageCabinetContainer(syncId, inv, pos);
+        return new StorageCabinetHandler(syncId, inv, pos);
     }
 }
 

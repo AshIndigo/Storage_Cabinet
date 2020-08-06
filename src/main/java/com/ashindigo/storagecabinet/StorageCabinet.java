@@ -1,7 +1,7 @@
 package com.ashindigo.storagecabinet;
 
-import com.ashindigo.storagecabinet.container.CabinetManagerContainer;
-import com.ashindigo.storagecabinet.container.StorageCabinetContainer;
+import com.ashindigo.storagecabinet.handler.CabinetManagerHandler;
+import com.ashindigo.storagecabinet.handler.StorageCabinetHandler;
 import com.ashindigo.storagecabinet.entity.CabinetManagerEntity;
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
 import net.fabricmc.api.ModInitializer;
@@ -20,16 +20,16 @@ public class StorageCabinet implements ModInitializer {
     public static BlockEntityType<StorageCabinetEntity> storageCabinetEntity;
     public static BlockEntityType<CabinetManagerEntity> cabinetManagerEntity;
     public static ItemGroup CABINET_GROUP;
-    public static ExtendedScreenHandlerType<StorageCabinetContainer> cabinetScreenHandler;
-    public static ExtendedScreenHandlerType<? extends CabinetManagerContainer> managerScreenHandler;
+    public static ExtendedScreenHandlerType<StorageCabinetHandler> cabinetScreenHandler;
+    public static ExtendedScreenHandlerType<? extends CabinetManagerHandler> managerScreenHandler;
 
     @Override
     public void onInitialize() {
         CABINET_GROUP = FabricItemGroupBuilder.build(new Identifier(MODID, MODID), () -> new ItemStack(BlockRegistry.IRON_CABINET));
         BlockRegistry.init();
         ItemRegistry.init();
-        cabinetScreenHandler = (ExtendedScreenHandlerType<StorageCabinetContainer>) ScreenHandlerRegistry.registerExtended(new Identifier(MODID, MODID), (syncId, inventory, buf) -> new StorageCabinetContainer(syncId, inventory, buf.readBlockPos()));
-        managerScreenHandler = (ExtendedScreenHandlerType<CabinetManagerContainer>) ScreenHandlerRegistry.registerExtended(new Identifier(MODID, "cabinet_manager"), (syncId, inventory, buf) -> new CabinetManagerContainer(syncId, inventory, buf.readBlockPos()));
+        cabinetScreenHandler = (ExtendedScreenHandlerType<StorageCabinetHandler>) ScreenHandlerRegistry.registerExtended(new Identifier(MODID, MODID), (syncId, inventory, buf) -> new StorageCabinetHandler(syncId, inventory, buf.readBlockPos()));
+        managerScreenHandler = (ExtendedScreenHandlerType<CabinetManagerHandler>) ScreenHandlerRegistry.registerExtended(new Identifier(MODID, "cabinet_manager"), (syncId, inventory, buf) -> new CabinetManagerHandler(syncId, inventory, buf.readBlockPos()));
         storageCabinetEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, MODID + ":" + MODID, BlockEntityType.Builder.create(StorageCabinetEntity::new, BlockRegistry.WOOD_CABINET, BlockRegistry.IRON_CABINET, BlockRegistry.GOLD_CABINET, BlockRegistry.DIAMOND_CABINET, BlockRegistry.EMERALD_CABINET).build(null));
         cabinetManagerEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, MODID + ":" + "cabinet_manager", BlockEntityType.Builder.create(CabinetManagerEntity::new, BlockRegistry.CABINET_MANAGER).build(null));
     }

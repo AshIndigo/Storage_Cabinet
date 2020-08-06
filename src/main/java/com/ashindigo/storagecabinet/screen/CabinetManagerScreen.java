@@ -2,7 +2,7 @@ package com.ashindigo.storagecabinet.screen;
 
 import com.ashindigo.storagecabinet.widgets.WSlotCabinet;
 import com.ashindigo.storagecabinet.blocks.StorageCabinetBlock;
-import com.ashindigo.storagecabinet.container.CabinetManagerContainer;
+import com.ashindigo.storagecabinet.handler.CabinetManagerHandler;
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
 import com.ashindigo.storagecabinet.widgets.WPagedTabHolder;
 import com.ashindigo.storagecabinet.widgets.WVerticalScrollableContainerModified;
@@ -20,9 +20,9 @@ import spinnery.widget.api.Size;
 
 import java.util.ArrayList;
 
-public class CabinetManagerScreen extends BaseHandledScreen<CabinetManagerContainer> {
+public class CabinetManagerScreen extends BaseHandledScreen<CabinetManagerHandler> {
 
-    public CabinetManagerScreen(CabinetManagerContainer linkedContainer, PlayerInventory playerInv, Text name) {
+    public CabinetManagerScreen(CabinetManagerHandler linkedContainer, PlayerInventory playerInv, Text name) {
         super(name, linkedContainer, playerInv.player);
         WInterface mainInterface = getInterface();
         WPagedTabHolder tabHolder = mainInterface.createChild(WPagedTabHolder::new, Position.of(mainInterface), Size.of((10 * 18) + 28, 162 + (5 * 18) + 18 + 18));

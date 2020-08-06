@@ -1,4 +1,4 @@
-package com.ashindigo.storagecabinet.container;
+package com.ashindigo.storagecabinet.handler;
 
 import com.ashindigo.storagecabinet.StorageCabinet;
 import com.ashindigo.storagecabinet.widgets.WSlotCabinet;
@@ -17,12 +17,12 @@ import spinnery.widget.WSlot;
 
 import java.util.ArrayList;
 
-public class CabinetManagerContainer extends BaseScreenHandler {
+public class CabinetManagerHandler extends BaseScreenHandler {
 
     public final CabinetManagerEntity managerEntity;
     ArrayList<StorageCabinetEntity> cabinetList = new ArrayList<>();
 
-    public CabinetManagerContainer(int synchronizationID, PlayerInventory playerInventory, BlockPos pos) {
+    public CabinetManagerHandler(int synchronizationID, PlayerInventory playerInventory, BlockPos pos) {
         super(synchronizationID, playerInventory);
         WInterface mainInterface = getInterface();
         WSlot.addHeadlessPlayerInventory(mainInterface);

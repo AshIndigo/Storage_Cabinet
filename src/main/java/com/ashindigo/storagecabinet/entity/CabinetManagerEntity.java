@@ -2,7 +2,7 @@ package com.ashindigo.storagecabinet.entity;
 
 import com.ashindigo.storagecabinet.BlockRegistry;
 import com.ashindigo.storagecabinet.StorageCabinet;
-import com.ashindigo.storagecabinet.container.CabinetManagerContainer;
+import com.ashindigo.storagecabinet.handler.CabinetManagerHandler;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -31,6 +31,6 @@ public class CabinetManagerEntity extends BlockEntity implements ExtendedScreenH
 
     @Override
     public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
-        return new CabinetManagerContainer(syncId, inv, pos);
+        return new CabinetManagerHandler(syncId, inv, pos);
     }
 }

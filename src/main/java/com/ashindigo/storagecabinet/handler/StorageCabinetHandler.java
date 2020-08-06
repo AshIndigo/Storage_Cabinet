@@ -1,4 +1,4 @@
-package com.ashindigo.storagecabinet.container;
+package com.ashindigo.storagecabinet.handler;
 
 import com.ashindigo.storagecabinet.StorageCabinet;
 import com.ashindigo.storagecabinet.widgets.WSlotCabinet;
@@ -12,7 +12,7 @@ import spinnery.common.handler.BaseScreenHandler;
 import spinnery.widget.WInterface;
 import spinnery.widget.WSlot;
 
-public class StorageCabinetContainer extends BaseScreenHandler {
+public class StorageCabinetHandler extends BaseScreenHandler {
 
     public static final int INVENTORY = 1;
 
@@ -20,7 +20,7 @@ public class StorageCabinetContainer extends BaseScreenHandler {
     public final int arrayHeight;
     public final int arrayWidth; // Isn't it always 9.
 
-    public StorageCabinetContainer(int synchronizationID, PlayerInventory playerInventory, BlockPos pos) {
+    public StorageCabinetHandler(int synchronizationID, PlayerInventory playerInventory, BlockPos pos) {
         super(synchronizationID, playerInventory);
         cabinetEntity = ((StorageCabinetEntity) getWorld().getBlockEntity(pos));
         cabinetEntity.onOpen(playerInventory.player);

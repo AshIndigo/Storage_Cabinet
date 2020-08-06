@@ -1,6 +1,6 @@
 package com.ashindigo.storagecabinet.screen;
 
-import com.ashindigo.storagecabinet.container.StorageCabinetContainer;
+import com.ashindigo.storagecabinet.handler.StorageCabinetHandler;
 import com.ashindigo.storagecabinet.widgets.WSlotCabinet;
 import com.ashindigo.storagecabinet.widgets.WVerticalScrollableContainerModified;
 import net.minecraft.client.gui.screen.ingame.ScreenHandlerProvider;
@@ -13,11 +13,11 @@ import spinnery.widget.WSlot;
 import spinnery.widget.api.Position;
 import spinnery.widget.api.Size;
 
-import static com.ashindigo.storagecabinet.container.StorageCabinetContainer.INVENTORY;
+import static com.ashindigo.storagecabinet.handler.StorageCabinetHandler.INVENTORY;
 
-public class StorageCabinetScreen extends BaseHandledScreen<StorageCabinetContainer> implements ScreenHandlerProvider<StorageCabinetContainer> {
+public class StorageCabinetScreen extends BaseHandledScreen<StorageCabinetHandler> implements ScreenHandlerProvider<StorageCabinetHandler> {
 
-    public StorageCabinetScreen(StorageCabinetContainer linkedContainer, PlayerInventory playerInv, Text name) {
+    public StorageCabinetScreen(StorageCabinetHandler linkedContainer, PlayerInventory playerInv, Text name) {
         super(name, linkedContainer, playerInv.player);
         WInterface mainInterface = getInterface();
         WPanel mainPanel = mainInterface.createChild(WPanel::new, Position.of(mainInterface), Size.of((10 * 18) + 28, 162 + (5 * 18) + 18));
