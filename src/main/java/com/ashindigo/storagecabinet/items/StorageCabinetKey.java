@@ -19,10 +19,12 @@ public class StorageCabinetKey extends Item {
         if (context.getWorld().getBlockState(context.getBlockPos()).getBlock() instanceof StorageCabinetBlock) {
             if (context.getWorld().getBlockEntity(context.getBlockPos()) != null && context.getWorld().getBlockEntity(context.getBlockPos()) instanceof StorageCabinetEntity) {
                 StorageCabinetEntity blockEntity = (StorageCabinetEntity) context.getWorld().getBlockEntity(context.getBlockPos());
-                CompoundTag tag = blockEntity.toTag(new CompoundTag());
-                tag.putBoolean("locked", !tag.getBoolean("locked"));
-                tag.putString("item", Registry.ITEM.getId(blockEntity.getMainItemStack().getItem()).toString());
-                blockEntity.fromTag(blockEntity.getCachedState(), tag);
+                if (blockEntity != null) {
+                    CompoundTag tag = blockEntity.toTag(new CompoundTag());
+                    tag.putBoolean("locked", !tag.getBoolean("locked"));
+                    tag.putString("item", Registry.ITEM.getId(blockEntity.getMainItemStack().getItem()).toString());
+                    blockEntity.fromTag(blockEntity.getCachedState(), tag);
+                }
             }
             return ActionResult.SUCCESS;
         }

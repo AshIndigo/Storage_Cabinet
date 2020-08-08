@@ -30,7 +30,7 @@ public class StorageCabinet implements ModInitializer {
         ItemRegistry.init();
         cabinetScreenHandler = (ExtendedScreenHandlerType<StorageCabinetHandler>) ScreenHandlerRegistry.registerExtended(new Identifier(MODID, MODID), (syncId, inventory, buf) -> new StorageCabinetHandler(syncId, inventory, buf.readBlockPos()));
         managerScreenHandler = (ExtendedScreenHandlerType<CabinetManagerHandler>) ScreenHandlerRegistry.registerExtended(new Identifier(MODID, "cabinet_manager"), (syncId, inventory, buf) -> new CabinetManagerHandler(syncId, inventory, buf.readBlockPos()));
-        storageCabinetEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, MODID + ":" + MODID, BlockEntityType.Builder.create(StorageCabinetEntity::new, BlockRegistry.WOOD_CABINET, BlockRegistry.IRON_CABINET, BlockRegistry.GOLD_CABINET, BlockRegistry.DIAMOND_CABINET, BlockRegistry.EMERALD_CABINET).build(null));
-        cabinetManagerEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, MODID + ":" + "cabinet_manager", BlockEntityType.Builder.create(CabinetManagerEntity::new, BlockRegistry.CABINET_MANAGER).build(null));
+        storageCabinetEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(MODID, MODID), BlockEntityType.Builder.create(StorageCabinetEntity::new, BlockRegistry.WOOD_CABINET, BlockRegistry.IRON_CABINET, BlockRegistry.GOLD_CABINET, BlockRegistry.DIAMOND_CABINET, BlockRegistry.EMERALD_CABINET).build(null));
+        cabinetManagerEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(MODID, "cabinet_manager"), BlockEntityType.Builder.create(CabinetManagerEntity::new, BlockRegistry.CABINET_MANAGER).build(null));
     }
 }
