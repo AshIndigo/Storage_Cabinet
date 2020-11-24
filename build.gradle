@@ -1,6 +1,6 @@
 plugins {
 	id 'maven-publish'
-	id 'fabric-loom' version '0.4-SNAPSHOT'
+	id 'fabric-loom' version '0.5-SNAPSHOT'
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -15,11 +15,16 @@ minecraft {
 
 repositories {
 	maven {
-        url  "https://dl.bintray.com/spinnery/Spinnery"
-    }
+		name = "bsprks"
+		url "http://server.bbkr.space:8081/artifactory/libs-release/"
+	}
 	maven {
-        name = "bsprks"
-        url "http://server.bbkr.space:8081/artifactory/libs-release/"
+		name = "fabricmc"
+		url = "https://maven.fabricmc.net"
+	}
+	maven {
+		name = "CottonMC"
+		url = "https://server.bbkr.space/artifactory/libs-release"
 	}
 }
 
@@ -28,10 +33,14 @@ dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-	modImplementation "io.github.prospector:modmenu:${project.modmenu_version}"
+	modImplementation("io.github.prospector:modmenu:${project.modmenu_version}") {
+		exclude module: "fabric-api"
+	}
 	modImplementation "me.shedaniel:RoughlyEnoughItems:${project.rei_version}"
-	modImplementation "com.github.vini2003:spinnery:${project.spinnery_version}"
+	modApi("io.github.cottonmc:LibGui:${project.libgui_version}")
 }
 
 processResources {

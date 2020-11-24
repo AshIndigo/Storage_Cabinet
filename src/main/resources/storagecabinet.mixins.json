@@ -3,7 +3,6 @@
   "package": "com.ashindigo.storagecabinet.mixins",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "ItemStackMixin"
   ],
   "client": [],
   "injectors": {

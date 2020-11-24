@@ -79,11 +79,11 @@ public class CabinetManagerBlock extends BlockWithEntity implements InventoryPro
     @Override
     public SidedInventory getInventory(BlockState state, WorldAccess world, BlockPos pos) {
         ArrayList<StorageCabinetEntity> list = new ArrayList<>();
-        checkSurroundingCabinets(list, pos, world.getWorld());
+        checkSurroundingCabinets(list, pos, world);
         return new ManagerInventory((CabinetManagerEntity) world.getBlockEntity(pos), list);
     }
 
-    private void checkSurroundingCabinets(ArrayList<StorageCabinetEntity> cabinetList, BlockPos pos, World world) {
+    private void checkSurroundingCabinets(ArrayList<StorageCabinetEntity> cabinetList, BlockPos pos, WorldAccess world) {
         for (Direction direction : Direction.values()) {
             if (world.getBlockEntity(pos.offset(direction)) instanceof StorageCabinetEntity) {
                 if (!cabinetList.contains(world.getBlockEntity(pos.offset(direction)))) {

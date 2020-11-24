@@ -133,7 +133,6 @@ public class ManagerInventory implements SidedInventory { // The methods involvi
         checkSurroundingCabinets((ArrayList<StorageCabinetEntity>) cabinets, entity.getPos(), entity.getWorld());
         for (StorageCabinetEntity cabinet : cabinets) {
             cabinet.markDirty();
-            cabinet.sync();
         }
         entity.markDirty();
     }
@@ -159,5 +158,9 @@ public class ManagerInventory implements SidedInventory { // The methods involvi
         for (StorageCabinetEntity cabinet : cabinets) {
             cabinet.clear();
         }
+    }
+
+    public CabinetManagerEntity getEntity() {
+        return entity;
     }
 }

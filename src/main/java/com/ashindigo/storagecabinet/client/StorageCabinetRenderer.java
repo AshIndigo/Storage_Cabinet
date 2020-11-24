@@ -7,12 +7,10 @@ import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
-import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
-import spinnery.client.render.BaseRenderer;
 
 public class StorageCabinetRenderer extends BlockEntityRenderer<StorageCabinetEntity> {
 
@@ -63,7 +61,7 @@ public class StorageCabinetRenderer extends BlockEntityRenderer<StorageCabinetEn
 
     private void drawKey(boolean locked, MatrixStack matrices, VertexConsumerProvider provider, int overlay) {
         if (locked) {
-            BaseRenderer.getAdvancedItemRenderer().renderItem(matrices, provider, KEY, ModelTransformation.Mode.GUI, 0x00f000f0, overlay);
+            //MinecraftClient.getInstance().getItemRenderer().renderItem(matrices, provider, KEY, ModelTransformation.Mode.GUI, 0x00f000f0, overlay);
         }
     }
 
@@ -71,7 +69,7 @@ public class StorageCabinetRenderer extends BlockEntityRenderer<StorageCabinetEn
         if (stack.getItem() instanceof BlockItem) {
             DiffuseLighting.disableGuiDepthLighting();
         }
-        BaseRenderer.getAdvancedItemRenderer().renderItem(matrices, vertexConsumers, stack, ModelTransformation.Mode.GUI, 0x00f000f0, overlay);
+       // MinecraftClient.getInstance().getItemRenderer().renderItem(matrices, vertexConsumers, stack, ModelTransformation.Mode.GUI, 0x00f000f0, overlay);
         if (stack.getItem() instanceof BlockItem) {
             DiffuseLighting.enableGuiDepthLighting();
         }

@@ -31,8 +31,7 @@
 
   "depends": {
     "fabricloader": ">=0.4.0",
-    "fabric": "*",
-    "spinnery": ">=3.0.56+fabric-1.16.x"
+    "fabric": "*"
   },
   "suggests": {
   }

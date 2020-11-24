@@ -7,6 +7,7 @@ import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
@@ -20,10 +21,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldAccess;
 
 import java.util.Random;
 
-public class StorageCabinetBlock extends BlockWithEntity {
+public class StorageCabinetBlock extends BlockWithEntity implements InventoryProvider {
 
     public static final DirectionProperty FACING;
     public static final BooleanProperty OPEN;
@@ -101,10 +103,10 @@ public class StorageCabinetBlock extends BlockWithEntity {
 
     @Override
     public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
-        BlockEntity blockEntity = world.getWorld().getBlockEntity(pos);
+        BlockEntity blockEntity = world.getBlockEntity(pos);
         if (blockEntity instanceof StorageCabinetEntity) {
-            ItemScatterer.spawn(world.getWorld(), pos, (StorageCabinetEntity) blockEntity);
-            world.getWorld().updateComparators(pos, this);
+            ItemScatterer.spawn(world, pos, (StorageCabinetEntity) blockEntity);
+            world.updateComparators(pos, this);
         }
         super.onBreak(world, pos, state, player);
     }
@@ -112,6 +114,11 @@ public class StorageCabinetBlock extends BlockWithEntity {
 
     public int getTier() {
         return tier;
+    }
+
+    @Override
+    public SidedInventory getInventory(BlockState state, WorldAccess world, BlockPos pos) {
+        return (SidedInventory) world.getBlockEntity(pos);
     }
 
     public static class Manager {
