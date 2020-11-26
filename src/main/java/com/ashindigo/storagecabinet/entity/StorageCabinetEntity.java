@@ -72,11 +72,11 @@ public class StorageCabinetEntity extends BlockEntity implements BasicSidedInven
     @Override
     public void fromTag(BlockState state, CompoundTag tag) {
         super.fromTag(state, tag);
-        Inventories.fromTag(tag, stacks);
         this.tier = tag.getInt("tier");
+        setTier(tier);
+        Inventories.fromTag(tag, stacks);
         this.locked = tag.getBoolean("locked");
         this.item = Registry.ITEM.get(Identifier.tryParse(tag.getString("item")));
-        setTier(tier);
         if (tag.contains("CustomName", 8)) {
             this.customName = Text.Serializer.fromJson(tag.getString("CustomName"));
         }
@@ -84,15 +84,14 @@ public class StorageCabinetEntity extends BlockEntity implements BasicSidedInven
 
     @Override
     public CompoundTag toTag(CompoundTag tag) {
-        Inventories.toTag(tag, stacks);
         tag.putInt("tier", tier);
+        Inventories.toTag(tag, stacks);
         tag.putBoolean("locked", locked);
         tag.putString("item", Registry.ITEM.getId(item).toString());
         if (this.customName != null) {
             tag.putString("CustomName", Text.Serializer.toJson(this.customName));
         }
-        super.toTag(tag);
-        return tag;
+        return super.toTag(tag);
     }
 
     public void addListener(InventoryChangedListener... listeners) {

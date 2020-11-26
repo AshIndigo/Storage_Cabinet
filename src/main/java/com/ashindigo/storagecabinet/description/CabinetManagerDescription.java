@@ -6,10 +6,7 @@ import com.ashindigo.storagecabinet.blocks.StorageCabinetBlock;
 import com.ashindigo.storagecabinet.entity.CabinetManagerEntity;
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
 import io.github.cottonmc.cotton.gui.SyncedGuiDescription;
-import io.github.cottonmc.cotton.gui.widget.WItemSlot;
-import io.github.cottonmc.cotton.gui.widget.WScrollPanel;
-import io.github.cottonmc.cotton.gui.widget.WTabPanel;
-import io.github.cottonmc.cotton.gui.widget.WText;
+import io.github.cottonmc.cotton.gui.widget.*;
 import io.github.cottonmc.cotton.gui.widget.icon.ItemIcon;
 import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -23,33 +20,48 @@ import net.minecraft.world.World;
 
 import java.util.ArrayList;
 
+// TODO So two options(?)
+// One: A plain panel as the backend, with a tab panel existing for the cabinets that also shows their inventory and then player inv is added to the plain panel
+// Two: Root is tab panel, which is then a plain panel with a scroll panel and the player inv panel
 public class CabinetManagerDescription extends SyncedGuiDescription {
 
     public final CabinetManagerEntity managerEntity;
     final ArrayList<StorageCabinetEntity> cabinetList = new ArrayList<>();
+    final WPlayerInvPanel playerInvPanel;
+    final ArrayList<WScrollPanel> cabinetPanels = new ArrayList<>();
+    final int width = 170;
 
     public CabinetManagerDescription(int synchronizationID, PlayerInventory playerInventory, ScreenHandlerContext ctx) {
         super(StorageCabinet.managerScreenHandler, synchronizationID, playerInventory, getBlockInventory(ctx), getBlockPropertyDelegate(ctx));
-        WTabPanel root = new WTabPanel();
+        // Initial set up stuff
         managerEntity = ((ManagerInventory) blockInventory).getEntity();
+        playerInvPanel = new WPlayerInvPanel(playerInventory, true);
         checkSurroundingCabinets(cabinetList, managerEntity.getPos(), world);
-        if (cabinetList.isEmpty()) { // In case no cabinet's are attached
-            root.add(new WText(new LiteralText("")), builder -> builder.icon(new ItemIcon(Items.BARRIER)));
-        }
-        cabinetList.forEach(cabinetEntity -> addCabinet(root, cabinetEntity));
-        root.setSize(208, 288);
+        //Panel
+        WPlainPanel root = new WPlainPanel();
+        WTabPanel cabinetTabs = new WTabPanel();
+        root.setSize(width + 14, 270);
+        root.add(cabinetTabs, 0, 16);
+        root.add(playerInvPanel, 0, 244);
         setRootPanel(root);
-        //root.validate(this);
-        root.setSize(208, 288);
+        if (cabinetList.isEmpty()) { // In case no cabinet's are attached
+            cabinetTabs.add(new WText(new LiteralText("")), builder -> builder.icon(new ItemIcon(Items.BARRIER)));
+        }
+        cabinetList.forEach(cabinetEntity -> addCabinet(cabinetTabs, cabinetEntity));
+        root.validate(this);
+        cabinetTabs.setSize(width, 270);
+        cabinetPanels.forEach(panel -> panel.setSize(width, 180));
+
     }
 
     private void addCabinet(WTabPanel main, StorageCabinetEntity cabinetEntity) {
-        WScrollPanel scrollPanel = new WScrollPanel(new WItemSlot(cabinetEntity, 0, StorageCabinetBlock.Manager.getWidth(), StorageCabinetBlock.Manager.getHeight(cabinetEntity.tier), false)).setScrollingHorizontally(TriState.FALSE);
+        WScrollPanel scrollPanel = new WScrollPanel(new WItemSlot(cabinetEntity, 0, StorageCabinetBlock.Manager.getWidth(), StorageCabinetBlock.Manager.getHeight(cabinetEntity.tier), false));
+        scrollPanel.setScrollingHorizontally(TriState.FALSE);
+        scrollPanel.setScrollingVertically(TriState.TRUE);
         main.add(scrollPanel, builder -> builder.icon(new ItemIcon(cabinetEntity.isEmpty() ? Items.AIR : cabinetEntity.getMainItemStack().getItem())));
         cabinetEntity.addListener(sender -> sendContentUpdates()); // TODO Useless?
         cabinetEntity.addListener(this::onContentChanged);
-        scrollPanel.validate(this);
-        scrollPanel.setSize(172, 180);
+        cabinetPanels.add(scrollPanel);
     }
 
     private void checkSurroundingCabinets(ArrayList<StorageCabinetEntity> cabinetList, BlockPos pos, World world) {
