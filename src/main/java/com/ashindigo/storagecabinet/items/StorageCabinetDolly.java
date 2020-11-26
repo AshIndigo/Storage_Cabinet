@@ -21,7 +21,7 @@ import java.util.List;
 
 public class StorageCabinetDolly extends Item {
     public StorageCabinetDolly() {
-        super(new Item.Settings().group(StorageCabinet.CABINET_GROUP));
+        super(new Item.Settings().group(StorageCabinet.CABINET_GROUP).maxCount(1));
     }
 
     @Override

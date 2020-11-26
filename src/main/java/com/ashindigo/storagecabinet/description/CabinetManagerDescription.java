@@ -5,12 +5,14 @@ import com.ashindigo.storagecabinet.StorageCabinet;
 import com.ashindigo.storagecabinet.blocks.StorageCabinetBlock;
 import com.ashindigo.storagecabinet.entity.CabinetManagerEntity;
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
+import com.ashindigo.storagecabinet.widgets.WPagedTabPanel;
 import io.github.cottonmc.cotton.gui.SyncedGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.*;
 import io.github.cottonmc.cotton.gui.widget.icon.ItemIcon;
 import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Items;
 import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.text.LiteralText;
@@ -20,29 +22,26 @@ import net.minecraft.world.World;
 
 import java.util.ArrayList;
 
-// TODO So two options(?)
-// One: A plain panel as the backend, with a tab panel existing for the cabinets that also shows their inventory and then player inv is added to the plain panel
-// Two: Root is tab panel, which is then a plain panel with a scroll panel and the player inv panel
+// TODO Shift clicking isn't working for some reason
 public class CabinetManagerDescription extends SyncedGuiDescription {
 
     public final CabinetManagerEntity managerEntity;
     final ArrayList<StorageCabinetEntity> cabinetList = new ArrayList<>();
-    final WPlayerInvPanel playerInvPanel;
     final ArrayList<WScrollPanel> cabinetPanels = new ArrayList<>();
+    final WPagedTabPanel cabinetTabs;
     final int width = 170;
 
     public CabinetManagerDescription(int synchronizationID, PlayerInventory playerInventory, ScreenHandlerContext ctx) {
         super(StorageCabinet.managerScreenHandler, synchronizationID, playerInventory, getBlockInventory(ctx), getBlockPropertyDelegate(ctx));
         // Initial set up stuff
         managerEntity = ((ManagerInventory) blockInventory).getEntity();
-        playerInvPanel = new WPlayerInvPanel(playerInventory, true);
         checkSurroundingCabinets(cabinetList, managerEntity.getPos(), world);
         //Panel
         WPlainPanel root = new WPlainPanel();
-        WTabPanel cabinetTabs = new WTabPanel();
+        cabinetTabs = new WPagedTabPanel();
         root.setSize(width + 14, 270);
         root.add(cabinetTabs, 0, 16);
-        root.add(playerInvPanel, 0, 244);
+        root.add(new WPlayerInvPanel(playerInventory, true), 0, 244);
         setRootPanel(root);
         if (cabinetList.isEmpty()) { // In case no cabinet's are attached
             cabinetTabs.add(new WText(new LiteralText("")), builder -> builder.icon(new ItemIcon(Items.BARRIER)));
@@ -54,14 +53,26 @@ public class CabinetManagerDescription extends SyncedGuiDescription {
 
     }
 
-    private void addCabinet(WTabPanel main, StorageCabinetEntity cabinetEntity) {
-        WScrollPanel scrollPanel = new WScrollPanel(new WItemSlot(cabinetEntity, 0, StorageCabinetBlock.Manager.getWidth(), StorageCabinetBlock.Manager.getHeight(cabinetEntity.tier), false));
+    private void addCabinet(WPagedTabPanel main, StorageCabinetEntity cabinetEntity) {
+        WScrollPanel scrollPanel = new WScrollPanel(new WItemSlot(cabinetEntity, 0, StorageCabinetBlock.Manager.getWidth(), StorageCabinetBlock.Manager.getHeight(cabinetEntity.tier), false).setFilter(stack -> cabinetEntity.isValid(0, stack)));
         scrollPanel.setScrollingHorizontally(TriState.FALSE);
         scrollPanel.setScrollingVertically(TriState.TRUE);
         main.add(scrollPanel, builder -> builder.icon(new ItemIcon(cabinetEntity.isEmpty() ? Items.AIR : cabinetEntity.getMainItemStack().getItem())));
-        cabinetEntity.addListener(sender -> sendContentUpdates()); // TODO Useless?
         cabinetEntity.addListener(this::onContentChanged);
+        cabinetEntity.addClientOnlyListener(this::iconChangeListener); // Yep
         cabinetPanels.add(scrollPanel);
+    }
+
+    private void iconChangeListener(Inventory inventory) {
+        if (inventory instanceof StorageCabinetEntity) {
+            StorageCabinetEntity storageCabinetEntity = (StorageCabinetEntity) inventory;
+            for (int i = 0; i < cabinetList.size(); i++) {
+                StorageCabinetEntity cabinet = cabinetList.get(i);
+                if (cabinet.getPos().equals(storageCabinetEntity.getPos())) {
+                    cabinetTabs.getTabWidgets().get(i).getData().setIcon(new ItemIcon(storageCabinetEntity.getMainItemStack()));
+                }
+            }
+        }
     }
 
     private void checkSurroundingCabinets(ArrayList<StorageCabinetEntity> cabinetList, BlockPos pos, World world) {

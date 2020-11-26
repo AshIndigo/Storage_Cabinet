@@ -6,6 +6,7 @@ import com.ashindigo.storagecabinet.blocks.StorageCabinetBlock;
 import com.ashindigo.storagecabinet.description.StorageCabinetDescription;
 import com.ashindigo.storagecabinet.misc.BasicSidedInventory;
 import com.google.common.collect.Lists;
+import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.InventoryProvider;
@@ -37,9 +38,10 @@ import net.minecraft.world.WorldAccess;
 
 import java.util.*;
 
-public class StorageCabinetEntity extends BlockEntity implements BasicSidedInventory, InventoryChangedListener, ExtendedScreenHandlerFactory, InventoryProvider {
+public class StorageCabinetEntity extends BlockEntity implements BasicSidedInventory, InventoryChangedListener, ExtendedScreenHandlerFactory, BlockEntityClientSerializable,InventoryProvider {
 
     final List<InventoryChangedListener> listeners = new ArrayList<>();
+    final List<InventoryChangedListener> clientListeners = new ArrayList<>();
     public boolean locked = false;
     public int tier = 0;
     public Item item = Items.AIR;
@@ -94,6 +96,10 @@ public class StorageCabinetEntity extends BlockEntity implements BasicSidedInven
         return super.toTag(tag);
     }
 
+    public void addClientOnlyListener(InventoryChangedListener... listeners) {
+        this.clientListeners.addAll(Arrays.asList(listeners));
+    }
+
     public void addListener(InventoryChangedListener... listeners) {
         this.listeners.addAll(Arrays.asList(listeners));
     }
@@ -105,6 +111,7 @@ public class StorageCabinetEntity extends BlockEntity implements BasicSidedInven
 
     public void clearListeners() {
         listeners.clear();
+        clientListeners.clear();
     }
 
     @Override
@@ -143,6 +150,9 @@ public class StorageCabinetEntity extends BlockEntity implements BasicSidedInven
     public void onInventoryChanged(Inventory sender) {
         if (world != null && !world.isClient) {
             listeners.forEach(inventoryListener -> inventoryListener.onInventoryChanged(sender));
+        }
+        if (world != null && world.isClient) {
+            clientListeners.forEach(inventoryChangedListener -> inventoryChangedListener.onInventoryChanged(sender));
         }
         if (item.equals(Items.AIR)) {
             item = getMainItemStack().getItem();
@@ -271,6 +281,16 @@ public class StorageCabinetEntity extends BlockEntity implements BasicSidedInven
     @Override
     public SidedInventory getInventory(BlockState state, WorldAccess world, BlockPos pos) {
         return this;
+    }
+
+    @Override
+    public void fromClientTag(CompoundTag tag) {
+        fromTag(getCachedState(), tag);
+    }
+
+    @Override
+    public CompoundTag toClientTag(CompoundTag tag) {
+        return toTag(tag);
     }
 }
 
