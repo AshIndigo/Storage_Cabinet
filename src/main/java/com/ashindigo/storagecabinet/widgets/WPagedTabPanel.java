@@ -124,14 +124,13 @@ public class WPagedTabPanel extends WPanel {
         return tabList;
     }
 
-    @Override
     protected void updateTabs() {
         if (next != null && back != null) {
             if (getPageCount() > 1) {
                 hasButtons = true;
 
-                next.setPosition(Position.of(this, getWidth() - 10, -10, 0)).setHidden(false);
-                back.setPosition(Position.of(this, getWidth() - 20, -10, 0)).setHidden(false);
+                next.setLocation(-10, -10);
+                back.setLocation(-30, -10);
             } else {
                 hasButtons = false;
                 next.setEnabled(true);
@@ -143,15 +142,15 @@ public class WPagedTabPanel extends WPanel {
         int tabSize = 24;
         int tabOffset = 0;
         for (WTab tab : tabWidgets) {
-            tab.setEnabled(true);
+            tab.onShown();
         }
         for (WTab tab : getTabsOnPage(page)) {
             tab.setSize(tabSize, tab.getHeight());
             tab.setLocation(getX() + tabOffset, getY());
             tabOffset += tabSize;
-            tab.setEnabled(false);
+            tab.onHidden();
         }
-        mainPanel.setSelectedCard(tabWidgets.get(getTabsPerPage() * page));
+        mainPanel.setSelectedCard(tabWidgets.get(getTabsPerPage() * page).data.widget);
     }
 
     public static class Tab {
