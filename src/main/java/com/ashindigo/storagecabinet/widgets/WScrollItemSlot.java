@@ -1,7 +1,11 @@
 package com.ashindigo.storagecabinet.widgets;
 
+import com.ashindigo.storagecabinet.mixins.ValidatedSlotAccessor;
 import io.github.cottonmc.cotton.gui.GuiDescription;
 import io.github.cottonmc.cotton.gui.client.BackgroundPainter;
+import io.github.cottonmc.cotton.gui.client.ScreenDrawing;
+import io.github.cottonmc.cotton.gui.impl.access.SlotAccessor;
+import io.github.cottonmc.cotton.gui.widget.WItemSlot;
 import io.github.cottonmc.cotton.gui.widget.WWidget;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -20,9 +24,7 @@ public class WScrollItemSlot extends WWidget {
 
     private static final Predicate<ItemStack> DEFAULT_FILTER = (stack) -> true;
     private final List<ScrollValidatedSlot> peers = new ArrayList<>();
-    @Nullable
-    @Environment(EnvType.CLIENT)
-    private BackgroundPainter backgroundPainter = null;
+    private final Set<WScrollItemSlot.ChangeListener> listeners;
     private Inventory internalInv;
     private int startIndex = 0;
     private int slotsWide = 1;
@@ -30,8 +32,30 @@ public class WScrollItemSlot extends WWidget {
     private boolean insertingAllowed = true;
     private boolean takingAllowed = true;
     private int focusedSlot = -1;
+    @Nullable
+    @Environment(EnvType.CLIENT)
+    private BackgroundPainter backgroundPainter = (left, top, panel) -> { // Yes this is just BackgroundPainter.SLOT with some small modifications to it
+        WScrollItemSlot slot = (WScrollItemSlot) panel;
+        for (int x = 0; x < slot.getWidth() / 18; ++x) {
+            for (int y = 0; y < slot.getHeight() / 18; ++y) {
+                int index = x + y * (slot.getWidth() / 18);
+                int lo = 0xB8000000;
+                int bg = 0x4C000000;
+                int hi = 0xB8FFFFFF;
+                ScreenDrawing.drawBeveledPanel((x * 18) + left, (y * 18) + top, 16 + 2, 16 + 2, lo, bg, hi);
+                if (slot.getFocusedSlot() == index) {
+                    int sx = (x * 18) + left;
+                    int sy = (y * 18) + top;
+                    ScreenDrawing.coloredRect(sx, sy, 18, 1, 0xFF_FFFFA0);
+                    ScreenDrawing.coloredRect(sx, sy + 1, 1, 18 - 1, 0xFF_FFFFA0);
+                    ScreenDrawing.coloredRect(sx + 18 - 1, sy + 1, 1, 18 - 1, 0xFF_FFFFA0);
+                    ScreenDrawing.coloredRect(sx + 1, sy + 18 - 1, 18 - 1, 1, 0xFF_FFFFA0);
+                }
+
+            }
+        }
+    };
     private Predicate<ItemStack> filter;
-    private final Set<WScrollItemSlot.ChangeListener> listeners;
 
     public WScrollItemSlot(Inventory inventory, int startIndex, int slotsWide, int slotsHigh) {
         this.filter = DEFAULT_FILTER;
@@ -144,8 +168,8 @@ public class WScrollItemSlot extends WWidget {
         this.peers.clear();
         int index = this.startIndex;
 
-        for(int y = 0; y < this.slotsHigh; ++y) {
-            for(int x = 0; x < this.slotsWide; ++x) {
+        for (int y = 0; y < this.slotsHigh; ++y) {
+            for (int x = 0; x < this.slotsWide; ++x) {
                 ScrollValidatedSlot slot = this.createSlotPeer(this.internalInv, index, this.getAbsoluteX() + x * 18 + 1, this.getAbsoluteY() + y * 18 + 1);
                 slot.setInsertingAllowed(this.insertingAllowed);
                 slot.setTakingAllowed(this.takingAllowed);
@@ -166,7 +190,7 @@ public class WScrollItemSlot extends WWidget {
     @Environment(EnvType.CLIENT)
     public void onKeyPressed(int ch, int key, int modifiers) {
         if (isActivationKey(ch) && this.host instanceof ScreenHandler && this.focusedSlot >= 0) {
-            ScreenHandler handler = (ScreenHandler)this.host;
+            ScreenHandler handler = (ScreenHandler) this.host;
             MinecraftClient client = MinecraftClient.getInstance();
             ScrollValidatedSlot peer = this.peers.get(this.focusedSlot);
             client.interactionManager.clickSlot(handler.syncId, peer.id, 0, SlotActionType.PICKUP, client.player);
@@ -175,7 +199,7 @@ public class WScrollItemSlot extends WWidget {
     }
 
     protected ScrollValidatedSlot createSlotPeer(Inventory inventory, int index, int x, int y) {
-        return new ScrollValidatedSlot(inventory, index, x, y);
+        return new ScrollValidatedSlot(inventory, index, x, y, getX(), getY(), getX() + getParent().getWidth(), getY() + getParent().getHeight());
     }
 
     @Nullable
@@ -256,12 +280,16 @@ public class WScrollItemSlot extends WWidget {
     }
 
     public void scrollVert(int startIndex) {
-            this.startIndex = startIndex;
+        //this.startIndex = startIndex;
+        for (int i = 0; i < peers.size(); i++) {
+            ValidatedSlotAccessor slot = ((ValidatedSlotAccessor) peers.get(i));
+            slot.setY(slot.getOrigY() - (18 * startIndex));
+        }
     }
 
     @Environment(EnvType.CLIENT)
     public void addPainters() {
-        this.backgroundPainter = BackgroundPainter.SLOT;
+        //this.backgroundPainter = BackgroundPainter.SLOT;
     }
 
     @FunctionalInterface

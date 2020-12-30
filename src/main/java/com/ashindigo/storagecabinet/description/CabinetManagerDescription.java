@@ -5,7 +5,9 @@ import com.ashindigo.storagecabinet.StorageCabinet;
 import com.ashindigo.storagecabinet.blocks.StorageCabinetBlock;
 import com.ashindigo.storagecabinet.entity.CabinetManagerEntity;
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
+import com.ashindigo.storagecabinet.widgets.WItemScrollPanel;
 import com.ashindigo.storagecabinet.widgets.WPagedTabPanel;
+import com.ashindigo.storagecabinet.widgets.WScrollItemSlot;
 import io.github.cottonmc.cotton.gui.SyncedGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.*;
 import io.github.cottonmc.cotton.gui.widget.icon.ItemIcon;
@@ -27,7 +29,7 @@ public class CabinetManagerDescription extends SyncedGuiDescription {
 
     public final CabinetManagerEntity managerEntity;
     final ArrayList<StorageCabinetEntity> cabinetList = new ArrayList<>();
-    final ArrayList<WScrollPanel> cabinetPanels = new ArrayList<>();
+    final ArrayList<WItemScrollPanel> cabinetPanels = new ArrayList<>();
     final WPagedTabPanel cabinetTabs;
     final int width = 170;
 
@@ -54,7 +56,8 @@ public class CabinetManagerDescription extends SyncedGuiDescription {
     }
 
     private void addCabinet(WPagedTabPanel main, StorageCabinetEntity cabinetEntity) {
-        WScrollPanel scrollPanel = new WScrollPanel(new WItemSlot(cabinetEntity, 0, StorageCabinetBlock.Manager.getWidth(), StorageCabinetBlock.Manager.getHeight(cabinetEntity.tier), false).setFilter(stack -> cabinetEntity.isValid(0, stack)));
+        WScrollItemSlot itemSlot = new WScrollItemSlot(cabinetEntity, 0, StorageCabinetBlock.Manager.getWidth(), StorageCabinetBlock.Manager.getHeight(cabinetEntity.tier)).setFilter(stack -> cabinetEntity.isValid(0, stack));
+        WItemScrollPanel scrollPanel = new WItemScrollPanel(itemSlot);
         scrollPanel.setScrollingHorizontally(TriState.FALSE);
         scrollPanel.setScrollingVertically(TriState.TRUE);
         main.add(scrollPanel, builder -> builder.icon(new ItemIcon(cabinetEntity.isEmpty() ? Items.AIR : cabinetEntity.getMainItemStack().getItem())));

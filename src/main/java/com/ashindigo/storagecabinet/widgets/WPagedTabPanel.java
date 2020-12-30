@@ -60,6 +60,7 @@ public class WPagedTabPanel extends WPanel {
     public void validate(GuiDescription c) {
         add(next, 0, 0);
         add(back, 0, 5);
+        updateTabs();
         super.validate(c);
     }
 
@@ -128,14 +129,13 @@ public class WPagedTabPanel extends WPanel {
         if (next != null && back != null) {
             if (getPageCount() > 1) {
                 hasButtons = true;
-
-                next.setLocation(-10, -10);
-                back.setLocation(-30, -10);
             } else {
                 hasButtons = false;
                 next.setEnabled(true);
                 back.setEnabled(true);
             }
+            next.setLocation(-20, -10);
+            back.setLocation(-40, -10);
         }
         // Copy and pasted from updateTabs();
         if (tabWidgets.size() == 0) return;

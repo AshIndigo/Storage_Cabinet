@@ -3,6 +3,7 @@
   "package": "com.ashindigo.storagecabinet.mixins",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "ValidatedSlotAccessor"
   ],
   "client": [],
   "injectors": {

@@ -83,18 +83,18 @@ public class WItemScrollPanel extends WClippedPanel {
         this.horizontalScrollBar.setSize(this.width - offset, SCROLL_BAR_SIZE);
         this.horizontalScrollBar.setLocation(0, this.height - this.horizontalScrollBar.getHeight());
         this.children.add(this.widget);
-        int x = horizontal ? -this.horizontalScrollBar.getValue() : 0;
-        int y = vertical ? -this.verticalScrollBar.getValue() : 0;
-        this.widget.setLocation(x, y);
-        this.verticalScrollBar.setWindow(this.height - (horizontal ? SCROLL_BAR_SIZE : 0));
-        this.verticalScrollBar.setMaxValue(this.widget.getHeight());
-        this.horizontalScrollBar.setWindow(this.width - (vertical ? SCROLL_BAR_SIZE : 0));
-        this.horizontalScrollBar.setMaxValue(this.widget.getWidth());
+        widget.scrollVert(verticalScrollBar.getValue());
+        verticalScrollBar.setWindow(10);
+        horizontalScrollBar.setWindow(10); // ??
         if (vertical) {
             this.children.add(this.verticalScrollBar);
         }
         if (horizontal) {
             this.children.add(this.horizontalScrollBar);
         }
+    }
+
+    public WScrollBar getVerticalScrollBar() {
+        return verticalScrollBar;
     }
 }
