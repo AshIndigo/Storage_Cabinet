@@ -42,13 +42,11 @@ public class ScrollValidatedSlot extends ValidatedSlot {
     @Environment(EnvType.CLIENT)
     public boolean doDrawHoveringEffect() {
         if (boundUX >= x && x >= boundLX) {
-            if (boundUY >= y && y >= boundLY) {
-                //this.setVisible(true);
-                return true;
-            }
+            //this.setVisible(true);
+            return boundUY >= y && y >= boundLY;
         }
         //setVisible(false);
-            return false;
+        return false;
     }
 
 

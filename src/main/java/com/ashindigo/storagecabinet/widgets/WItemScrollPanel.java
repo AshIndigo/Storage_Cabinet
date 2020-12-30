@@ -12,22 +12,16 @@ public class WItemScrollPanel extends WClippedPanel {
 
     private static final int SCROLL_BAR_SIZE = 8;
     private final WScrollItemSlot widget;
-    private TriState scrollingHorizontally;
-    private TriState scrollingVertically;
-    protected WScrollBar horizontalScrollBar;
-    protected WScrollBar verticalScrollBar;
-    private int lastHorizontalScroll;
-    private int lastVerticalScroll;
+    private TriState scrollingHorizontally = TriState.DEFAULT;
+    private TriState scrollingVertically = TriState.DEFAULT;
+    protected WScrollBar horizontalScrollBar = new WScrollBar(Axis.HORIZONTAL);
+    protected WScrollBar verticalScrollBar = new WScrollBar(Axis.VERTICAL);
+    private int lastHorizontalScroll = -1;
+    private int lastVerticalScroll = -1;
 
     public WItemScrollPanel(WScrollItemSlot widget) {
-        this.scrollingHorizontally = TriState.DEFAULT;
-        this.scrollingVertically = TriState.DEFAULT;
-        this.horizontalScrollBar = new WScrollBar(Axis.HORIZONTAL);
-        this.verticalScrollBar = new WScrollBar(Axis.VERTICAL);
         verticalScrollBar.setMaxValue(widget.getHeight() / 18);
         horizontalScrollBar.setMaxValue(widget.getWidth() / 18);
-        this.lastHorizontalScroll = -1;
-        this.lastVerticalScroll = -1;
         this.widget = widget;
         widget.setParent(this);
         this.horizontalScrollBar.setParent(this);
@@ -96,5 +90,9 @@ public class WItemScrollPanel extends WClippedPanel {
 
     public WScrollBar getVerticalScrollBar() {
         return verticalScrollBar;
+    }
+
+    public int getBoundOffset() {
+        return parent instanceof WCardPanel ? 46 : 0;
     }
 }

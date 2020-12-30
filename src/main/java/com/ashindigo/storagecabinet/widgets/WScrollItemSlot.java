@@ -199,7 +199,7 @@ public class WScrollItemSlot extends WWidget {
     }
 
     protected ScrollValidatedSlot createSlotPeer(Inventory inventory, int index, int x, int y) {
-        return new ScrollValidatedSlot(inventory, index, x, y, getX(), getY(), getX() + getParent().getWidth(), getY() + getParent().getHeight());
+        return new ScrollValidatedSlot(inventory, index, x, y, getX(), getY()+((WItemScrollPanel)getParent()).getBoundOffset(), getX() + getParent().getWidth(), getY() + getParent().getHeight()+((WItemScrollPanel)getParent()).getBoundOffset());
     }
 
     @Nullable
@@ -265,7 +265,6 @@ public class WScrollItemSlot extends WWidget {
     }
 
     public void onShown() {
-
         for (ScrollValidatedSlot peer : this.peers) {
             peer.setVisible(true);
         }

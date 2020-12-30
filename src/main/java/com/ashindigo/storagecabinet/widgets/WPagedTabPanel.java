@@ -84,6 +84,7 @@ public class WPagedTabPanel extends WPanel {
     }
 
     public void add(WWidget widget, Consumer<Tab.Builder> configurator) {
+        widget.setLocation(widget.getX(), widget.getY()-TAB_HEIGHT);
         Tab.Builder builder = new Tab.Builder(widget);
         configurator.accept(builder);
         add(builder.build());
@@ -93,6 +94,11 @@ public class WPagedTabPanel extends WPanel {
     public void setSize(int x, int y) {
         super.setSize(x, y);
         tabRibbon.setSize(x, TAB_HEIGHT);
+    }
+
+    @Override
+    public int getHeight() {
+        return height;
     }
 
     @Environment(EnvType.CLIENT)

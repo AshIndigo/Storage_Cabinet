@@ -41,7 +41,7 @@ public class CabinetManagerDescription extends SyncedGuiDescription {
         //Panel
         WPlainPanel root = new WPlainPanel();
         cabinetTabs = new WPagedTabPanel();
-        root.setSize(width + 14, 270);
+        root.setSize(width + 14, 270+30);
         root.add(cabinetTabs, 0, 16);
         root.add(new WPlayerInvPanel(playerInventory, true), 0, 244);
         setRootPanel(root);
@@ -49,10 +49,12 @@ public class CabinetManagerDescription extends SyncedGuiDescription {
             cabinetTabs.add(new WText(new LiteralText("")), builder -> builder.icon(new ItemIcon(Items.BARRIER)));
         }
         cabinetList.forEach(cabinetEntity -> addCabinet(cabinetTabs, cabinetEntity));
-        root.validate(this);
-        cabinetTabs.setSize(width, 270);
+        cabinetTabs.setSize(width, 270+30);
         cabinetPanels.forEach(panel -> panel.setSize(width, 180));
-
+        for (WItemScrollPanel panel : cabinetPanels) {
+            panel.setLocation(panel.getX(), panel.getY());
+        }
+        root.validate(this);
     }
 
     private void addCabinet(WPagedTabPanel main, StorageCabinetEntity cabinetEntity) {
