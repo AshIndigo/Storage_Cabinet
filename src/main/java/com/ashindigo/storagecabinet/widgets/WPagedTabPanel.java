@@ -33,11 +33,11 @@ public class WPagedTabPanel extends WPanel {
     private static final int TAB_HEIGHT = 30;
     private static final int PANEL_PADDING = 8;
     private static final int ICON_SIZE = 16;
+    private static final int TABS_PER_PAGE = 6;
     private final WBox tabRibbon = new WBox(Axis.HORIZONTAL).setSpacing(1);
     private final List<WTab> tabWidgets = new ArrayList<>();
     private final WCardPanel mainPanel = new WCardPanel();
     int page = 0;
-    boolean hasButtons = true;
     WButton back = new WButton(new LiteralText("<")).setOnClick(() -> {
         page = Math.max(0, page - 1);
         updateTabs();
@@ -57,9 +57,9 @@ public class WPagedTabPanel extends WPanel {
     }
 
     @Override
-    public void validate(GuiDescription c) { // TODO Offset everything by 20~ to the right, put buttons vertically stacked on free left space
-        add(next, 0, 0);
-        add(back, 0, 5);
+    public void validate(GuiDescription c) {
+        add(next, 190, 0);
+        add(back, 190, 20);
         updateTabs();
         super.validate(c);
     }
@@ -67,7 +67,7 @@ public class WPagedTabPanel extends WPanel {
     private void add(WWidget widget, int x, int y) {
         children.add(widget);
         widget.setParent(this);
-        widget.setLocation(x+25, y);
+        widget.setLocation(x, y); // +25 x
         expandToFit(widget);
     }
 
@@ -79,9 +79,8 @@ public class WPagedTabPanel extends WPanel {
         }
 
         tabWidgets.add(tabWidget);
-        tabRibbon.add(tabWidget, TAB_WIDTH, TAB_HEIGHT + TAB_PADDING);
+        //tabRibbon.add(tabWidget, TAB_WIDTH, TAB_HEIGHT + TAB_PADDING);
         mainPanel.add(tab.getWidget());
-        //tab.getWidget().setLocation(tab.getWidget().getX()+25, tab.getWidget().getY());
     }
 
     public void add(WWidget widget, Consumer<Tab.Builder> configurator) {
@@ -104,20 +103,16 @@ public class WPagedTabPanel extends WPanel {
     }
 
     public int getPageCount() {
-        int initSize = tabWidgets.size() / getTabsPerPage();
-        if (tabWidgets.size() % getTabsPerPage() > 0) {
+        int initSize = tabWidgets.size() / TABS_PER_PAGE;
+        if (tabWidgets.size() % TABS_PER_PAGE > 0) {
             initSize++;
         }
         return initSize;
     }
 
-    public int getTabsPerPage() {
-        return 5;//tabWidgets.get(mainPanel.getSelectedIndex()).getWidth() / TAB_WIDTH;
-    }
-
     private Iterable<WTab> getTabsOnPage(int page) {
         ArrayList<WTab> tabList = new ArrayList<>();
-        for (int i = getTabsPerPage() * page; i < (getTabsPerPage() * page) + getTabsPerPage(); i++) {
+        for (int i = TABS_PER_PAGE * page; i < (TABS_PER_PAGE * page) + TABS_PER_PAGE; i++) {
             if (i >= tabWidgets.size()) {
                 return tabList;
             }
@@ -127,31 +122,46 @@ public class WPagedTabPanel extends WPanel {
     }
 
     protected void updateTabs() {
+        if (tabWidgets.size() == 0) return;
         if (next != null && back != null) {
-            if (getPageCount() > 1) {
-                hasButtons = true;
+            if (getPageCount() <= 1) {
+                next.setEnabled(false);
+                back.setEnabled(false);
             } else {
-                hasButtons = false;
                 next.setEnabled(true);
                 back.setEnabled(true);
             }
-            next.setLocation(0, 0);
-            back.setLocation(0, 20);
         }
         // Copy and pasted from updateTabs();
-        if (tabWidgets.size() == 0) return;
         int tabSize = 24;
         int tabOffset = 0;
         for (WTab tab : tabWidgets) {
             tab.onHidden();
+            tabRibbon.remove(tab);
         }
         for (WTab tab : getTabsOnPage(page)) {
-            tab.setSize(tabSize, tab.getHeight());
-            tab.setLocation(getX() + tabOffset + 20, getY());
-            tabOffset += tabSize;
+            tab.setLocation(tabOffset, 0); // getY()
+            tabOffset += TAB_WIDTH+1;
             tab.onShown();
+            tabRibbon.add(tab, TAB_WIDTH, TAB_HEIGHT + TAB_PADDING);
         }
-        mainPanel.setSelectedCard(tabWidgets.get(getTabsPerPage() * page).data.widget);
+        tabWidgets.get(TABS_PER_PAGE * page).selected = true;
+        mainPanel.setSelectedCard(tabWidgets.get(TABS_PER_PAGE * page).data.widget);
+    }
+
+    @Override
+    public void paint(MatrixStack matrices, int x, int y, int mouseX, int mouseY) {
+        if (getBackgroundPainter()!=null) getBackgroundPainter().paintBackground(x, y, this);
+
+        for(WWidget child : children) {
+            if (child instanceof WButton) {
+                if (((WButton) child).isEnabled()) {
+                    child.paint(matrices, x + child.getX(), y + child.getY(), mouseX - child.getX(), mouseY - child.getY());
+                }
+            } else {
+                child.paint(matrices, x + child.getX(), y + child.getY(), mouseX - child.getX(), mouseY - child.getY());
+            }
+        }
     }
 
     public static class Tab {
