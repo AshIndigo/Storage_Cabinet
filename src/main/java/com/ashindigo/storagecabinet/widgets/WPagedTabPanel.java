@@ -38,12 +38,12 @@ public class WPagedTabPanel extends WPanel {
     private final WCardPanel mainPanel = new WCardPanel();
     int page = 0;
     boolean hasButtons = true;
-    WButton next = new WButton(new LiteralText(">")).setOnClick(() -> {
-        page = Math.min(getPageCount() - 1, page + 1);
-        updateTabs();
-    });
     WButton back = new WButton(new LiteralText("<")).setOnClick(() -> {
         page = Math.max(0, page - 1);
+        updateTabs();
+    });
+    WButton next = new WButton(new LiteralText(">")).setOnClick(() -> {
+        page = Math.min(getPageCount() - 1, page + 1);
         updateTabs();
     });
 
@@ -57,7 +57,7 @@ public class WPagedTabPanel extends WPanel {
     }
 
     @Override
-    public void validate(GuiDescription c) {
+    public void validate(GuiDescription c) { // TODO Offset everything by 20~ to the right, put buttons vertically stacked on free left space
         add(next, 0, 0);
         add(back, 0, 5);
         updateTabs();
@@ -67,7 +67,7 @@ public class WPagedTabPanel extends WPanel {
     private void add(WWidget widget, int x, int y) {
         children.add(widget);
         widget.setParent(this);
-        widget.setLocation(x, y);
+        widget.setLocation(x+25, y);
         expandToFit(widget);
     }
 
@@ -81,10 +81,10 @@ public class WPagedTabPanel extends WPanel {
         tabWidgets.add(tabWidget);
         tabRibbon.add(tabWidget, TAB_WIDTH, TAB_HEIGHT + TAB_PADDING);
         mainPanel.add(tab.getWidget());
+        //tab.getWidget().setLocation(tab.getWidget().getX()+25, tab.getWidget().getY());
     }
 
     public void add(WWidget widget, Consumer<Tab.Builder> configurator) {
-        widget.setLocation(widget.getX(), widget.getY()-TAB_HEIGHT);
         Tab.Builder builder = new Tab.Builder(widget);
         configurator.accept(builder);
         add(builder.build());
@@ -94,11 +94,6 @@ public class WPagedTabPanel extends WPanel {
     public void setSize(int x, int y) {
         super.setSize(x, y);
         tabRibbon.setSize(x, TAB_HEIGHT);
-    }
-
-    @Override
-    public int getHeight() {
-        return height;
     }
 
     @Environment(EnvType.CLIENT)
@@ -117,7 +112,7 @@ public class WPagedTabPanel extends WPanel {
     }
 
     public int getTabsPerPage() {
-        return getWidth() / 24;
+        return 5;//tabWidgets.get(mainPanel.getSelectedIndex()).getWidth() / TAB_WIDTH;
     }
 
     private Iterable<WTab> getTabsOnPage(int page) {
@@ -140,21 +135,21 @@ public class WPagedTabPanel extends WPanel {
                 next.setEnabled(true);
                 back.setEnabled(true);
             }
-            next.setLocation(-20, -10);
-            back.setLocation(-40, -10);
+            next.setLocation(0, 0);
+            back.setLocation(0, 20);
         }
         // Copy and pasted from updateTabs();
         if (tabWidgets.size() == 0) return;
         int tabSize = 24;
         int tabOffset = 0;
         for (WTab tab : tabWidgets) {
-            tab.onShown();
+            tab.onHidden();
         }
         for (WTab tab : getTabsOnPage(page)) {
             tab.setSize(tabSize, tab.getHeight());
-            tab.setLocation(getX() + tabOffset, getY());
+            tab.setLocation(getX() + tabOffset + 20, getY());
             tabOffset += tabSize;
-            tab.onHidden();
+            tab.onShown();
         }
         mainPanel.setSelectedCard(tabWidgets.get(getTabsPerPage() * page).data.widget);
     }
@@ -279,6 +274,7 @@ public class WPagedTabPanel extends WPanel {
     public class WTab extends WWidget {
         private final Tab data;
         boolean selected = false;
+        private boolean render;
 
         WTab(Tab data) {
             this.data = data;
@@ -319,51 +315,65 @@ public class WPagedTabPanel extends WPanel {
         @Environment(EnvType.CLIENT)
         @Override
         public void paint(MatrixStack matrices, int x, int y, int mouseX, int mouseY) {
-            TextRenderer renderer = MinecraftClient.getInstance().textRenderer;
-            Text title = data.getTitle();
-            Icon icon = data.getIcon();
+            if (render) {
+                TextRenderer renderer = MinecraftClient.getInstance().textRenderer;
+                Text title = data.getTitle();
+                Icon icon = data.getIcon();
 
-            if (title != null) {
-                int width = TAB_WIDTH + renderer.getWidth(title);
-                if (icon == null) width = Math.max(TAB_WIDTH, width - ICON_SIZE);
+                if (title != null) {
+                    int width = TAB_WIDTH + renderer.getWidth(title);
+                    if (icon == null) width = Math.max(TAB_WIDTH, width - ICON_SIZE);
 
-                if (this.width != width) {
-                    setSize(width, this.height);
-                    getParent().layout();
-                }
-            }
-
-            (selected ? Painters.SELECTED_TAB : Painters.UNSELECTED_TAB).paintBackground(x, y, this);
-            if (isFocused()) {
-                (selected ? Painters.SELECTED_TAB_FOCUS_BORDER : Painters.UNSELECTED_TAB_FOCUS_BORDER).paintBackground(x, y, this);
-            }
-
-            int iconX = 6;
-
-            if (title != null) {
-                int titleX = (icon != null) ? iconX + ICON_SIZE + 1 : 0;
-                int titleY = (height - TAB_PADDING - renderer.fontHeight) / 2 + 1;
-                int width = (icon != null) ? this.width - iconX - ICON_SIZE : this.width;
-                HorizontalAlignment align = (icon != null) ? HorizontalAlignment.LEFT : HorizontalAlignment.CENTER;
-
-                int color;
-                if (LibGuiClient.config.darkMode) {
-                    color = WLabel.DEFAULT_DARKMODE_TEXT_COLOR;
-                } else {
-                    color = selected ? WLabel.DEFAULT_TEXT_COLOR : 0xEEEEEE;
+                    if (this.width != width) {
+                        setSize(width, this.height);
+                        getParent().layout();
+                    }
                 }
 
-                ScreenDrawing.drawString(matrices, title.asOrderedText(), align, x + titleX, y + titleY, width, color);
-            }
+                (selected ? Painters.SELECTED_TAB : Painters.UNSELECTED_TAB).paintBackground(x, y, this);
+                if (isFocused()) {
+                    (selected ? Painters.SELECTED_TAB_FOCUS_BORDER : Painters.UNSELECTED_TAB_FOCUS_BORDER).paintBackground(x, y, this);
+                }
 
-            if (icon != null) {
-                icon.paint(matrices, x + iconX, y + (height - TAB_PADDING - ICON_SIZE) / 2, ICON_SIZE);
+                int iconX = 6;
+
+                if (title != null) {
+                    int titleX = (icon != null) ? iconX + ICON_SIZE + 1 : 0;
+                    int titleY = (height - TAB_PADDING - renderer.fontHeight) / 2 + 1;
+                    int width = (icon != null) ? this.width - iconX - ICON_SIZE : this.width;
+                    HorizontalAlignment align = (icon != null) ? HorizontalAlignment.LEFT : HorizontalAlignment.CENTER;
+
+                    int color;
+                    if (LibGuiClient.config.darkMode) {
+                        color = WLabel.DEFAULT_DARKMODE_TEXT_COLOR;
+                    } else {
+                        color = selected ? WLabel.DEFAULT_TEXT_COLOR : 0xEEEEEE;
+                    }
+
+                    ScreenDrawing.drawString(matrices, title.asOrderedText(), align, x + titleX, y + titleY, width, color);
+                }
+
+                if (icon != null) {
+                    icon.paint(matrices, x + iconX, y + (height - TAB_PADDING - ICON_SIZE) / 2, ICON_SIZE);
+                }
             }
         }
 
         @Override
         public void addTooltip(TooltipBuilder tooltip) {
             data.addTooltip(tooltip);
+        }
+
+        @Override
+        public void onHidden() {
+            super.onHidden();
+            render = false;
+        }
+
+        @Override
+        public void onShown() {
+            super.onShown();
+            render = true;
         }
     }
 }

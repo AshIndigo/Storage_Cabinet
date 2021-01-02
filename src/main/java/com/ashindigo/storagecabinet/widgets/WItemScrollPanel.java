@@ -92,7 +92,11 @@ public class WItemScrollPanel extends WClippedPanel {
         return verticalScrollBar;
     }
 
-    public int getBoundOffset() {
+    public int getBoundOffsetY() {
         return parent instanceof WCardPanel ? 46 : 0;
+    }
+
+    public int getBoundOffsetX() {
+        return parent instanceof WCardPanel ? 25 : 0;
     }
 }

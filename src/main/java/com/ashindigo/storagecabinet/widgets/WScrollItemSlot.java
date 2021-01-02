@@ -4,8 +4,6 @@ import com.ashindigo.storagecabinet.mixins.ValidatedSlotAccessor;
 import io.github.cottonmc.cotton.gui.GuiDescription;
 import io.github.cottonmc.cotton.gui.client.BackgroundPainter;
 import io.github.cottonmc.cotton.gui.client.ScreenDrawing;
-import io.github.cottonmc.cotton.gui.impl.access.SlotAccessor;
-import io.github.cottonmc.cotton.gui.widget.WItemSlot;
 import io.github.cottonmc.cotton.gui.widget.WWidget;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -199,7 +197,7 @@ public class WScrollItemSlot extends WWidget {
     }
 
     protected ScrollValidatedSlot createSlotPeer(Inventory inventory, int index, int x, int y) {
-        return new ScrollValidatedSlot(inventory, index, x, y, getX(), getY()+((WItemScrollPanel)getParent()).getBoundOffset(), getX() + getParent().getWidth(), getY() + getParent().getHeight()+((WItemScrollPanel)getParent()).getBoundOffset());
+        return new ScrollValidatedSlot(inventory, index, x, y, getX()+((WItemScrollPanel)getParent()).getBoundOffsetX(), getY()+((WItemScrollPanel)getParent()).getBoundOffsetY(), getX() + getParent().getWidth()+((WItemScrollPanel)getParent()).getBoundOffsetX(), getY() + getParent().getHeight()+((WItemScrollPanel)getParent()).getBoundOffsetY());
     }
 
     @Nullable
@@ -279,7 +277,6 @@ public class WScrollItemSlot extends WWidget {
     }
 
     public void scrollVert(int startIndex) {
-        //this.startIndex = startIndex;
         for (int i = 0; i < peers.size(); i++) {
             ValidatedSlotAccessor slot = ((ValidatedSlotAccessor) peers.get(i));
             slot.setY(slot.getOrigY() - (18 * startIndex));
