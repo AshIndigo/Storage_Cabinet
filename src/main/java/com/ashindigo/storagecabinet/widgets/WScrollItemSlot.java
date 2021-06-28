@@ -14,7 +14,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.SlotActionType;
 
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 
@@ -30,7 +29,7 @@ public class WScrollItemSlot extends WWidget {
     private boolean insertingAllowed = true;
     private boolean takingAllowed = true;
     private int focusedSlot = -1;
-    @Nullable
+    
     @Environment(EnvType.CLIENT)
     private BackgroundPainter backgroundPainter = (left, top, panel) -> { // Yes this is just BackgroundPainter.SLOT with some small modifications to it
         WScrollItemSlot slot = (WScrollItemSlot) panel;
@@ -200,14 +199,14 @@ public class WScrollItemSlot extends WWidget {
         return new ScrollValidatedSlot(inventory, index, x, y, getX()+((WItemScrollPanel)getParent()).getBoundOffsetX(), getY()+((WItemScrollPanel)getParent()).getBoundOffsetY(), getX() + getParent().getWidth()+((WItemScrollPanel)getParent()).getBoundOffsetX(), getY() + getParent().getHeight()+((WItemScrollPanel)getParent()).getBoundOffsetY());
     }
 
-    @Nullable
+    
     @Environment(EnvType.CLIENT)
     public BackgroundPainter getBackgroundPainter() {
         return this.backgroundPainter;
     }
 
     @Environment(EnvType.CLIENT)
-    public void setBackgroundPainter(@Nullable BackgroundPainter painter) {
+    public void setBackgroundPainter( BackgroundPainter painter) {
         this.backgroundPainter = painter;
     }
 
@@ -233,7 +232,6 @@ public class WScrollItemSlot extends WWidget {
 
     }
 
-    @Nullable
     public WWidget cycleFocus(boolean lookForwards) {
         if (this.focusedSlot < 0) {
             this.focusedSlot = lookForwards ? 0 : this.slotsWide * this.slotsHigh - 1;
@@ -277,15 +275,10 @@ public class WScrollItemSlot extends WWidget {
     }
 
     public void scrollVert(int startIndex) {
-        for (int i = 0; i < peers.size(); i++) {
-            ValidatedSlotAccessor slot = ((ValidatedSlotAccessor) peers.get(i));
+        for (ScrollValidatedSlot peer : peers) {
+            ValidatedSlotAccessor slot = ((ValidatedSlotAccessor) peer);
             slot.setY(slot.getOrigY() - (18 * startIndex));
         }
-    }
-
-    @Environment(EnvType.CLIENT)
-    public void addPainters() {
-        //this.backgroundPainter = BackgroundPainter.SLOT;
     }
 
     @FunctionalInterface

@@ -19,7 +19,6 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -38,12 +37,12 @@ public class WPagedTabPanel extends WPanel {
     private final List<WTab> tabWidgets = new ArrayList<>();
     private final WCardPanel mainPanel = new WCardPanel();
     int page = 0;
-    WButton back = new WButton(new LiteralText("<")).setOnClick(() -> {
-        page = Math.max(0, page - 1);
-        updateTabs();
-    });
     WButton next = new WButton(new LiteralText(">")).setOnClick(() -> {
         page = Math.min(getPageCount() - 1, page + 1);
+        updateTabs();
+    });
+    WButton back = new WButton(new LiteralText("<")).setOnClick(() -> {
+        page = Math.max(0, page - 1);
         updateTabs();
     });
 
@@ -141,7 +140,7 @@ public class WPagedTabPanel extends WPanel {
         }
         for (WTab tab : getTabsOnPage(page)) {
             tab.setLocation(tabOffset, 0); // getY()
-            tabOffset += TAB_WIDTH+1;
+            tabOffset += TAB_WIDTH + 1;
             tab.onShown();
             tabRibbon.add(tab, TAB_WIDTH, TAB_HEIGHT + TAB_PADDING);
         }
@@ -151,9 +150,9 @@ public class WPagedTabPanel extends WPanel {
 
     @Override
     public void paint(MatrixStack matrices, int x, int y, int mouseX, int mouseY) {
-        if (getBackgroundPainter()!=null) getBackgroundPainter().paintBackground(x, y, this);
+        if (getBackgroundPainter() != null) getBackgroundPainter().paintBackground(x, y, this);
 
-        for(WWidget child : children) {
+        for (WWidget child : children) {
             if (child instanceof WButton) {
                 if (((WButton) child).isEnabled()) {
                     child.paint(matrices, x + child.getX(), y + child.getY(), mouseX - child.getX(), mouseY - child.getY());
@@ -165,17 +164,17 @@ public class WPagedTabPanel extends WPanel {
     }
 
     public static class Tab {
-        @Nullable
+
         private final Text title;
         private final WWidget widget;
-        @Nullable
+
         private final Consumer<TooltipBuilder> tooltip;
-        @Nullable
+
         private Icon icon;
 
         @SuppressWarnings("DeprecatedIsStillUsed")
         @Deprecated
-        public Tab(@Nullable Text title, @Nullable Icon icon, WWidget widget, @Nullable Consumer<TooltipBuilder> tooltip) {
+        public Tab(Text title, Icon icon, WWidget widget, Consumer<TooltipBuilder> tooltip) {
             if (title == null && icon == null) {
                 throw new IllegalArgumentException("A tab must have a title or an icon");
             }
@@ -186,12 +185,12 @@ public class WPagedTabPanel extends WPanel {
             this.tooltip = tooltip;
         }
 
-        @Nullable
+
         public Text getTitle() {
             return title;
         }
 
-        @Nullable
+
         public Icon getIcon() {
             return icon;
         }
@@ -214,9 +213,9 @@ public class WPagedTabPanel extends WPanel {
         public static final class Builder {
             private final WWidget widget;
             private final List<Text> tooltip = new ArrayList<>();
-            @Nullable
+
             private Text title;
-            @Nullable
+
             private Icon icon;
 
             public Builder(WWidget widget) {

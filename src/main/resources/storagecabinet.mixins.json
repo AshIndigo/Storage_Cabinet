@@ -8,6 +8,5 @@
   "client": [],
   "injectors": {
     "defaultRequire": 1
-  },
-  "refmap": "storagecabinet-refmap.json"
+  }
 }

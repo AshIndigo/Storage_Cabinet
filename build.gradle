@@ -40,7 +40,7 @@ dependencies {
 		exclude module: "fabric-api"
 	}
 	modImplementation "me.shedaniel:RoughlyEnoughItems:${project.rei_version}"
-	modApi("io.github.cottonmc:LibGui:${project.libgui_version}")
+	modImplementation include("io.github.cottonmc:LibGui:${project.libgui_version}")
 }
 
 processResources {

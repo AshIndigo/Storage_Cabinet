@@ -33,9 +33,7 @@ public class ScrollValidatedSlot extends ValidatedSlot {
 
     @Override
     public void markDirty() {
-        this.listeners.forEach((slot, listener) -> {
-            listener.onStackChanged(slot, this.inventory, this.getInventoryIndex(), this.getStack());
-        });
+        this.listeners.forEach((slot, listener) -> listener.onStackChanged(slot, this.inventory, this.getInventoryIndex(), this.getStack()));
         super.markDirty();
     }
 
