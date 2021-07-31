@@ -36,19 +36,13 @@ public class StorageCabinetUpgrade extends Item {
     }
 
     public StorageCabinetBlock getCabinet(int tier) {
-        switch (tier) {
-            default:
-            case 0:
-                return (StorageCabinetBlock) Registry.BLOCK.get(new Identifier(MODID, MODID + "_wood"));
-            case 1:
-                return (StorageCabinetBlock) Registry.BLOCK.get(new Identifier(MODID, MODID + "_iron"));
-            case 2:
-                return (StorageCabinetBlock) Registry.BLOCK.get(new Identifier(MODID, MODID + "_gold"));
-            case 3:
-                return (StorageCabinetBlock) Registry.BLOCK.get(new Identifier(MODID, MODID + "_diamond"));
-            case 4:
-                return (StorageCabinetBlock) Registry.BLOCK.get(new Identifier(MODID, MODID + "_emerald"));
-        }
+        return switch (tier) {
+            case 1 -> (StorageCabinetBlock) Registry.BLOCK.get(new Identifier(MODID, MODID + "_iron"));
+            case 2 -> (StorageCabinetBlock) Registry.BLOCK.get(new Identifier(MODID, MODID + "_gold"));
+            case 3 -> (StorageCabinetBlock) Registry.BLOCK.get(new Identifier(MODID, MODID + "_diamond"));
+            case 4 -> (StorageCabinetBlock) Registry.BLOCK.get(new Identifier(MODID, MODID + "_emerald"));
+            default -> (StorageCabinetBlock) Registry.BLOCK.get(new Identifier(MODID, MODID + "_wood"));
+        };
     }
 
     public void copyItems(Inventory source, Inventory target) {

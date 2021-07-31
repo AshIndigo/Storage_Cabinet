@@ -13,6 +13,6 @@ public class StorageCabinetClient implements ClientModInitializer {
     public void onInitializeClient() {
         ScreenRegistry.register(StorageCabinet.cabinetScreenHandler, StorageCabinetScreen::new);
         ScreenRegistry.register(StorageCabinet.managerScreenHandler, CabinetManagerScreen::new);
-        BlockEntityRendererRegistry.INSTANCE.register(StorageCabinet.storageCabinetEntity, StorageCabinetRenderer::new);
+        BlockEntityRendererRegistry.INSTANCE.register(StorageCabinet.STORAGE_CABINET_ENTITY, ctx -> new StorageCabinetRenderer());
     }
 }

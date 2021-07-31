@@ -20,38 +20,35 @@ import java.util.function.Predicate;
 public class WScrollItemSlot extends WWidget {
 
     private static final Predicate<ItemStack> DEFAULT_FILTER = (stack) -> true;
-    private final List<ScrollValidatedSlot> peers = new ArrayList<>();
-    private final Set<WScrollItemSlot.ChangeListener> listeners;
-    private Inventory internalInv;
-    private int startIndex = 0;
-    private int slotsWide = 1;
-    private int slotsHigh = 1;
-    private boolean insertingAllowed = true;
-    private boolean takingAllowed = true;
-    private int focusedSlot = -1;
-    
     @Environment(EnvType.CLIENT)
-    private BackgroundPainter backgroundPainter = (left, top, panel) -> { // Yes this is just BackgroundPainter.SLOT with some small modifications to it
-        WScrollItemSlot slot = (WScrollItemSlot) panel;
-        for (int x = 0; x < slot.getWidth() / 18; ++x) {
-            for (int y = 0; y < slot.getHeight() / 18; ++y) {
-                int index = x + y * (slot.getWidth() / 18);
-                int lo = 0xB8000000;
-                int bg = 0x4C000000;
-                int hi = 0xB8FFFFFF;
-                ScreenDrawing.drawBeveledPanel((x * 18) + left, (y * 18) + top, 16 + 2, 16 + 2, lo, bg, hi);
-                if (slot.getFocusedSlot() == index) {
-                    int sx = (x * 18) + left;
-                    int sy = (y * 18) + top;
-                    ScreenDrawing.coloredRect(sx, sy, 18, 1, 0xFF_FFFFA0);
-                    ScreenDrawing.coloredRect(sx, sy + 1, 1, 18 - 1, 0xFF_FFFFA0);
-                    ScreenDrawing.coloredRect(sx + 18 - 1, sy + 1, 1, 18 - 1, 0xFF_FFFFA0);
-                    ScreenDrawing.coloredRect(sx + 1, sy + 18 - 1, 18 - 1, 1, 0xFF_FFFFA0);
+    public static BackgroundPainter backgroundPainter = (matrices, left, top, panel) -> {
+        if (panel instanceof WScrollItemSlot slot) {
+            for (int x = 0; x < slot.getWidth() / 18; ++x) {
+                for (int y = 0; y < slot.getHeight() / 18; ++y) {
+                    int index = x + y * (slot.getWidth() / 18);
+                    int lo = 0xB8000000;
+                    int bg = 0x4C000000;
+                    int hi = 0xB8FFFFFF;
+                    ScreenDrawing.drawBeveledPanel(matrices, (x * 18) + left, (y * 18) + top, 16 + 2, 16 + 2, lo, bg, hi);
+                    if (slot.getFocusedSlot() == index) {
+                        int sx = (x * 18) + left;
+                        int sy = (y * 18) + top;
+                        ScreenDrawing.coloredRect(matrices, sx, sy, 18, 1, 0xFF_FFFFA0);
+                        ScreenDrawing.coloredRect(matrices, sx, sy + 1, 1, 18 - 1, 0xFF_FFFFA0);
+                        ScreenDrawing.coloredRect(matrices, sx + 18 - 1, sy + 1, 1, 18 - 1, 0xFF_FFFFA0);
+                        ScreenDrawing.coloredRect(matrices, sx + 1, sy + 18 - 1, 18 - 1, 1, 0xFF_FFFFA0);
+                    }
                 }
-
             }
         }
     };
+    private final List<ScrollValidatedSlot> peers = new ArrayList<>();
+    private final Set<WScrollItemSlot.ChangeListener> listeners;
+    private final Inventory internalInv;
+    private final int startIndex;
+    private final int slotsWide;
+    private final int slotsHigh;
+    private int focusedSlot = -1;
     private Predicate<ItemStack> filter;
 
     public WScrollItemSlot(Inventory inventory, int startIndex, int slotsWide, int slotsHigh) {
@@ -61,43 +58,6 @@ public class WScrollItemSlot extends WWidget {
         this.startIndex = startIndex;
         this.slotsWide = slotsWide;
         this.slotsHigh = slotsHigh;
-    }
-
-    private WScrollItemSlot() {
-        this.filter = DEFAULT_FILTER;
-        this.listeners = new HashSet<>();
-    }
-
-    public static WScrollItemSlot of(Inventory inventory, int index) {
-        WScrollItemSlot w = new WScrollItemSlot();
-        w.internalInv = inventory;
-        w.startIndex = index;
-        return w;
-    }
-
-    public static WScrollItemSlot of(Inventory inventory, int startIndex, int slotsWide, int slotsHigh) {
-        WScrollItemSlot w = new WScrollItemSlot();
-        w.internalInv = inventory;
-        w.startIndex = startIndex;
-        w.slotsWide = slotsWide;
-        w.slotsHigh = slotsHigh;
-        return w;
-    }
-
-    public static WScrollItemSlot outputOf(Inventory inventory, int index) {
-        WScrollItemSlot w = new WScrollItemSlot();
-        w.internalInv = inventory;
-        w.startIndex = index;
-        return w;
-    }
-
-    public static WScrollItemSlot ofPlayerStorage(Inventory inventory) {
-        WScrollItemSlot w = new WScrollItemSlot();
-        w.internalInv = inventory;
-        w.startIndex = 9;
-        w.slotsWide = 9;
-        w.slotsHigh = 3;
-        return w;
     }
 
     public int getWidth() {
@@ -112,50 +72,6 @@ public class WScrollItemSlot extends WWidget {
         return true;
     }
 
-    public boolean isModifiable() {
-        return this.takingAllowed || this.insertingAllowed;
-    }
-
-    public WScrollItemSlot setModifiable(boolean modifiable) {
-        this.insertingAllowed = modifiable;
-        this.takingAllowed = modifiable;
-
-        for (ScrollValidatedSlot peer : this.peers) {
-            peer.setInsertingAllowed(modifiable);
-            peer.setTakingAllowed(modifiable);
-        }
-
-        return this;
-    }
-
-    public boolean isInsertingAllowed() {
-        return this.insertingAllowed;
-    }
-
-    public WScrollItemSlot setInsertingAllowed(boolean insertingAllowed) {
-        this.insertingAllowed = insertingAllowed;
-
-        for (ScrollValidatedSlot peer : this.peers) {
-            peer.setInsertingAllowed(insertingAllowed);
-        }
-
-        return this;
-    }
-
-    public boolean isTakingAllowed() {
-        return this.takingAllowed;
-    }
-
-    public WScrollItemSlot setTakingAllowed(boolean takingAllowed) {
-        this.takingAllowed = takingAllowed;
-
-        for (ScrollValidatedSlot peer : this.peers) {
-            peer.setTakingAllowed(takingAllowed);
-        }
-
-        return this;
-    }
-
     public int getFocusedSlot() {
         return this.focusedSlot;
     }
@@ -168,8 +84,8 @@ public class WScrollItemSlot extends WWidget {
         for (int y = 0; y < this.slotsHigh; ++y) {
             for (int x = 0; x < this.slotsWide; ++x) {
                 ScrollValidatedSlot slot = this.createSlotPeer(this.internalInv, index, this.getAbsoluteX() + x * 18 + 1, this.getAbsoluteY() + y * 18 + 1);
-                slot.setInsertingAllowed(this.insertingAllowed);
-                slot.setTakingAllowed(this.takingAllowed);
+                slot.setInsertingAllowed(true);
+                slot.setTakingAllowed(true);
                 slot.setFilter(this.filter);
 
                 for (ChangeListener listener : this.listeners) {
@@ -186,8 +102,7 @@ public class WScrollItemSlot extends WWidget {
 
     @Environment(EnvType.CLIENT)
     public void onKeyPressed(int ch, int key, int modifiers) {
-        if (isActivationKey(ch) && this.host instanceof ScreenHandler && this.focusedSlot >= 0) {
-            ScreenHandler handler = (ScreenHandler) this.host;
+        if (isActivationKey(ch) && this.host instanceof ScreenHandler handler && this.focusedSlot >= 0) {
             MinecraftClient client = MinecraftClient.getInstance();
             ScrollValidatedSlot peer = this.peers.get(this.focusedSlot);
             client.interactionManager.clickSlot(handler.syncId, peer.id, 0, SlotActionType.PICKUP, client.player);
@@ -196,22 +111,7 @@ public class WScrollItemSlot extends WWidget {
     }
 
     protected ScrollValidatedSlot createSlotPeer(Inventory inventory, int index, int x, int y) {
-        return new ScrollValidatedSlot(inventory, index, x, y, getX()+((WItemScrollPanel)getParent()).getBoundOffsetX(), getY()+((WItemScrollPanel)getParent()).getBoundOffsetY(), getX() + getParent().getWidth()+((WItemScrollPanel)getParent()).getBoundOffsetX(), getY() + getParent().getHeight()+((WItemScrollPanel)getParent()).getBoundOffsetY());
-    }
-
-    
-    @Environment(EnvType.CLIENT)
-    public BackgroundPainter getBackgroundPainter() {
-        return this.backgroundPainter;
-    }
-
-    @Environment(EnvType.CLIENT)
-    public void setBackgroundPainter( BackgroundPainter painter) {
-        this.backgroundPainter = painter;
-    }
-
-    public Predicate<ItemStack> getFilter() {
-        return this.filter;
+        return new ScrollValidatedSlot(inventory, index, x, y, getX() + ((WItemScrollPanel) getParent()).getBoundOffsetX(), getY() + ((WItemScrollPanel) getParent()).getBoundOffsetY(), getX() + getParent().getWidth() + ((WItemScrollPanel) getParent()).getBoundOffsetX(), getY() + getParent().getHeight() + ((WItemScrollPanel) getParent()).getBoundOffsetY());
     }
 
     public WScrollItemSlot setFilter(Predicate<ItemStack> filter) {
@@ -226,10 +126,9 @@ public class WScrollItemSlot extends WWidget {
 
     @Environment(EnvType.CLIENT)
     public void paint(MatrixStack matrices, int x, int y, int mouseX, int mouseY) {
-        if (this.backgroundPainter != null) {
-            this.backgroundPainter.paintBackground(x, y, this);
+        if (backgroundPainter != null) {
+            backgroundPainter.paintBackground(matrices, x, y, this);
         }
-
     }
 
     public WWidget cycleFocus(boolean lookForwards) {
@@ -257,16 +156,18 @@ public class WScrollItemSlot extends WWidget {
         for (ScrollValidatedSlot peer : this.peers) {
             peer.addChangeListener(this, listener);
         }
-
     }
 
+    @SuppressWarnings("UnstableApiUsage")
+    @Override
     public void onShown() {
         for (ScrollValidatedSlot peer : this.peers) {
             peer.setVisible(true);
         }
-
     }
 
+    @SuppressWarnings("UnstableApiUsage")
+    @Override
     public void onHidden() {
         super.onHidden();
         for (ScrollValidatedSlot peer : this.peers) {

@@ -13,15 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-public class ManagerInventory implements SidedInventory { // The methods involving "temp" scare me
-
-    private final CabinetManagerEntity entity;
-    private final List<StorageCabinetEntity> cabinets;
-
-    public ManagerInventory(CabinetManagerEntity entity, List<StorageCabinetEntity> cabinets) {
-        this.entity = entity;
-        this.cabinets = cabinets;
-    }
+public record ManagerInventory(CabinetManagerEntity entity, List<StorageCabinetEntity> cabinets) implements SidedInventory { // The methods involving "temp" scare me
 
     @Override
     public int[] getAvailableSlots(Direction side) {
@@ -80,7 +72,7 @@ public class ManagerInventory implements SidedInventory { // The methods involvi
         int temp = slot;
         for (StorageCabinetEntity cabinet : cabinets) {
             if (cabinet.size() - 1 >= temp) {
-               return cabinet.getStack(temp);
+                return cabinet.getStack(temp);
             } else {
                 temp -= cabinet.size();
             }
@@ -93,7 +85,7 @@ public class ManagerInventory implements SidedInventory { // The methods involvi
         int temp = slot;
         for (StorageCabinetEntity cabinet : cabinets) {
             if (cabinet.size() - 1 >= temp) {
-               return cabinet.removeStack(temp, amount);
+                return cabinet.removeStack(temp, amount);
             } else {
                 temp -= cabinet.size();
             }
@@ -119,8 +111,8 @@ public class ManagerInventory implements SidedInventory { // The methods involvi
         int temp = slot;
         for (StorageCabinetEntity cabinet : cabinets) {
             if (cabinet.size() - 1 >= temp) {
-               cabinet.setStack(temp, stack);
-               return;
+                cabinet.setStack(temp, stack);
+                return;
             } else {
                 temp -= cabinet.size();
             }

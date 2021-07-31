@@ -2,11 +2,12 @@ package com.ashindigo.storagecabinet.widgets;
 
 import io.github.cottonmc.cotton.gui.GuiDescription;
 import io.github.cottonmc.cotton.gui.client.BackgroundPainter;
-import io.github.cottonmc.cotton.gui.client.LibGuiClient;
+import io.github.cottonmc.cotton.gui.client.LibGui;
 import io.github.cottonmc.cotton.gui.client.ScreenDrawing;
 import io.github.cottonmc.cotton.gui.widget.*;
 import io.github.cottonmc.cotton.gui.widget.data.Axis;
 import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
+import io.github.cottonmc.cotton.gui.widget.data.InputResult;
 import io.github.cottonmc.cotton.gui.widget.icon.Icon;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -37,12 +38,12 @@ public class WPagedTabPanel extends WPanel {
     private final List<WTab> tabWidgets = new ArrayList<>();
     private final WCardPanel mainPanel = new WCardPanel();
     int page = 0;
-    WButton next = new WButton(new LiteralText(">")).setOnClick(() -> {
-        page = Math.min(getPageCount() - 1, page + 1);
-        updateTabs();
-    });
     WButton back = new WButton(new LiteralText("<")).setOnClick(() -> {
         page = Math.max(0, page - 1);
+        updateTabs();
+    });
+    WButton next = new WButton(new LiteralText(">")).setOnClick(() -> {
+        page = Math.min(getPageCount() - 1, page + 1);
         updateTabs();
     });
 
@@ -57,8 +58,8 @@ public class WPagedTabPanel extends WPanel {
 
     @Override
     public void validate(GuiDescription c) {
-        add(next, 190, 0);
-        add(back, 190, 20);
+        add(next, 175, 0);
+        add(back, 175, 20);
         updateTabs();
         super.validate(c);
     }
@@ -92,13 +93,6 @@ public class WPagedTabPanel extends WPanel {
     public void setSize(int x, int y) {
         super.setSize(x, y);
         tabRibbon.setSize(x, TAB_HEIGHT);
-    }
-
-    @Environment(EnvType.CLIENT)
-    @Override
-    public void addPainters() {
-        super.addPainters();
-        mainPanel.setBackgroundPainter(BackgroundPainter.VANILLA);
     }
 
     public int getPageCount() {
@@ -150,7 +144,7 @@ public class WPagedTabPanel extends WPanel {
 
     @Override
     public void paint(MatrixStack matrices, int x, int y, int mouseX, int mouseY) {
-        if (getBackgroundPainter() != null) getBackgroundPainter().paintBackground(x, y, this);
+        if (getBackgroundPainter() != null) getBackgroundPainter().paintBackground(matrices, x, y, this);
 
         for (WWidget child : children) {
             if (child instanceof WButton) {
@@ -172,7 +166,6 @@ public class WPagedTabPanel extends WPanel {
 
         private Icon icon;
 
-        @SuppressWarnings("DeprecatedIsStillUsed")
         @Deprecated
         public Tab(Text title, Icon icon, WWidget widget, Consumer<TooltipBuilder> tooltip) {
             if (title == null && icon == null) {
@@ -250,7 +243,7 @@ public class WPagedTabPanel extends WPanel {
 
                 if (!this.tooltip.isEmpty()) {
                     //noinspection Convert2Lambda
-                    tooltip = new Consumer<TooltipBuilder>() {
+                    tooltip = new Consumer<>() {
                         @Environment(EnvType.CLIENT)
                         @Override
                         public void accept(TooltipBuilder builder) {
@@ -300,7 +293,7 @@ public class WPagedTabPanel extends WPanel {
 
         @Environment(EnvType.CLIENT)
         @Override
-        public void onClick(int x, int y, int button) {
+        public InputResult onClick(int x, int y, int button) {
             super.onClick(x, y, button);
 
             MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.0F));
@@ -311,6 +304,7 @@ public class WPagedTabPanel extends WPanel {
 
             mainPanel.setSelectedCard(data.getWidget());
             WPagedTabPanel.this.layout();
+            return InputResult.PROCESSED;
         }
 
         @Environment(EnvType.CLIENT)
@@ -324,47 +318,45 @@ public class WPagedTabPanel extends WPanel {
         @Environment(EnvType.CLIENT)
         @Override
         public void paint(MatrixStack matrices, int x, int y, int mouseX, int mouseY) {
-            if (render) {
-                TextRenderer renderer = MinecraftClient.getInstance().textRenderer;
-                Text title = data.getTitle();
-                Icon icon = data.getIcon();
+            TextRenderer renderer = MinecraftClient.getInstance().textRenderer;
+            Text title = data.getTitle();
+            Icon icon = data.getIcon();
 
-                if (title != null) {
-                    int width = TAB_WIDTH + renderer.getWidth(title);
-                    if (icon == null) width = Math.max(TAB_WIDTH, width - ICON_SIZE);
+            if (title != null) {
+                int width = TAB_WIDTH + renderer.getWidth(title);
+                if (icon == null) width = Math.max(TAB_WIDTH, width - ICON_SIZE);
 
-                    if (this.width != width) {
-                        setSize(width, this.height);
-                        getParent().layout();
-                    }
+                if (this.width != width) {
+                    setSize(width, this.height);
+                    getParent().layout();
+                }
+            }
+
+            (selected ? Painters.SELECTED_TAB : Painters.UNSELECTED_TAB).paintBackground(matrices, x, y, this);
+            if (isFocused()) {
+                (selected ? Painters.SELECTED_TAB_FOCUS_BORDER : Painters.UNSELECTED_TAB_FOCUS_BORDER).paintBackground(matrices, x, y, this);
+            }
+
+            int iconX = 6;
+
+            if (title != null) {
+                int titleX = (icon != null) ? iconX + ICON_SIZE + 1 : 0;
+                int titleY = (height - TAB_PADDING - renderer.fontHeight) / 2 + 1;
+                int width = (icon != null) ? this.width - iconX - ICON_SIZE : this.width;
+                HorizontalAlignment align = (icon != null) ? HorizontalAlignment.LEFT : HorizontalAlignment.CENTER;
+
+                int color;
+                if (LibGui.isDarkMode()) {
+                    color = WLabel.DEFAULT_DARKMODE_TEXT_COLOR;
+                } else {
+                    color = selected ? WLabel.DEFAULT_TEXT_COLOR : 0xEEEEEE;
                 }
 
-                (selected ? Painters.SELECTED_TAB : Painters.UNSELECTED_TAB).paintBackground(x, y, this);
-                if (isFocused()) {
-                    (selected ? Painters.SELECTED_TAB_FOCUS_BORDER : Painters.UNSELECTED_TAB_FOCUS_BORDER).paintBackground(x, y, this);
-                }
+                ScreenDrawing.drawString(matrices, title.asOrderedText(), align, x + titleX, y + titleY, width, color);
+            }
 
-                int iconX = 6;
-
-                if (title != null) {
-                    int titleX = (icon != null) ? iconX + ICON_SIZE + 1 : 0;
-                    int titleY = (height - TAB_PADDING - renderer.fontHeight) / 2 + 1;
-                    int width = (icon != null) ? this.width - iconX - ICON_SIZE : this.width;
-                    HorizontalAlignment align = (icon != null) ? HorizontalAlignment.LEFT : HorizontalAlignment.CENTER;
-
-                    int color;
-                    if (LibGuiClient.config.darkMode) {
-                        color = WLabel.DEFAULT_DARKMODE_TEXT_COLOR;
-                    } else {
-                        color = selected ? WLabel.DEFAULT_TEXT_COLOR : 0xEEEEEE;
-                    }
-
-                    ScreenDrawing.drawString(matrices, title.asOrderedText(), align, x + titleX, y + titleY, width, color);
-                }
-
-                if (icon != null) {
-                    icon.paint(matrices, x + iconX, y + (height - TAB_PADDING - ICON_SIZE) / 2, ICON_SIZE);
-                }
+            if (icon != null) {
+                icon.paint(matrices, x + iconX, y + (height - TAB_PADDING - ICON_SIZE) / 2, ICON_SIZE);
             }
         }
 

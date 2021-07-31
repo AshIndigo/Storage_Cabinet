@@ -20,7 +20,7 @@ import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
@@ -38,7 +38,7 @@ import net.minecraft.world.WorldAccess;
 
 import java.util.*;
 
-public class StorageCabinetEntity extends BlockEntity implements BasicSidedInventory, InventoryChangedListener, ExtendedScreenHandlerFactory, BlockEntityClientSerializable,InventoryProvider {
+public class StorageCabinetEntity extends BlockEntity implements BasicSidedInventory, InventoryChangedListener, ExtendedScreenHandlerFactory, BlockEntityClientSerializable, InventoryProvider {
 
     final List<InventoryChangedListener> listeners = new ArrayList<>();
     final List<InventoryChangedListener> clientListeners = new ArrayList<>();
@@ -50,8 +50,8 @@ public class StorageCabinetEntity extends BlockEntity implements BasicSidedInven
     private int viewerCount;
     private Text customName;
 
-    public StorageCabinetEntity() {
-        super(StorageCabinet.storageCabinetEntity);
+    public StorageCabinetEntity(BlockPos pos, BlockState state) {
+        super(StorageCabinet.STORAGE_CABINET_ENTITY, pos, state);
     }
 
     public StorageCabinetEntity setTier(int tier) {
@@ -62,7 +62,7 @@ public class StorageCabinetEntity extends BlockEntity implements BasicSidedInven
 
     public Collection<Identifier> getTagsFor(Item object) {
         List<Identifier> list = Lists.newArrayList();
-        for (Map.Entry<Identifier, Tag<Item>> entry : ServerTagManagerHolder.getTagManager().getItems().getTags().entrySet()) {
+        for (Map.Entry<Identifier, Tag<Item>> entry : ServerTagManagerHolder.getTagManager().getOrCreateTagGroup(Registry.ITEM.getKey()).getTags().entrySet()) {
             if (entry.getValue().contains(object)) {
                 list.add(entry.getKey());
             }
@@ -72,11 +72,11 @@ public class StorageCabinetEntity extends BlockEntity implements BasicSidedInven
     }
 
     @Override
-    public void fromTag(BlockState state, CompoundTag tag) {
-        super.fromTag(state, tag);
+    public void readNbt(NbtCompound tag) {
+        super.readNbt(tag);
         this.tier = tag.getInt("tier");
         setTier(tier);
-        Inventories.fromTag(tag, stacks);
+        Inventories.readNbt(tag, stacks);
         this.locked = tag.getBoolean("locked");
         this.item = Registry.ITEM.get(Identifier.tryParse(tag.getString("item")));
         if (tag.contains("CustomName", 8)) {
@@ -85,15 +85,15 @@ public class StorageCabinetEntity extends BlockEntity implements BasicSidedInven
     }
 
     @Override
-    public CompoundTag toTag(CompoundTag tag) {
+    public NbtCompound writeNbt(NbtCompound tag) {
         tag.putInt("tier", tier);
-        Inventories.toTag(tag, stacks);
+        Inventories.writeNbt(tag, stacks);
         tag.putBoolean("locked", locked);
         tag.putString("item", Registry.ITEM.getId(item).toString());
         if (this.customName != null) {
             tag.putString("CustomName", Text.Serializer.toJson(this.customName));
         }
-        return super.toTag(tag);
+        return super.writeNbt(tag);
     }
 
     public void addClientOnlyListener(InventoryChangedListener... listeners) {
@@ -123,6 +123,7 @@ public class StorageCabinetEntity extends BlockEntity implements BasicSidedInven
     public int size() {
         return (tier + 1) * 90;
     }
+
     @Override
     public ItemStack removeStack(int slot, int amount) {
         ItemStack stack = stacks.get(slot).split(amount);
@@ -203,8 +204,7 @@ public class StorageCabinetEntity extends BlockEntity implements BasicSidedInven
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof StorageCabinetEntity) {
-            StorageCabinetEntity cabinet = (StorageCabinetEntity) obj;
+        if (obj instanceof StorageCabinetEntity cabinet) {
             return cabinet.getPos().equals(this.getPos());
         }
         return false;
@@ -284,13 +284,13 @@ public class StorageCabinetEntity extends BlockEntity implements BasicSidedInven
     }
 
     @Override
-    public void fromClientTag(CompoundTag tag) {
-        fromTag(getCachedState(), tag);
+    public void fromClientTag(NbtCompound tag) {
+        readNbt(tag);
     }
 
     @Override
-    public CompoundTag toClientTag(CompoundTag tag) {
-        return toTag(tag);
+    public NbtCompound toClientTag(NbtCompound tag) {
+        return writeNbt(tag);
     }
 }
 

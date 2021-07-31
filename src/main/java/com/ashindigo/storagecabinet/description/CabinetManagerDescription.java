@@ -31,7 +31,7 @@ public class CabinetManagerDescription extends SyncedGuiDescription {
     final ArrayList<StorageCabinetEntity> cabinetList = new ArrayList<>();
     final ArrayList<WItemScrollPanel> cabinetPanels = new ArrayList<>();
     final WPagedTabPanel cabinetTabs;
-    final int width = 170;
+    final int width = 184;
 
     public CabinetManagerDescription(int synchronizationID, PlayerInventory playerInventory, ScreenHandlerContext ctx) {
         super(StorageCabinet.managerScreenHandler, synchronizationID, playerInventory, getBlockInventory(ctx), getBlockPropertyDelegate(ctx));
@@ -41,18 +41,18 @@ public class CabinetManagerDescription extends SyncedGuiDescription {
         //Panel
         WPlainPanel root = new WPlainPanel();
         cabinetTabs = new WPagedTabPanel();
-        root.setSize(width + 14, 270+30);
-        root.add(cabinetTabs, 0, 16);
-        root.add(new WPlayerInvPanel(playerInventory, true), 0, 244);
+        cabinetTabs.setSize(width-6, 260);
+        root.setSize(width+12, 270+60);
+        root.add(cabinetTabs, 4, 16);
+        root.add(new WPlayerInvPanel(playerInventory, true), 4, 236);
         setRootPanel(root);
         if (cabinetList.isEmpty()) { // In case no cabinet's are attached
             cabinetTabs.add(new WText(new LiteralText("")), builder -> builder.icon(new ItemIcon(Items.BARRIER)));
         }
         cabinetList.forEach(cabinetEntity -> addCabinet(cabinetTabs, cabinetEntity));
-        cabinetTabs.setSize(width, 270+30);
-        cabinetPanels.forEach(panel -> panel.setSize(width, 180));
+        cabinetPanels.forEach(panel -> panel.setSize(width-4, 180));
         for (WItemScrollPanel panel : cabinetPanels) {
-            panel.setLocation(panel.getX(), panel.getY());
+            panel.setLocation(panel.getX()-8, panel.getY());
         }
         root.validate(this);
     }
@@ -69,8 +69,7 @@ public class CabinetManagerDescription extends SyncedGuiDescription {
     }
 
     private void iconChangeListener(Inventory inventory) {
-        if (inventory instanceof StorageCabinetEntity) {
-            StorageCabinetEntity storageCabinetEntity = (StorageCabinetEntity) inventory;
+        if (inventory instanceof StorageCabinetEntity storageCabinetEntity) {
             for (int i = 0; i < cabinetList.size(); i++) {
                 StorageCabinetEntity cabinet = cabinetList.get(i);
                 if (cabinet.getPos().equals(storageCabinetEntity.getPos())) {

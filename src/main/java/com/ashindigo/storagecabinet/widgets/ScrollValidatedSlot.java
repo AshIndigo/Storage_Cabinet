@@ -3,8 +3,6 @@ package com.ashindigo.storagecabinet.widgets;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import io.github.cottonmc.cotton.gui.ValidatedSlot;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.inventory.Inventory;
 
 import java.util.Objects;
@@ -37,15 +35,11 @@ public class ScrollValidatedSlot extends ValidatedSlot {
         super.markDirty();
     }
 
-    @Environment(EnvType.CLIENT)
-    public boolean doDrawHoveringEffect() {
+    @Override
+    public boolean isEnabled() {
         if (boundUX >= x && x >= boundLX) {
-            //this.setVisible(true);
             return boundUY >= y && y >= boundLY;
         }
-        //setVisible(false);
         return false;
     }
-
-
 }

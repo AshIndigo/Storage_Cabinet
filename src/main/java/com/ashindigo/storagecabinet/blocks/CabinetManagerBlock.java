@@ -18,9 +18,9 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
@@ -56,10 +56,10 @@ public class CabinetManagerBlock extends BlockWithEntity implements InventoryPro
         builder.add(FACING);
     }
 
-
+    @Nullable
     @Override
-    public BlockEntity createBlockEntity(BlockView world) {
-        return new CabinetManagerEntity();
+    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new CabinetManagerEntity(pos, state);
     }
 
     @Override

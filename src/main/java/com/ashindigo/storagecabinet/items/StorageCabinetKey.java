@@ -5,7 +5,7 @@ import com.ashindigo.storagecabinet.blocks.StorageCabinetBlock;
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemUsageContext;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.registry.Registry;
 
@@ -17,14 +17,11 @@ public class StorageCabinetKey extends Item {
     @Override
     public ActionResult useOnBlock(ItemUsageContext context) {
         if (context.getWorld().getBlockState(context.getBlockPos()).getBlock() instanceof StorageCabinetBlock) {
-            if (context.getWorld().getBlockEntity(context.getBlockPos()) != null && context.getWorld().getBlockEntity(context.getBlockPos()) instanceof StorageCabinetEntity) {
-                StorageCabinetEntity blockEntity = (StorageCabinetEntity) context.getWorld().getBlockEntity(context.getBlockPos());
-                if (blockEntity != null) {
-                    CompoundTag tag = blockEntity.toTag(new CompoundTag());
-                    tag.putBoolean("locked", !tag.getBoolean("locked"));
-                    tag.putString("item", Registry.ITEM.getId(blockEntity.getMainItemStack().getItem()).toString());
-                    blockEntity.fromTag(blockEntity.getCachedState(), tag);
-                }
+            if (context.getWorld().getBlockEntity(context.getBlockPos()) != null && context.getWorld().getBlockEntity(context.getBlockPos()) instanceof StorageCabinetEntity blockEntity) {
+                NbtCompound tag = blockEntity.writeNbt(new NbtCompound());
+                tag.putBoolean("locked", !tag.getBoolean("locked"));
+                tag.putString("item", Registry.ITEM.getId(blockEntity.getMainItemStack().getItem()).toString());
+                blockEntity.readNbt(tag);
             }
             return ActionResult.SUCCESS;
         }
