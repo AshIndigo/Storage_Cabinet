@@ -15,35 +15,45 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.List;
 
 public class StorageCabinetDolly extends Item {
+
     public StorageCabinetDolly() {
         super(new Item.Settings().group(StorageCabinet.CABINET_GROUP).maxCount(1));
     }
 
     @Override
     public ActionResult useOnBlock(ItemUsageContext context) {
-        if (context.getWorld().getBlockState(context.getBlockPos()).getBlock() instanceof StorageCabinetBlock) {
-            if (context.getWorld().getBlockEntity(context.getBlockPos()) != null && context.getWorld().getBlockEntity(context.getBlockPos()) instanceof StorageCabinetEntity blockEntity) {
+        World world = context.getWorld();
+        BlockPos clickedPos = context.getBlockPos();
+        ItemStack dolly = context.getStack();
+        BlockPos offsetPos = clickedPos.offset(context.getSide());
+
+        if (world.getBlockState(clickedPos).getBlock() instanceof StorageCabinetBlock) {
+            if (world.getBlockEntity(clickedPos) != null && world.getBlockEntity(clickedPos) instanceof StorageCabinetEntity blockEntity) {
                 NbtCompound tag = blockEntity.writeNbt(new NbtCompound());
-                if (!context.getStack().hasNbt()) {
-                    context.getStack().setNbt(tag);
-                    context.getWorld().setBlockState(context.getBlockPos(), Blocks.AIR.getDefaultState());
+                if (!dolly.hasNbt()) {
+                    dolly.setNbt(tag);
+                    world.setBlockState(clickedPos, Blocks.AIR.getDefaultState());
                     return super.useOnBlock(context);
                 }
             }
         }
-        if (context.getStack().hasNbt()) {
-            if (context.getWorld().isAir(context.getBlockPos().offset(context.getSide()))) {
-                context.getWorld().setBlockState(context.getBlockPos().offset(context.getSide()), BlockRegistry.getByTier(context.getStack().getNbt().getInt("tier")).getDefaultState().with(HorizontalFacingBlock.FACING, context.getPlayerFacing().getOpposite()));
-                StorageCabinetBlock block = (StorageCabinetBlock) context.getWorld().getBlockState(context.getBlockPos().offset(context.getSide())).getBlock();
-                BlockEntity ent =  block.createBlockEntity(context.getBlockPos().offset(context.getSide()), context.getWorld().getBlockState(context.getBlockPos().offset(context.getSide())));
-                ent.readNbt(context.getStack().getNbt());
-                context.getWorld().addBlockEntity(ent);
-                context.getStack().setNbt(null);
+        if (dolly.hasNbt() && dolly.getNbt().contains("tier")) {
+            if (world.isAir(offsetPos)) {
+                world.setBlockState(offsetPos, BlockRegistry.getByTier(dolly.getNbt().getInt("tier")).getDefaultState().with(HorizontalFacingBlock.FACING, context.getPlayerFacing().getOpposite()));
+                StorageCabinetBlock block = (StorageCabinetBlock) world.getBlockState(offsetPos).getBlock();
+                BlockEntity ent =  block.createBlockEntity(offsetPos, world.getBlockState(offsetPos));
+                if (ent != null) {
+                    ent.readNbt(dolly.getNbt());
+                    world.addBlockEntity(ent);
+                    dolly.setNbt(null);
+                    ent.markDirty();
+                }
             }
         }
         return super.useOnBlock(context);
@@ -51,7 +61,7 @@ public class StorageCabinetDolly extends Item {
 
     @Override
     public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
-        if (stack.hasNbt()) {
+        if (stack.hasNbt() && stack.getNbt().contains("tier")) {
             tooltip.add(new TranslatableText("text.storagecabinet.dollyhas"));
         }
         super.appendTooltip(stack, world, tooltip, context);
