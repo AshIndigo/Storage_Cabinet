@@ -38,7 +38,6 @@ public class BlockRegistry {
         StorageCabinetBlock storageCabinetBlock = new StorageCabinetBlock(settings.strength(3.0F, 5.0F).breakByHand(false).requiresTool(), tier);
         Registry.register(Registry.BLOCK, new Identifier(StorageCabinet.MODID, StorageCabinet.MODID + "_" + suffix), storageCabinetBlock);
         Registry.register(Registry.ITEM, new Identifier(StorageCabinet.MODID, StorageCabinet.MODID + "_" + suffix), new BlockItem(storageCabinetBlock, new Item.Settings().group(StorageCabinet.CABINET_GROUP)));
-        GrassBlock grassBlock = (GrassBlock) new Block(FabricBlockSettings.of(Material.GLASS));
         return storageCabinetBlock;
     }
 
