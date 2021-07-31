@@ -3,77 +3,77 @@ package com.ashindigo.storagecabinet.client;
 import com.ashindigo.storagecabinet.StorageCabinet;
 import com.ashindigo.storagecabinet.block.StorageCabinetBlock;
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
 
-public class StorageCabinetRenderer extends TileEntityRenderer<StorageCabinetEntity> {
+public class StorageCabinetRenderer implements BlockEntityRenderer<StorageCabinetEntity> {
 
-    public final ItemStack KEY = new ItemStack(StorageCabinet.KEY.get());
+    public static final ItemStack KEY = new ItemStack(StorageCabinet.KEY.get());
 
-    public StorageCabinetRenderer(TileEntityRendererDispatcher dispatcher) {
-        super(dispatcher);
+    public StorageCabinetRenderer(BlockEntityRendererProvider.Context context) {
     }
 
     @Override
-    public void render(StorageCabinetEntity entity, float tickDelta, MatrixStack matrices, IRenderTypeBuffer vertexConsumers, int light, int overlay) {
+    public void render(StorageCabinetEntity entity, float v, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay) {
         matrices.pushPose();
         switch (entity.getBlockState().getValue(StorageCabinetBlock.FACING)) {
-            case NORTH:
+            case NORTH -> {
                 matrices.mulPose(Vector3f.YP.rotationDegrees(180));
                 matrices.scale(.1F, .1F, 0.001F);
                 matrices.translate(-.4F, 9.5F, 0);
                 drawKey(entity.locked, matrices, vertexConsumers, overlay);
                 matrices.translate(-4.4F, 0, 0.15F);
                 drawStack(entity.getMainItemStack(), matrices, vertexConsumers, overlay);
-                break;
-            case SOUTH:
+            }
+            case SOUTH -> {
                 matrices.scale(.1F, .1F, 0.001F);
                 matrices.translate(9.6F, 9.5F, 1000);
                 drawKey(entity.locked, matrices, vertexConsumers, overlay);
                 matrices.translate(-4.4F, 0, 0.15F);
                 drawStack(entity.getMainItemStack(), matrices, vertexConsumers, overlay);
-                break;
-            case WEST:
+            }
+            case WEST -> {
                 matrices.mulPose(Vector3f.YP.rotationDegrees(-90));
                 matrices.scale(.1F, .1F, 0.001F);
                 matrices.translate(9.5F, 9.5F, 0);
                 drawKey(entity.locked, matrices, vertexConsumers, overlay);
                 matrices.translate(-4.2F, 0, 1);
                 drawStack(entity.getMainItemStack(), matrices, vertexConsumers, overlay);
-                break;
-            case EAST:
+            }
+            case EAST -> {
                 matrices.mulPose(Vector3f.YP.rotationDegrees(90));
                 matrices.scale(.1F, .1F, 0.001F);
                 matrices.translate(-.4F, 9.5F, 1000);
                 drawKey(entity.locked, matrices, vertexConsumers, overlay);
                 matrices.translate(-4.2F, 0, 1);
                 drawStack(entity.getMainItemStack(), matrices, vertexConsumers, overlay);
-                break;
+            }
         }
         matrices.popPose();
     }
 
-    private void drawKey(boolean locked, MatrixStack matrices, IRenderTypeBuffer provider, int overlay) {
+    private static void drawKey(boolean locked, PoseStack matrices, MultiBufferSource provider, int overlay) {
         if (locked) {
-            Minecraft.getInstance().getItemRenderer().renderStatic(KEY, ItemCameraTransforms.TransformType.GUI, 0x00f000f0, overlay, matrices, provider);
+            Minecraft.getInstance().getItemRenderer().renderStatic(KEY, ItemTransforms.TransformType.GUI, 0x00f000f0, overlay, matrices, provider, 0);
         }
     }
 
-    private void drawStack(ItemStack stack, MatrixStack matrices, IRenderTypeBuffer vertexConsumers, int overlay) {
+    private static void drawStack(ItemStack stack, PoseStack matrices, MultiBufferSource vertexConsumers, int overlay) {
         if (stack.getItem() instanceof BlockItem) {
-            RenderHelper.turnOff();
+            //Lighting.turnOff();
         }
-        Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemCameraTransforms.TransformType.GUI, 0x00f000f0, overlay, matrices, vertexConsumers);
+        Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemTransforms.TransformType.GUI, 0x00f000f0, overlay, matrices, vertexConsumers, 0);
         if (stack.getItem() instanceof BlockItem) {
-            RenderHelper.turnBackOn();
+            //Lighting.turnBackOn();
         }
     }
+
 }

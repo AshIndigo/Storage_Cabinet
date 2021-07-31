@@ -1,39 +1,41 @@
 package com.ashindigo.storagecabinet.block;
 
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
-import net.minecraft.block.*;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.state.BooleanProperty;
-import net.minecraft.state.DirectionProperty;
-import net.minecraft.state.StateContainer;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nullable;
 import java.util.Random;
 
-public class StorageCabinetBlock extends ContainerBlock {
+public class StorageCabinetBlock extends BaseEntityBlock {
 
     public static final DirectionProperty FACING;
     public static final BooleanProperty OPEN;
 
     static {
-        FACING = HorizontalBlock.FACING;
+        FACING = HorizontalDirectionalBlock.FACING;
         OPEN = BlockStateProperties.OPEN;
     }
 
@@ -46,21 +48,21 @@ public class StorageCabinetBlock extends ContainerBlock {
     }
 
     @Override
-    public void tick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        TileEntity blockEntity = world.getBlockEntity(pos);
+    public void tick(BlockState state, ServerLevel world, BlockPos pos, Random random) {
+        BlockEntity blockEntity = world.getBlockEntity(pos);
         if (blockEntity instanceof StorageCabinetEntity) {
             ((StorageCabinetEntity) blockEntity).tick();
         }
     }
 
     @Override
-    public BlockState getStateForPlacement(BlockItemUseContext context) {
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
         return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite()).setValue(OPEN, false);
     }
 
     @Override
-    public BlockRenderType getRenderShape(BlockState state) {
-        return BlockRenderType.MODEL;
+    public RenderShape getRenderShape(BlockState state) {
+        return RenderShape.MODEL;
     }
 
     @Override
@@ -74,40 +76,34 @@ public class StorageCabinetBlock extends ContainerBlock {
     }
 
     @Override
-    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING, OPEN);
     }
 
-    @Nullable
     @Override
-    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return new StorageCabinetEntity().setTier(tier);
-    }
-
-    @Override
-    public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
+    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (!world.isClientSide) {
-            NetworkHooks.openGui((ServerPlayerEntity) player, (INamedContainerProvider) world.getBlockEntity(pos), packetBuffer -> {
+            NetworkHooks.openGui((ServerPlayer) player, (MenuProvider) world.getBlockEntity(pos), packetBuffer -> {
                 packetBuffer.writeBlockPos(pos);
                 packetBuffer.writeInt(tier);
             });
         }
-        return ActionResultType.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     @Override
-    public void setPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
+    public void setPlacedBy(Level world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
         if (itemStack.hasCustomHoverName()) {
-            TileEntity blockEntity = world.getBlockEntity(pos);
+            BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof StorageCabinetEntity) {
-                ((StorageCabinetEntity)blockEntity).setCustomName(itemStack.getDisplayName());
+                ((StorageCabinetEntity) blockEntity).setCustomName(itemStack.getDisplayName());
             }
         }
     }
 
     @Override
-    public void playerWillDestroy(World world, BlockPos pos, BlockState state, PlayerEntity player) {
-        TileEntity blockEntity = world.getBlockEntity(pos);
+    public void playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
+        BlockEntity blockEntity = world.getBlockEntity(pos);
         if (blockEntity instanceof StorageCabinetEntity) {
             IItemHandler inventory = world.getBlockEntity(pos).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseThrow(() -> new NullPointerException("Source Capability was not present!"));
             for (int i = 0; i < inventory.getSlots(); i++) {
@@ -124,9 +120,11 @@ public class StorageCabinetBlock extends ContainerBlock {
 
     @Nullable
     @Override
-     public TileEntity newBlockEntity(IBlockReader p_196283_1_) {
-        return null; // TODO Remains null
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new StorageCabinetEntity(pos, state).setTier(tier);
     }
+
+
 
 
     public static class Manager {

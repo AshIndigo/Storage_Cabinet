@@ -3,10 +3,10 @@ package com.ashindigo.storagecabinet.item;
 import com.ashindigo.storagecabinet.StorageCabinet;
 import com.ashindigo.storagecabinet.block.StorageCabinetBlock;
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ActionResultType;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class StorageCabinetKey extends Item {
@@ -16,17 +16,16 @@ public class StorageCabinetKey extends Item {
     }
 
     @Override
-    public ActionResultType useOn(ItemUseContext context) {
+    public InteractionResult useOn(UseOnContext context) {
         if (context.getLevel().getBlockState(context.getClickedPos()).getBlock() instanceof StorageCabinetBlock) {
-            if (context.getLevel().getBlockEntity(context.getClickedPos()) != null && context.getLevel().getBlockEntity(context.getClickedPos()) instanceof StorageCabinetEntity) {
-                StorageCabinetEntity blockEntity = (StorageCabinetEntity) context.getLevel().getBlockEntity(context.getClickedPos());
-                CompoundNBT tag = blockEntity.save(new CompoundNBT());
+            if (context.getLevel().getBlockEntity(context.getClickedPos()) != null && context.getLevel().getBlockEntity(context.getClickedPos()) instanceof StorageCabinetEntity blockEntity) {
+                CompoundTag tag = blockEntity.save(new CompoundTag());
                 tag.putBoolean("locked", !tag.getBoolean("locked"));
                 tag.putString("item", ForgeRegistries.ITEMS.getKey(blockEntity.getMainItemStack().getItem()).toString());
-                blockEntity.load(context.getLevel().getBlockState(context.getClickedPos()), tag);
+                blockEntity.load(tag);
             }
-            return ActionResultType.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
-        return ActionResultType.PASS;
+        return InteractionResult.PASS;
     }
 }

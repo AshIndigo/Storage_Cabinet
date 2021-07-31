@@ -5,16 +5,16 @@ import com.ashindigo.storagecabinet.block.StorageCabinetBlock;
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
@@ -22,16 +22,16 @@ import net.minecraftforge.items.SlotItemHandler;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 
-public class CabinetManagerContainer extends Container {
+public class CabinetManagerContainer extends AbstractContainerMenu {
 
     public final ArrayList<StorageCabinetEntity> cabinetList = new ArrayList<>();
     public final ListMultimap<StorageCabinetEntity, ExtraSlotItemHandler> CABINET_SLOT_LIST = ArrayListMultimap.create();
 
-    public CabinetManagerContainer(int syncId, PlayerInventory inv, PacketBuffer buf) {
+    public CabinetManagerContainer(int syncId, Inventory inv, FriendlyByteBuf buf) {
         this(syncId, inv, buf.readBlockPos());
     }
 
-    public CabinetManagerContainer(int syncId, PlayerInventory playerInv, BlockPos blockPos) {
+    public CabinetManagerContainer(int syncId, Inventory playerInv, BlockPos blockPos) {
         super(StorageCabinet.MANAGER_CONTAINER.get(), syncId);
         checkSurroundingCabinets(cabinetList, blockPos, playerInv.player.level);
         // Player Inv stuff
@@ -46,17 +46,16 @@ public class CabinetManagerContainer extends Container {
     }
 
     @Override
-    public boolean stillValid(PlayerEntity p_75145_1_) {
+    public boolean stillValid(Player p_75145_1_) {
         return true;
     }
 
-    private void checkSurroundingCabinets(ArrayList<StorageCabinetEntity> cabinetList, BlockPos pos, World world) {
+    private void checkSurroundingCabinets(ArrayList<StorageCabinetEntity> cabinetList, BlockPos pos, Level world) {
         for (Direction direction : Direction.values()) {
             BlockPos offsetPos = pos.offset(direction.getNormal());
-            TileEntity entity = world.getBlockEntity(offsetPos);
+            BlockEntity entity = world.getBlockEntity(offsetPos);
 
-            if (entity instanceof StorageCabinetEntity) {
-                StorageCabinetEntity cabinetEntity = (StorageCabinetEntity) entity;
+            if (entity instanceof StorageCabinetEntity cabinetEntity) {
                 if (!cabinetList.contains(cabinetEntity)) {
                     cabinetList.add(cabinetEntity);
                     for (int i = 0; i < StorageCabinetBlock.Manager.getHeight(cabinetEntity.tier); ++i) {
@@ -71,21 +70,21 @@ public class CabinetManagerContainer extends Container {
     }
 
     @Override
-    public void removed(PlayerEntity player) {
+    public void removed(Player player) {
         super.removed(player);
     }
 
     @Override
     @Nonnull
-    public ItemStack quickMoveStack(PlayerEntity player, int index) {
+    public ItemStack quickMoveStack(Player player, int index) {
         ItemStack itemStack = ItemStack.EMPTY;
         Slot slot = slots.get(index);
 
-        if (slot != null && slot.hasItem()) {
+        if (slot.hasItem()) {
             ItemStack itemStack1 = slot.getItem();
             itemStack = itemStack1.copy();
 
-            int containerSlots = slots.size() - player.inventory.items.size();
+            int containerSlots = slots.size() - player.getInventory().items.size();
 
             if (index < containerSlots) {
                 if (!this.moveItemStackTo(itemStack1, containerSlots, slots.size(), true)) {
@@ -148,10 +147,10 @@ public class CabinetManagerContainer extends Container {
 
     static class ExtraSlotItemHandler extends SlotItemHandler {
 
-        private final TileEntity entity;
+        private final BlockEntity entity;
         private boolean enabled;
 
-        public ExtraSlotItemHandler(IItemHandler itemHandler, int index, int xPosition, int yPosition, TileEntity entity) {
+        public ExtraSlotItemHandler(IItemHandler itemHandler, int index, int xPosition, int yPosition, BlockEntity entity) {
             super(itemHandler, index, xPosition, yPosition);
             this.entity = entity;
         }

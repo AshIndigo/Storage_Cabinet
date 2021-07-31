@@ -12,25 +12,29 @@ import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
 import com.ashindigo.storagecabinet.item.StorageCabinetDolly;
 import com.ashindigo.storagecabinet.item.StorageCabinetKey;
 import com.ashindigo.storagecabinet.item.StorageCabinetUpgrade;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.gui.ScreenManager;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntityType;
+import com.mojang.blaze3d.platform.ScreenManager;
+import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.Material;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.RegistryObject;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fmlclient.registry.ClientRegistry;
+import net.minecraftforge.fmllegacy.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -40,12 +44,12 @@ public class StorageCabinet {
     public static final String MODID = "storagecabinet";
     // Blocks
     private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, StorageCabinet.MODID);
-    public static final RegistryObject<Block> WOOD_CABINET = BLOCKS.register("storagecabinet_wood", () -> new StorageCabinetBlock(AbstractBlock.Properties.of(Material.WOOD).harvestTool(ToolType.AXE), 0));
-    public static final RegistryObject<Block> IRON_CABINET = BLOCKS.register("storagecabinet_iron", () -> new StorageCabinetBlock(AbstractBlock.Properties.of(Material.METAL).harvestTool(ToolType.PICKAXE).harvestLevel(2), 1));
-    public static final RegistryObject<Block> GOLD_CABINET = BLOCKS.register("storagecabinet_gold", () -> new StorageCabinetBlock(AbstractBlock.Properties.of(Material.METAL).harvestTool(ToolType.PICKAXE).harvestLevel(2), 2));
-    public static final RegistryObject<Block> DIAMOND_CABINET = BLOCKS.register("storagecabinet_diamond", () -> new StorageCabinetBlock(AbstractBlock.Properties.of(Material.METAL).harvestTool(ToolType.PICKAXE).harvestLevel(2), 3));
-    public static final RegistryObject<Block> EMERALD_CABINET = BLOCKS.register("storagecabinet_emerald", () -> new StorageCabinetBlock(AbstractBlock.Properties.of(Material.METAL).harvestTool(ToolType.PICKAXE).harvestLevel(2), 4));
-    public static final RegistryObject<Block> CABINET_MANAGER = BLOCKS.register("cabinet_manager", () -> new CabinetManagerBlock(AbstractBlock.Properties.of(Material.METAL).harvestTool(ToolType.PICKAXE)));
+    public static final RegistryObject<Block> WOOD_CABINET = BLOCKS.register("storagecabinet_wood", () -> new StorageCabinetBlock(BlockBehaviour.Properties.of(Material.WOOD).harvestTool(ToolType.AXE), 0));
+    public static final RegistryObject<Block> IRON_CABINET = BLOCKS.register("storagecabinet_iron", () -> new StorageCabinetBlock(BlockBehaviour.Properties.of(Material.METAL).harvestTool(ToolType.PICKAXE).harvestLevel(2), 1));
+    public static final RegistryObject<Block> GOLD_CABINET = BLOCKS.register("storagecabinet_gold", () -> new StorageCabinetBlock(BlockBehaviour.Properties.of(Material.METAL).harvestTool(ToolType.PICKAXE).harvestLevel(2), 2));
+    public static final RegistryObject<Block> DIAMOND_CABINET = BLOCKS.register("storagecabinet_diamond", () -> new StorageCabinetBlock(BlockBehaviour.Properties.of(Material.METAL).harvestTool(ToolType.PICKAXE).harvestLevel(2), 3));
+    public static final RegistryObject<Block> EMERALD_CABINET = BLOCKS.register("storagecabinet_emerald", () -> new StorageCabinetBlock(BlockBehaviour.Properties.of(Material.METAL).harvestTool(ToolType.PICKAXE).harvestLevel(2), 4));
+    public static final RegistryObject<Block> CABINET_MANAGER = BLOCKS.register("cabinet_manager", () -> new CabinetManagerBlock(BlockBehaviour.Properties.of(Material.METAL).harvestTool(ToolType.PICKAXE)));
     // Items
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, StorageCabinet.MODID);
     public static final RegistryObject<Item> WOOD_CABINET_UPGRADE = ITEMS.register("storagecabinet_wood_upgrade", () -> new StorageCabinetUpgrade(0));
@@ -55,20 +59,20 @@ public class StorageCabinet {
     public static final RegistryObject<Item> EMERALD_CABINET_UPGRADE = ITEMS.register("storagecabinet_emerald_upgrade", () -> new StorageCabinetUpgrade(4));
     public static final RegistryObject<Item> KEY = ITEMS.register("key", StorageCabinetKey::new);
     public static final RegistryObject<Item> DOLLY = ITEMS.register("dolly", StorageCabinetDolly::new);
-    public static final ItemGroup CABINET_GROUP = new ItemGroup(MODID + "." + MODID) {
+    public static final CreativeModeTab CABINET_GROUP = new CreativeModeTab(MODID + "." + MODID) {
         @Override
         public ItemStack makeIcon() {
             return new ItemStack(IRON_CABINET.get());
         }
     };
     // Tile Entities
-    private static final DeferredRegister<TileEntityType<?>> TILE_ENTITIES = DeferredRegister.create(ForgeRegistries.TILE_ENTITIES, StorageCabinet.MODID);
-    public static final RegistryObject<TileEntityType<StorageCabinetEntity>> CABINET_ENTITY = TILE_ENTITIES.register(MODID, () -> TileEntityType.Builder.of(StorageCabinetEntity::new, WOOD_CABINET.get(), IRON_CABINET.get(), GOLD_CABINET.get(), DIAMOND_CABINET.get(), EMERALD_CABINET.get()).build(null));
-    public static final RegistryObject<TileEntityType<CabinetManagerEntity>> CABINET_MANAGER_ENTITY = TILE_ENTITIES.register("cabinet_manager", () -> TileEntityType.Builder.of(CabinetManagerEntity::new, CABINET_MANAGER.get()).build(null));
+    private static final DeferredRegister<BlockEntityType<?>> TILE_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, StorageCabinet.MODID);
+    public static final RegistryObject<BlockEntityType<StorageCabinetEntity>> CABINET_ENTITY = TILE_ENTITIES.register(MODID, () -> BlockEntityType.Builder.of(StorageCabinetEntity::new, WOOD_CABINET.get(), IRON_CABINET.get(), GOLD_CABINET.get(), DIAMOND_CABINET.get(), EMERALD_CABINET.get()).build(null));
+    public static final RegistryObject<BlockEntityType<CabinetManagerEntity>> CABINET_MANAGER_ENTITY = TILE_ENTITIES.register("cabinet_manager", () -> BlockEntityType.Builder.of(CabinetManagerEntity::new, CABINET_MANAGER.get()).build(null));
     // Containers
-    private static final DeferredRegister<ContainerType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.CONTAINERS, StorageCabinet.MODID);
-    public static final RegistryObject<ContainerType<StorageCabinetContainer>> CABINET_CONTAINER = CONTAINERS.register(MODID, () -> IForgeContainerType.create(StorageCabinetContainer::new));
-    public static final RegistryObject<ContainerType<CabinetManagerContainer>> MANAGER_CONTAINER = CONTAINERS.register("cabinet_manager", () -> IForgeContainerType.create(CabinetManagerContainer::new));
+    private static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.CONTAINERS, StorageCabinet.MODID);
+    public static final RegistryObject<MenuType<StorageCabinetContainer>> CABINET_CONTAINER = CONTAINERS.register(MODID, () -> IForgeContainerType.create(StorageCabinetContainer::new));
+    public static final RegistryObject<MenuType<CabinetManagerContainer>> MANAGER_CONTAINER = CONTAINERS.register("cabinet_manager", () -> IForgeContainerType.create(CabinetManagerContainer::new));
 
     public StorageCabinet() {
         BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
@@ -80,9 +84,9 @@ public class StorageCabinet {
 
     @SubscribeEvent
     public void registerClient(FMLClientSetupEvent event) {
-        ClientRegistry.bindTileEntityRenderer(CABINET_ENTITY.get(), StorageCabinetRenderer::new);
-        ScreenManager.register(CABINET_CONTAINER.get(), StorageCabinetScreen::new);
-        ScreenManager.register(MANAGER_CONTAINER.get(), CabinetManagerScreen::new);
+        BlockEntityRenderers.register(CABINET_ENTITY.get(), StorageCabinetRenderer::new);
+        MenuScreens.register(CABINET_CONTAINER.get(), StorageCabinetScreen::new);
+        MenuScreens.register(MANAGER_CONTAINER.get(), CabinetManagerScreen::new);
     }
 
     @SubscribeEvent
@@ -98,18 +102,12 @@ public class StorageCabinet {
     }
 
     public static Block getByTier(int tier) {
-        switch (tier) {
-            case 1:
-                return IRON_CABINET.get();
-            case 2:
-                return GOLD_CABINET.get();
-            case 3:
-                return DIAMOND_CABINET.get();
-            case 4:
-                return EMERALD_CABINET.get();
-            case 0:
-            default:
-                return WOOD_CABINET.get();
-        }
+        return switch (tier) {
+            case 1 -> IRON_CABINET.get();
+            case 2 -> GOLD_CABINET.get();
+            case 3 -> DIAMOND_CABINET.get();
+            case 4 -> EMERALD_CABINET.get();
+            default -> WOOD_CABINET.get();
+        };
     }
 }

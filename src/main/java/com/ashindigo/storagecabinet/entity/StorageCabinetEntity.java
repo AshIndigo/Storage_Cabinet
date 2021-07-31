@@ -4,25 +4,28 @@ import com.ashindigo.storagecabinet.StorageCabinet;
 import com.ashindigo.storagecabinet.block.StorageCabinetBlock;
 import com.ashindigo.storagecabinet.container.StorageCabinetContainer;
 import com.google.common.collect.Lists;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tags.ITag;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Registry;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.TagCollectionManager;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.tags.SerializationTags;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.common.util.ReverseTagWrapper;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
@@ -35,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
-public class StorageCabinetEntity extends TileEntity implements INamedContainerProvider {
+public class StorageCabinetEntity extends BlockEntity implements MenuProvider {
 
     public boolean locked = false;
     public int tier = 0;
@@ -59,7 +62,7 @@ public class StorageCabinetEntity extends TileEntity implements INamedContainerP
                         return IntStream.range(0, this.getSlots()).mapToObj(this::getStackInSlot).anyMatch(itemStack -> stack.getItem().equals(itemStack.getItem()) && itemStack.getCount() > 0);
                     } else {
                         for (ResourceLocation id : idList) {
-                            ITag<Item> tag = ItemTags.getAllTags().getTagOrEmpty(id);
+                            Tag<Item> tag = ItemTags.getAllTags().getTagOrEmpty(id);
                             return stacks.stream().anyMatch(stack2 -> tag.contains(stack2.getItem()));
                         }
                     }
@@ -73,7 +76,7 @@ public class StorageCabinetEntity extends TileEntity implements INamedContainerP
                     return stack.getItem().equals(item);
                 } else {
                     for (ResourceLocation id : idList) {
-                        ITag<Item> itemTag = ItemTags.getAllTags().getTagOrEmpty(id);
+                        Tag<Item> itemTag = ItemTags.getAllTags().getTagOrEmpty(id);
                         if (itemTag.contains(stack.getItem())) {
                             return true;
                         }
@@ -85,10 +88,10 @@ public class StorageCabinetEntity extends TileEntity implements INamedContainerP
     };
     final LazyOptional<IItemHandler> inventoryHandlerLazyOptional = LazyOptional.of(() -> itemHandler);
     private int viewerCount;
-    private ITextComponent customName;
+    private Component customName;
 
-    public StorageCabinetEntity() {
-        super(StorageCabinet.CABINET_ENTITY.get());
+    public StorageCabinetEntity(BlockPos pos, BlockState state) {
+        super(StorageCabinet.CABINET_ENTITY.get(), pos, state);
     }
 
     public StorageCabinetEntity setTier(int tier) {
@@ -103,7 +106,7 @@ public class StorageCabinetEntity extends TileEntity implements INamedContainerP
 
     public Collection<ResourceLocation> getTagsFor(Item object) {
         List<ResourceLocation> list = Lists.newArrayList();
-        for (Map.Entry<ResourceLocation, ITag<Item>> entry : TagCollectionManager.getInstance().getItems().getAllTags().entrySet()) {
+        for (Map.Entry<ResourceLocation, Tag<Item>> entry : SerializationTags.getInstance().getOrEmpty(Registry.ITEM_REGISTRY).getAllTags().entrySet()) {
             if (entry.getValue().contains(object)) {
                 list.add(entry.getKey());
             }
@@ -112,46 +115,48 @@ public class StorageCabinetEntity extends TileEntity implements INamedContainerP
     }
 
 
+
+
     @Override
-    public void load(BlockState state, CompoundNBT tag) {
+    public void load(CompoundTag tag) {
         this.tier = tag.getInt("tier");
         //setTier(tier);
         if (tag.contains("inv")) {
             itemHandler.deserializeNBT(tag.getCompound("inv"));
         }
-        super.load(state, tag);
+        super.load(tag);
         this.locked = tag.getBoolean("locked");
         this.item = ForgeRegistries.ITEMS.getValue(ResourceLocation.tryParse(tag.getString("item")));
         if (tag.contains("CustomName", 8)) {
-            this.customName = ITextComponent.Serializer.fromJson(tag.getString("CustomName"));
+            this.customName = Component.Serializer.fromJson(tag.getString("CustomName"));
         }
     }
 
     @Override
-    public CompoundNBT save(CompoundNBT tag) {
+    public CompoundTag save(CompoundTag tag) {
         super.save(tag);
         tag.putInt("tier", tier);
         tag.putBoolean("locked", locked);
         tag.putString("item", ForgeRegistries.ITEMS.getKey(item).toString());
         if (this.customName != null) {
-            tag.putString("CustomName", ITextComponent.Serializer.toJson(this.customName));
+            tag.putString("CustomName", Component.Serializer.toJson(this.customName));
         }
         tag.put("inv", itemHandler.serializeNBT());
         return tag;
     }
 
-    public void setCustomName(ITextComponent text) {
+    public void setCustomName(Component text) {
         this.customName = text;
     }
 
     @Override
-    public ITextComponent getDisplayName() {
-        return customName != null ? customName : new TranslationTextComponent(level.getBlockState(getBlockPos()).getBlock().getDescriptionId());
+    public Component getDisplayName() {
+        return customName != null ? customName : new TranslatableComponent(level.getBlockState(getBlockPos()).getBlock().getDescriptionId());
     }
 
     @Override
-    public Container createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
-        return new StorageCabinetContainer(syncId,inv, getBlockPos(), tier);
+    public AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
+        return new StorageCabinetContainer(syncId, inv, getBlockPos(), tier);
     }
 
     public ItemStack getMainItemStack() {
@@ -179,20 +184,15 @@ public class StorageCabinetEntity extends TileEntity implements INamedContainerP
     }
 
     @Override
-    public CompoundNBT getUpdateTag() {
-        CompoundNBT tag = super.getUpdateTag();
+    public CompoundTag getUpdateTag() {
+        CompoundTag tag = super.getUpdateTag();
         tag.putInt("tier", tier);
         tag.putBoolean("locked", locked);
         tag.putString("item", ForgeRegistries.ITEMS.getKey(item).toString());
         if (this.customName != null) {
-            tag.putString("CustomName", ITextComponent.Serializer.toJson(this.customName));
+            tag.putString("CustomName", Component.Serializer.toJson(this.customName));
         }
         return tag;
-    }
-
-    @Override
-    public void handleUpdateTag(BlockState state, CompoundNBT tag) {
-        super.handleUpdateTag(state, tag);
     }
 
     public void startOpen() {
@@ -226,7 +226,7 @@ public class StorageCabinetEntity extends TileEntity implements INamedContainerP
         }
     }
 
-    public void onClose(PlayerEntity player) {
+    public void onClose(Player player) {
         if (!player.isSpectator()) {
             --this.viewerCount;
         }

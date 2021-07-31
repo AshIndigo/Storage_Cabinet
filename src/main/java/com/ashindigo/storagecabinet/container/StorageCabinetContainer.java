@@ -3,31 +3,31 @@ package com.ashindigo.storagecabinet.container;
 import com.ashindigo.storagecabinet.StorageCabinet;
 import com.ashindigo.storagecabinet.block.StorageCabinetBlock;
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
 
-public class StorageCabinetContainer extends Container {
+public class StorageCabinetContainer extends AbstractContainerMenu {
 
     final StorageCabinetEntity entity;
     final IItemHandler inv;
     private final int tier;
 
-    public StorageCabinetContainer(int windowId, PlayerInventory playerInv, PacketBuffer buf) {
+    public StorageCabinetContainer(int windowId, Inventory playerInv, FriendlyByteBuf buf) {
         this(windowId, playerInv, buf.readBlockPos(), buf.readInt());
     }
 
-    public StorageCabinetContainer(int syncId, PlayerInventory playerInv, BlockPos blockPos, int tier) {
+    public StorageCabinetContainer(int syncId, Inventory playerInv, BlockPos blockPos, int tier) {
         super(StorageCabinet.CABINET_CONTAINER.get(), syncId);
         this.tier = tier;
         entity = (StorageCabinetEntity) playerInv.player.level.getBlockEntity(blockPos);
@@ -63,15 +63,15 @@ public class StorageCabinetContainer extends Container {
 
     @Override
     @Nonnull
-    public ItemStack quickMoveStack(PlayerEntity player, int index) {
+    public ItemStack quickMoveStack(Player player, int index) {
         ItemStack itemStack = ItemStack.EMPTY;
         Slot slot = slots.get(index);
 
-        if (slot != null && slot.hasItem()) {
+        if (slot.hasItem()) {
             ItemStack itemStack1 = slot.getItem();
             itemStack = itemStack1.copy();
 
-            int containerSlots = slots.size() - player.inventory.items.size();
+            int containerSlots = slots.size() - player.getInventory().items.size();
 
             if (index < containerSlots) {
                 if (!this.moveItemStackTo(itemStack1, containerSlots, slots.size(), true)) {
@@ -98,12 +98,12 @@ public class StorageCabinetContainer extends Container {
     }
 
     @Override
-    public boolean stillValid(PlayerEntity player) {
+    public boolean stillValid(Player player) {
         return true;
     }
 
     @Override
-    public void removed(PlayerEntity player) {
+    public void removed(Player player) {
         super.removed(player);
         entity.onClose(player);
     }
