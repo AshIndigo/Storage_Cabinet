@@ -1,296 +1,249 @@
 package com.ashindigo.storagecabinet.entity;
 
-import com.ashindigo.storagecabinet.BlockRegistry;
 import com.ashindigo.storagecabinet.StorageCabinet;
-import com.ashindigo.storagecabinet.blocks.StorageCabinetBlock;
-import com.ashindigo.storagecabinet.description.StorageCabinetDescription;
-import com.ashindigo.storagecabinet.misc.BasicSidedInventory;
+import com.ashindigo.storagecabinet.block.StorageCabinetBlock;
+import com.ashindigo.storagecabinet.container.StorageCabinetContainer;
 import com.google.common.collect.Lists;
-import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
-import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.InventoryProvider;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.Inventories;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.InventoryChangedListener;
-import net.minecraft.inventory.SidedInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.ScreenHandlerContext;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.tag.ItemTags;
-import net.minecraft.tag.ServerTagManagerHolder;
-import net.minecraft.tag.Tag;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.WorldAccess;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tags.ITag;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagCollectionManager;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.*;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.IntStream;
 
-public class StorageCabinetEntity extends BlockEntity implements BasicSidedInventory, InventoryChangedListener, ExtendedScreenHandlerFactory, BlockEntityClientSerializable,InventoryProvider {
+public class StorageCabinetEntity extends TileEntity implements INamedContainerProvider {
 
-    final List<InventoryChangedListener> listeners = new ArrayList<>();
-    final List<InventoryChangedListener> clientListeners = new ArrayList<>();
     public boolean locked = false;
     public int tier = 0;
     public Item item = Items.AIR;
+    private final ItemStackHandler itemHandler = new ItemStackHandler(size()) {
 
-    DefaultedList<ItemStack> stacks;
+        @Override
+        protected void onContentsChanged(int slot) {
+            super.onContentsChanged(slot);
+            setChanged();
+        }
+
+        @Override
+        public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+            if (!locked) {
+                if (stacks.stream().allMatch(ItemStack::isEmpty) || stack.isEmpty()) {
+                    return true;
+                } else {
+                    Collection<ResourceLocation> idList = getTagsFor(stack.getItem());
+                    if (idList.isEmpty()) {
+                        return IntStream.range(0, this.getSlots()).mapToObj(this::getStackInSlot).anyMatch(itemStack -> stack.getItem().equals(itemStack.getItem()) && itemStack.getCount() > 0);
+                    } else {
+                        for (ResourceLocation id : idList) {
+                            ITag<Item> tag = ItemTags.getAllTags().getTagOrEmpty(id);
+                            return stacks.stream().anyMatch(stack2 -> tag.contains(stack2.getItem()));
+                        }
+                    }
+                }
+            } else {
+                if (item.equals(Items.AIR)) {
+                    return true;
+                }
+                Collection<ResourceLocation> idList = getTagsFor(item);
+                if (idList.isEmpty()) {
+                    return stack.getItem().equals(item);
+                } else {
+                    for (ResourceLocation id : idList) {
+                        ITag<Item> itemTag = ItemTags.getAllTags().getTagOrEmpty(id);
+                        if (itemTag.contains(stack.getItem())) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+    };
+    final LazyOptional<IItemHandler> inventoryHandlerLazyOptional = LazyOptional.of(() -> itemHandler);
     private int viewerCount;
-    private Text customName;
+    private ITextComponent customName;
 
     public StorageCabinetEntity() {
-        super(StorageCabinet.storageCabinetEntity);
+        super(StorageCabinet.CABINET_ENTITY.get());
     }
 
     public StorageCabinetEntity setTier(int tier) {
         this.tier = tier;
-        this.stacks = DefaultedList.ofSize(size(), ItemStack.EMPTY);
+        itemHandler.setSize(size());
         return this;
     }
 
-    public Collection<Identifier> getTagsFor(Item object) {
-        List<Identifier> list = Lists.newArrayList();
-        for (Map.Entry<Identifier, Tag<Item>> entry : ServerTagManagerHolder.getTagManager().getItems().getTags().entrySet()) {
+    public int size() {
+        return (tier + 1) * 90;
+    }
+
+    public Collection<ResourceLocation> getTagsFor(Item object) {
+        List<ResourceLocation> list = Lists.newArrayList();
+        for (Map.Entry<ResourceLocation, ITag<Item>> entry : TagCollectionManager.getInstance().getItems().getAllTags().entrySet()) {
             if (entry.getValue().contains(object)) {
                 list.add(entry.getKey());
             }
         }
-
         return list;
     }
 
+
     @Override
-    public void fromTag(BlockState state, CompoundTag tag) {
-        super.fromTag(state, tag);
+    public void load(BlockState state, CompoundNBT tag) {
         this.tier = tag.getInt("tier");
-        setTier(tier);
-        Inventories.fromTag(tag, stacks);
+        //setTier(tier);
+        if (tag.contains("inv")) {
+            itemHandler.deserializeNBT(tag.getCompound("inv"));
+        }
+        super.load(state, tag);
         this.locked = tag.getBoolean("locked");
-        this.item = Registry.ITEM.get(Identifier.tryParse(tag.getString("item")));
+        this.item = ForgeRegistries.ITEMS.getValue(ResourceLocation.tryParse(tag.getString("item")));
         if (tag.contains("CustomName", 8)) {
-            this.customName = Text.Serializer.fromJson(tag.getString("CustomName"));
+            this.customName = ITextComponent.Serializer.fromJson(tag.getString("CustomName"));
         }
     }
 
     @Override
-    public CompoundTag toTag(CompoundTag tag) {
+    public CompoundNBT save(CompoundNBT tag) {
+        super.save(tag);
         tag.putInt("tier", tier);
-        Inventories.toTag(tag, stacks);
         tag.putBoolean("locked", locked);
-        tag.putString("item", Registry.ITEM.getId(item).toString());
+        tag.putString("item", ForgeRegistries.ITEMS.getKey(item).toString());
         if (this.customName != null) {
-            tag.putString("CustomName", Text.Serializer.toJson(this.customName));
+            tag.putString("CustomName", ITextComponent.Serializer.toJson(this.customName));
         }
-        return super.toTag(tag);
+        tag.put("inv", itemHandler.serializeNBT());
+        return tag;
     }
 
-    public void addClientOnlyListener(InventoryChangedListener... listeners) {
-        this.clientListeners.addAll(Arrays.asList(listeners));
-    }
-
-    public void addListener(InventoryChangedListener... listeners) {
-        this.listeners.addAll(Arrays.asList(listeners));
-    }
-
-    @SuppressWarnings("unused") // Keeping for potential use later
-    public void removeListener(InventoryChangedListener... listeners) {
-        this.listeners.removeAll(Arrays.asList(listeners));
-    }
-
-    public void clearListeners() {
-        listeners.clear();
-        clientListeners.clear();
+    public void setCustomName(ITextComponent text) {
+        this.customName = text;
     }
 
     @Override
-    public DefaultedList<ItemStack> getItems() {
-        return stacks;
+    public ITextComponent getDisplayName() {
+        return customName != null ? customName : new TranslationTextComponent(level.getBlockState(getBlockPos()).getBlock().getDescriptionId());
     }
 
     @Override
-    public int size() {
-        return (tier + 1) * 90;
-    }
-    @Override
-    public ItemStack removeStack(int slot, int amount) {
-        ItemStack stack = stacks.get(slot).split(amount);
-        markDirty();
-        onInventoryChanged(this);
-        return stack;
-    }
-
-    @Override
-    public ItemStack removeStack(int slot) {
-        ItemStack stack = stacks.remove(slot);
-        markDirty();
-        onInventoryChanged(this);
-        return stack;
-    }
-
-    @Override
-    public void setStack(int slot, ItemStack stack) {
-        stacks.set(slot, stack);
-        markDirty();
-        onInventoryChanged(this);
-    }
-
-    @Override
-    public void onInventoryChanged(Inventory sender) {
-        if (world != null && !world.isClient) {
-            listeners.forEach(inventoryListener -> inventoryListener.onInventoryChanged(sender));
-        }
-        if (world != null && world.isClient) {
-            clientListeners.forEach(inventoryChangedListener -> inventoryChangedListener.onInventoryChanged(sender));
-        }
-        if (item.equals(Items.AIR)) {
-            item = getMainItemStack().getItem();
-        }
-    }
-
-    @Override
-    public boolean isValid(int slot, ItemStack stack) {
-        if (!locked) {
-            if (isEmpty() || stack.isEmpty()) {
-                return true;
-            } else {
-                Collection<Identifier> idList = getTagsFor(stack.getItem());
-                if (idList.isEmpty()) {
-                    return containsAny(Collections.singleton(stack.getItem()));
-                } else {
-                    for (Identifier id : idList) {
-                        Tag<Item> tag = ItemTags.getTagGroup().getTagOrEmpty(id);
-                        return stacks.stream().anyMatch(stack2 -> tag.contains(stack2.getItem()));
-                    }
-                }
-            }
-        } else {
-            if (item.equals(Items.AIR)) {
-                return true;
-            }
-            Collection<Identifier> idList = getTagsFor(item);
-            if (idList.isEmpty()) {
-                return stack.getItem().equals(item);
-            } else {
-                for (Identifier id : idList) {
-                    Tag<Item> itemTag = ItemTags.getTagGroup().getTagOrEmpty(id);
-                    if (itemTag.contains(stack.getItem())) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
+    public Container createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
+        return new StorageCabinetContainer(syncId,inv, getBlockPos(), tier);
     }
 
     public ItemStack getMainItemStack() {
         if (locked) {
             return new ItemStack(item);
         }
-        return stacks.stream().filter(stack -> !stack.isEmpty()).findAny().orElse(ItemStack.EMPTY);
+        ItemStack stack = ItemStack.EMPTY;
+        IItemHandler inv = inventoryHandlerLazyOptional.orElseThrow(() -> new NullPointerException("Source Capability was not present!"));
+        for (int i = 0; i < inv.getSlots(); i++) {
+            ItemStack stackInSlot = inv.getStackInSlot(i);
+            if (!stackInSlot.isEmpty()) {
+                stack = stackInSlot;
+            }
+        }
+        return stack;
     }
 
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof StorageCabinetEntity) {
             StorageCabinetEntity cabinet = (StorageCabinetEntity) obj;
-            return cabinet.getPos().equals(this.getPos());
+            return cabinet.getBlockPos().equals(this.getBlockPos());
         }
         return false;
     }
 
     @Override
-    public void onOpen(PlayerEntity player) {
-        BlockState blockState = this.getCachedState();
-        boolean bl = blockState.get(StorageCabinetBlock.OPEN);
-        if (world != null) {
+    public CompoundNBT getUpdateTag() {
+        CompoundNBT tag = super.getUpdateTag();
+        tag.putInt("tier", tier);
+        tag.putBoolean("locked", locked);
+        tag.putString("item", ForgeRegistries.ITEMS.getKey(item).toString());
+        if (this.customName != null) {
+            tag.putString("CustomName", ITextComponent.Serializer.toJson(this.customName));
+        }
+        return tag;
+    }
+
+    @Override
+    public void handleUpdateTag(BlockState state, CompoundNBT tag) {
+        super.handleUpdateTag(state, tag);
+    }
+
+    public void startOpen() {
+        BlockState blockState = this.getBlockState();
+        boolean bl = blockState.getValue(StorageCabinetBlock.OPEN);
+        if (level != null) {
             if (!bl) {
-                this.world.setBlockState(this.getPos(), blockState.with(StorageCabinetBlock.OPEN, true), 3);
+                this.level.setBlock(this.getBlockPos(), blockState.setValue(StorageCabinetBlock.OPEN, true), 3);
             }
-            this.world.getBlockTickScheduler().schedule(this.getPos(), this.getCachedState().getBlock(), 5);
+            this.level.getBlockTicks().scheduleTick(this.getBlockPos(), this.getBlockState().getBlock(), 5);
             viewerCount++;
         }
     }
 
-
     public void tick() {
-        if (world != null) {
+        if (level != null) {
             if (this.viewerCount > 0) {
-                this.world.getBlockTickScheduler().schedule(this.getPos(), this.getCachedState().getBlock(), 5);
+                this.level.getBlockTicks().scheduleTick(this.getBlockPos(), this.getBlockState().getBlock(), 5);
             } else {
-                BlockState blockState = this.getCachedState();
-                if (!blockState.isOf(BlockRegistry.getByTier(tier))) {
-                    this.markRemoved();
+                BlockState blockState = this.getBlockState();
+                if (!blockState.is(StorageCabinet.getByTier(tier))) {
+                    this.setRemoved();
                     return;
                 }
 
-                boolean bl = blockState.get(StorageCabinetBlock.OPEN);
+                boolean bl = blockState.getValue(StorageCabinetBlock.OPEN);
                 if (bl) {
-                    this.world.setBlockState(this.getPos(), blockState.with(StorageCabinetBlock.OPEN, false), 3);
+                    this.level.setBlock(this.getBlockPos(), blockState.setValue(StorageCabinetBlock.OPEN, false), 3);
                 }
             }
         }
     }
 
-    @Override
     public void onClose(PlayerEntity player) {
         if (!player.isSpectator()) {
             --this.viewerCount;
         }
-
     }
 
-    public boolean hasCustomName() {
-        return customName != null;
-    }
-
-    public Text getCustomName() {
-        return customName;
-    }
-
-    public void setCustomName(Text customName) {
-        this.customName = customName;
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            return inventoryHandlerLazyOptional.cast();
+        }
+        return super.getCapability(cap, side);
     }
 
     @Override
-    public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
-        buf.writeBlockPos(pos);
-    }
-
-    @Override
-    public Text getDisplayName() {
-        return hasCustomName() ? getCustomName() : new TranslatableText(BlockRegistry.getByTier(tier).getTranslationKey());
-    }
-
-    @Override
-    public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
-        return new StorageCabinetDescription(syncId, inv, ScreenHandlerContext.create(world, pos));
-    }
-
-    @Override
-    public SidedInventory getInventory(BlockState state, WorldAccess world, BlockPos pos) {
-        return this;
-    }
-
-    @Override
-    public void fromClientTag(CompoundTag tag) {
-        fromTag(getCachedState(), tag);
-    }
-
-    @Override
-    public CompoundTag toClientTag(CompoundTag tag) {
-        return toTag(tag);
+    public void invalidateCaps() {
+        super.invalidateCaps();
+        inventoryHandlerLazyOptional.invalidate();
     }
 }
-
