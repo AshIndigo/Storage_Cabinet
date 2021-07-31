@@ -112,7 +112,7 @@ curseforge {
     apiKey = "${curseforge_apikey}"
     project {
         id = '304889'
-        changelog = 'TODO' // A file can also be set using: changelog = file('changelog.txt')
+        changelog = file('changelog.txt') // A file can also be set using: changelog = file('changelog.txt')
         releaseType = 'release'
         addGameVersion "${minecraft_version}"
         mainArtifact(jar) {
@@ -120,7 +120,7 @@ curseforge {
         }
     }
     options {
-        debug = true
+        //debug = true
     }
 }
 
