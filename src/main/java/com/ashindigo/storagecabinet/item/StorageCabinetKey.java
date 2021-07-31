@@ -12,7 +12,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class StorageCabinetKey extends Item {
 
     public StorageCabinetKey() {
-        super(new Item.Properties().tab(StorageCabinet.CABINET_GROUP));
+        super(new Item.Properties().tab(StorageCabinet.CABINET_GROUP).stacksTo(1));
     }
 
     @Override

@@ -21,7 +21,7 @@ import java.util.List;
 public class StorageCabinetDolly extends Item {
 
     public StorageCabinetDolly() {
-        super(new Item.Properties().tab(StorageCabinet.CABINET_GROUP));
+        super(new Item.Properties().tab(StorageCabinet.CABINET_GROUP).stacksTo(1));
     }
 
     @Override
