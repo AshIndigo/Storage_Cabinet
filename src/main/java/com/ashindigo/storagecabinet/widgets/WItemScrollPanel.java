@@ -2,6 +2,7 @@ package com.ashindigo.storagecabinet.widgets;
 
 import io.github.cottonmc.cotton.gui.widget.*;
 import io.github.cottonmc.cotton.gui.widget.data.Axis;
+import io.github.cottonmc.cotton.gui.widget.data.InputResult;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.util.TriState;
@@ -67,6 +68,12 @@ public class WItemScrollPanel extends WClippedPanel {
         super.paint(matrices, x, y, mouseX, mouseY);
     }
 
+    @Override
+    public InputResult onMouseScroll(int x, int y, double amount) {
+        return verticalScrollBar.onMouseScroll(0, 0, amount);
+    }
+
+    @Override
     public void layout() {
         this.children.clear();
         boolean horizontal = this.scrollingHorizontally == TriState.DEFAULT ? this.widget.getWidth() > this.width - SCROLL_BAR_SIZE : this.scrollingHorizontally.get();
