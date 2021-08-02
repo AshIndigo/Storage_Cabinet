@@ -58,7 +58,7 @@ public class CabinetManagerDescription extends SyncedGuiDescription {
     }
 
     private void addCabinet(WPagedTabPanel main, StorageCabinetEntity cabinetEntity) {
-        WScrollItemSlot itemSlot = new WScrollItemSlot(cabinetEntity, 0, StorageCabinetBlock.Manager.getWidth(), StorageCabinetBlock.Manager.getHeight(cabinetEntity.tier)).setFilter(stack -> cabinetEntity.isValid(0, stack));
+        WScrollItemSlot itemSlot = new WScrollItemSlot(cabinetEntity, 0, StorageCabinetBlock.getWidth(), StorageCabinetBlock.getHeight(cabinetEntity.tier)).setFilter(stack -> cabinetEntity.isValid(0, stack));
         WItemScrollPanel scrollPanel = new WItemScrollPanel(itemSlot);
         scrollPanel.setScrollingHorizontally(TriState.FALSE);
         scrollPanel.setScrollingVertically(TriState.TRUE);

@@ -15,8 +15,8 @@ public class WItemScrollPanel extends WClippedPanel {
     private final WScrollItemSlot widget;
     private TriState scrollingHorizontally = TriState.DEFAULT;
     private TriState scrollingVertically = TriState.DEFAULT;
-    protected WScrollBar horizontalScrollBar = new WScrollBar(Axis.HORIZONTAL);
-    protected WScrollBar verticalScrollBar = new WScrollBar(Axis.VERTICAL);
+    protected final WScrollBar horizontalScrollBar = new WScrollBar(Axis.HORIZONTAL);
+    protected final WScrollBar verticalScrollBar = new WScrollBar(Axis.VERTICAL);
     private int lastHorizontalScroll = -1;
     private int lastVerticalScroll = -1;
 
@@ -104,6 +104,6 @@ public class WItemScrollPanel extends WClippedPanel {
     }
 
     public int getBoundOffsetX() {
-        return parent instanceof WCardPanel ? 0 : 0; // 25
+        return 0; // 25
     }
 }

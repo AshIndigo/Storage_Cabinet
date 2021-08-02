@@ -21,27 +21,7 @@ public class WScrollItemSlot extends WWidget {
 
     private static final Predicate<ItemStack> DEFAULT_FILTER = (stack) -> true;
     @Environment(EnvType.CLIENT)
-    public static BackgroundPainter backgroundPainter = (matrices, left, top, panel) -> {
-        if (panel instanceof WScrollItemSlot slot) {
-            for (int x = 0; x < slot.getWidth() / 18; ++x) {
-                for (int y = 0; y < slot.getHeight() / 18; ++y) {
-                    int index = x + y * (slot.getWidth() / 18);
-                    int lo = 0xB8000000;
-                    int bg = 0x4C000000;
-                    int hi = 0xB8FFFFFF;
-                    ScreenDrawing.drawBeveledPanel(matrices, (x * 18) + left, (y * 18) + top, 16 + 2, 16 + 2, lo, bg, hi);
-                    if (slot.getFocusedSlot() == index) {
-                        int sx = (x * 18) + left;
-                        int sy = (y * 18) + top;
-                        ScreenDrawing.coloredRect(matrices, sx, sy, 18, 1, 0xFF_FFFFA0);
-                        ScreenDrawing.coloredRect(matrices, sx, sy + 1, 1, 18 - 1, 0xFF_FFFFA0);
-                        ScreenDrawing.coloredRect(matrices, sx + 18 - 1, sy + 1, 1, 18 - 1, 0xFF_FFFFA0);
-                        ScreenDrawing.coloredRect(matrices, sx + 1, sy + 18 - 1, 18 - 1, 1, 0xFF_FFFFA0);
-                    }
-                }
-            }
-        }
-    };
+    public static BackgroundPainter backgroundPainter;
     private final List<ScrollValidatedSlot> peers = new ArrayList<>();
     private final Set<WScrollItemSlot.ChangeListener> listeners;
     private final Inventory internalInv;
@@ -126,9 +106,30 @@ public class WScrollItemSlot extends WWidget {
 
     @Environment(EnvType.CLIENT)
     public void paint(MatrixStack matrices, int x, int y, int mouseX, int mouseY) {
-        if (backgroundPainter != null) {
-            backgroundPainter.paintBackground(matrices, x, y, this);
+        if (backgroundPainter == null) {
+            backgroundPainter = (matrices1, left, top, panel) -> {
+                if (panel instanceof WScrollItemSlot slot) {
+                    for (int x1 = 0; x1 < slot.getWidth() / 18; ++x1) {
+                        for (int y1 = 0; y1 < slot.getHeight() / 18; ++y1) {
+                            int index = x1 + y1 * (slot.getWidth() / 18);
+                            int lo = 0xB8000000;
+                            int bg = 0x4C000000;
+                            int hi = 0xB8FFFFFF;
+                            ScreenDrawing.drawBeveledPanel(matrices1, (x1 * 18) + left, (y1 * 18) + top, 16 + 2, 16 + 2, lo, bg, hi);
+                            if (slot.getFocusedSlot() == index) {
+                                int sx = (x1 * 18) + left;
+                                int sy = (y1 * 18) + top;
+                                ScreenDrawing.coloredRect(matrices1, sx, sy, 18, 1, 0xFF_FFFFA0);
+                                ScreenDrawing.coloredRect(matrices1, sx, sy + 1, 1, 18 - 1, 0xFF_FFFFA0);
+                                ScreenDrawing.coloredRect(matrices1, sx + 18 - 1, sy + 1, 1, 18 - 1, 0xFF_FFFFA0);
+                                ScreenDrawing.coloredRect(matrices1, sx + 1, sy + 18 - 1, 18 - 1, 1, 0xFF_FFFFA0);
+                            }
+                        }
+                    }
+                }
+            };
         }
+        backgroundPainter.paintBackground(matrices, x, y, this);
     }
 
     public WWidget cycleFocus(boolean lookForwards) {

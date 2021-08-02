@@ -111,23 +111,20 @@ public class StorageCabinetBlock extends BlockWithEntity implements InventoryPro
         super.onBreak(world, pos, state, player);
     }
 
-
-    public int getTier() {
-        return tier;
-    }
-
     @Override
     public SidedInventory getInventory(BlockState state, WorldAccess world, BlockPos pos) {
         return (SidedInventory) world.getBlockEntity(pos);
     }
 
-    public static class Manager {
-        public static int getWidth() { // TODO Just remove? It's always 9
-            return 9;
-        }
+    public int getTier() {
+        return tier;
+    }
 
-        public static int getHeight(int tier) {
-            return 10 * (tier + 1);
-        }
+    public static int getWidth() { // TODO Just remove? It's always 9
+        return 9;
+    }
+
+    public static int getHeight(int tier) {
+        return 10 * (tier + 1);
     }
 }

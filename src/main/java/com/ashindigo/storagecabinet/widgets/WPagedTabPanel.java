@@ -38,11 +38,11 @@ public class WPagedTabPanel extends WPanel {
     private final List<WTab> tabWidgets = new ArrayList<>();
     private final WCardPanel mainPanel = new WCardPanel();
     int page = 0;
-    WButton back = new WButton(new LiteralText("<")).setOnClick(() -> {
+    final WButton back = new WButton(new LiteralText("<")).setOnClick(() -> {
         page = Math.max(0, page - 1);
         updateTabs();
     });
-    WButton next = new WButton(new LiteralText(">")).setOnClick(() -> {
+    final WButton next = new WButton(new LiteralText(">")).setOnClick(() -> {
         page = Math.min(getPageCount() - 1, page + 1);
         updateTabs();
     });

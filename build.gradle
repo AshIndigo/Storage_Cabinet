@@ -68,7 +68,7 @@ curseforge {
 		changelog = file('changelog.txt') // A file can also be set using: changelog = file('changelog.txt')
 		releaseType = 'release'
 		addGameVersion "${minecraft_version}"
-		//addGameVersion 'Fabric'
+		addGameVersion 'Fabric'
 		mainArtifact(remapJar) {
 			displayName = "$archivesBaseName-$mod_version-Fabric"
 			relations {

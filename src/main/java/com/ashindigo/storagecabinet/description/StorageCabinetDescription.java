@@ -25,7 +25,7 @@ public class StorageCabinetDescription extends SyncedGuiDescription {
         setTitleVisible(true);
         WPlainPanel root = new WPlainPanel();
         root.setSize(180, 294); // 166
-        WScrollItemSlot itemSlot = new WScrollItemSlot(cabinetEntity, 0, StorageCabinetBlock.Manager.getWidth(), StorageCabinetBlock.Manager.getHeight(cabinetEntity.tier)).setFilter(stack -> cabinetEntity.isValid(0, stack));
+        WScrollItemSlot itemSlot = new WScrollItemSlot(cabinetEntity, 0, StorageCabinetBlock.getWidth(), StorageCabinetBlock.getHeight(cabinetEntity.tier)).setFilter(stack -> cabinetEntity.isValid(0, stack));
         WItemScrollPanel scrollPanel = new WItemScrollPanel(itemSlot);
         scrollPanel.setScrollingVertically(TriState.TRUE);
         scrollPanel.setScrollingHorizontally(TriState.FALSE);
