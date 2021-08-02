@@ -1,10 +1,5 @@
 plugins {
-	id 'maven-publish'
 	id 'fabric-loom' version '0.9-SNAPSHOT'
-
-}
-
-plugins {
 	id 'com.matthewprenger.cursegradle' version '1.4.0'
 }
 
@@ -14,9 +9,6 @@ targetCompatibility = JavaVersion.VERSION_16
 archivesBaseName = "${project.minecraft_version}-${project.archives_base_name}"
 version = project.mod_version
 group = project.maven_group
-
-minecraft {
-}
 
 repositories {
 	maven {
@@ -76,34 +68,21 @@ curseforge {
 		changelog = file('changelog.txt') // A file can also be set using: changelog = file('changelog.txt')
 		releaseType = 'release'
 		addGameVersion "${minecraft_version}"
-		mainArtifact(jar) {
-			displayName = "$archivesBaseName-$mod_version-fabric"
+		//addGameVersion 'Fabric'
+		mainArtifact(remapJar) {
+			displayName = "$archivesBaseName-$mod_version-Fabric"
+			relations {
+				embeddedLibrary "libgui"
+				requiredDependency "fabric-api"
+			}
 		}
 	}
 	options {
 		debug = true
+		forgeGradleIntegration = false
 	}
 }
 
-// configure the maven publication
-publishing {
-	publications {
-		mavenJava(MavenPublication) {
-			// add all the jars that should be included when publishing to maven
-			artifact(remapJar) {
-				builtBy remapJar
-			}
-			artifact(sourcesJar) {
-				builtBy remapSourcesJar
-			}
-		}
-	}
-
-	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-	repositories {
-		// Add repositories to publish to here.
-		// Notice: This block does NOT have the same function as the block in the top level.
-		// The repositories here will be used for publishing your artifact, not for
-		// retrieving dependencies.
-	}
+afterEvaluate {
+	tasks.curseforge304889.dependsOn remapJar
 }
