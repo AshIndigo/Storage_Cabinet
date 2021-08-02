@@ -1,6 +1,6 @@
 package com.ashindigo.storagecabinet.widgets;
 
-import com.ashindigo.storagecabinet.mixins.ValidatedSlotAccessor;
+import com.ashindigo.storagecabinet.mixins.SlotAccessor;
 import io.github.cottonmc.cotton.gui.GuiDescription;
 import io.github.cottonmc.cotton.gui.client.BackgroundPainter;
 import io.github.cottonmc.cotton.gui.client.ScreenDrawing;
@@ -177,8 +177,7 @@ public class WScrollItemSlot extends WWidget {
 
     public void scrollVert(int startIndex) {
         for (ScrollValidatedSlot peer : peers) {
-            ValidatedSlotAccessor slot = ((ValidatedSlotAccessor) peer);
-            slot.setY(slot.getOrigY() - (18 * startIndex));
+            ((SlotAccessor) peer).setY(peer.originalY - (18 * startIndex));
         }
     }
 

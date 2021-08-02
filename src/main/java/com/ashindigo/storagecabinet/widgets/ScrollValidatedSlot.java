@@ -1,5 +1,6 @@
 package com.ashindigo.storagecabinet.widgets;
 
+import com.ashindigo.storagecabinet.mixins.SlotAccessor;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import io.github.cottonmc.cotton.gui.ValidatedSlot;
@@ -9,14 +10,18 @@ import java.util.Objects;
 
 public class ScrollValidatedSlot extends ValidatedSlot {
 
+    private final int originalX;
+    public final int originalY;
     protected final Multimap<WScrollItemSlot, WScrollItemSlot.ChangeListener> listeners = HashMultimap.create();
     private final int boundUX;
     private final int boundUY;
     private final int boundLX;
     private final int boundLY;
 
-    public ScrollValidatedSlot(Inventory inventory, int index, int x, int y, int boundLX, int boundLY, int boundUX, int boundUY) {
-        super(inventory, index, x, y);
+    public ScrollValidatedSlot(Inventory inventory, int index, int origX, int origY, int boundLX, int boundLY, int boundUX, int boundUY) {
+        super(inventory, index, origX, origY);
+        originalX = origX;
+        this.originalY = origY;
         this.boundUX = boundUX;
         this.boundUY = boundUY;
         this.boundLX = boundLX;
@@ -41,5 +46,19 @@ public class ScrollValidatedSlot extends ValidatedSlot {
             return boundUY >= y && y >= boundLY;
         }
         return false;
+    }
+
+    @Override
+    public void setVisible(boolean visible) { // I needed this back
+        if (isVisible() != visible) {
+            super.setVisible(visible);
+            if (visible) {
+                ((SlotAccessor) this).setX(originalX);
+                ((SlotAccessor) this).setY(originalY);
+            } else {
+                ((SlotAccessor) this).setX(-100000);
+                ((SlotAccessor) this).setY(-100000);
+            }
+        }
     }
 }
