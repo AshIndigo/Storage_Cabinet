@@ -6,8 +6,8 @@ plugins {
 sourceCompatibility = JavaVersion.VERSION_16
 targetCompatibility = JavaVersion.VERSION_16
 
-archivesBaseName = "${project.minecraft_version}-${project.archives_base_name}"
-version = project.mod_version
+archivesBaseName = "${project.archives_base_name}"
+version = "${project.minecraft_version}-${project.mod_version}"
 group = project.maven_group
 
 repositories {
@@ -69,16 +69,16 @@ curseforge {
 		releaseType = 'release'
 		addGameVersion "${minecraft_version}"
 		addGameVersion 'Fabric'
-		mainArtifact(remapJar) {
-			displayName = "$archivesBaseName-$mod_version-Fabric"
-			relations {
-				embeddedLibrary "libgui"
-				requiredDependency "fabric-api"
+			mainArtifact(remapJar) {
+				displayName = "$minecraft_version-$archivesBaseName-$mod_version-Fabric"
+				relations {
+					embeddedLibrary "libgui"
+					requiredDependency "fabric-api"
+				}
 			}
-		}
 	}
 	options {
-		debug = true
+		//debug = true
 		forgeGradleIntegration = false
 	}
 }

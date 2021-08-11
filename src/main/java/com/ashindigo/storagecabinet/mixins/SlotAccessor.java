@@ -12,13 +12,8 @@ public interface SlotAccessor {
     @Mutable
     void setY(int y);
 
-    @Accessor("y")
-    int getY();
-
     @Accessor("x")
     @Mutable
     void setX(int x);
 
-    @Accessor("x")
-    int getX();
 }
