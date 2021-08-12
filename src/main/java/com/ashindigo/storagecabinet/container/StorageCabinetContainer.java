@@ -33,8 +33,8 @@ public class StorageCabinetContainer extends Container {
         entity = (StorageCabinetEntity) playerInv.player.level.getBlockEntity(blockPos);
         entity.startOpen();
         inv = entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.NORTH).orElseThrow(() -> new NullPointerException("Source Capability was not present!"));
-        for (int i = 0; i < StorageCabinetBlock.Manager.getHeight(tier); ++i) {
-            for (int j = 0; j < 9; ++j) {
+        for (int i = 0; i < StorageCabinetBlock.getHeight(tier); ++i) {
+            for (int j = 0; j < StorageCabinetBlock.getWidth(); ++j) {
                 this.addSlot(new SlotItemHandler(inv, i * 9 + j, 9 + j * 18, 18 + i * 18) {
                     @Override
                     public void setChanged() {
@@ -117,8 +117,8 @@ public class StorageCabinetContainer extends Container {
         }
 
         // Iterate through all slots
-        for (int y = 0; y < StorageCabinetBlock.Manager.getHeight(tier); ++y) {
-            for (int x = 0; x < 9; ++x) {
+        for (int y = 0; y < StorageCabinetBlock.getHeight(tier); ++y) {
+            for (int x = 0; x < StorageCabinetBlock.getWidth(); ++x) {
                 if (j == 0) {
                     slots.get(y * 9 + x).y = 18 + y * 18; // Orig 18 + y * 18
                 } else {

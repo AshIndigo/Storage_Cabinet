@@ -115,7 +115,7 @@ curseforge {
         releaseType = 'release'
         addGameVersion "${minecraft_version}"
         mainArtifact(jar) {
-            displayName = "$archivesBaseName-$mod_version"
+            displayName = "$archivesBaseName-$mod_version-Forge"
         }
     }
     options {

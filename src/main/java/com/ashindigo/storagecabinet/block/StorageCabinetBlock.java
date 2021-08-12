@@ -45,6 +45,14 @@ public class StorageCabinetBlock extends ContainerBlock {
         this.registerDefaultState(getStateDefinition().any().setValue(FACING, Direction.NORTH).setValue(OPEN, false));
     }
 
+    public static int getWidth() { // TODO Just remove? It's always 9
+        return 9;
+    }
+
+    public static int getHeight(int tier) {
+        return 10 * (tier + 1);
+    }
+
     @Override
     public void tick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
         TileEntity blockEntity = world.getBlockEntity(pos);
@@ -126,16 +134,5 @@ public class StorageCabinetBlock extends ContainerBlock {
     @Override
      public TileEntity newBlockEntity(IBlockReader p_196283_1_) {
         return null; // TODO Remains null
-    }
-
-
-    public static class Manager {
-        public static int getWidth() { // TODO Just remove? It's always 9
-            return 9;
-        }
-
-        public static int getHeight(int tier) {
-            return 10 * (tier + 1);
-        }
     }
 }

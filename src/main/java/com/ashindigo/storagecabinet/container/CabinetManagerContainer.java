@@ -59,8 +59,8 @@ public class CabinetManagerContainer extends Container {
                 StorageCabinetEntity cabinetEntity = (StorageCabinetEntity) entity;
                 if (!cabinetList.contains(cabinetEntity)) {
                     cabinetList.add(cabinetEntity);
-                    for (int i = 0; i < StorageCabinetBlock.Manager.getHeight(cabinetEntity.tier); ++i) {
-                        for (int j = 0; j < 9; ++j) {
+                    for (int i = 0; i < StorageCabinetBlock.getHeight(cabinetEntity.tier); ++i) {
+                        for (int j = 0; j < StorageCabinetBlock.getWidth(); ++j) {
                             CABINET_SLOT_LIST.put(cabinetEntity, (ExtraSlotItemHandler) this.addSlot(new ExtraSlotItemHandler(cabinetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.NORTH).orElseThrow(() -> new NullPointerException("Source Capability was not present!")), i * 9 + j, 9 + j * 18, 18 + i * 18, entity)));
                         }
                     }
@@ -122,8 +122,8 @@ public class CabinetManagerContainer extends Container {
         }
 
         // Iterate through all slots
-        for (int y = 0; y < StorageCabinetBlock.Manager.getHeight(cabinetEntity.tier); ++y) {
-            for (int x = 0; x < 9; ++x) {
+        for (int y = 0; y < StorageCabinetBlock.getHeight(cabinetEntity.tier); ++y) {
+            for (int x = 0; x < StorageCabinetBlock.getWidth(); ++x) {
                 if (j == 0) {
                     CABINET_SLOT_LIST.get(cabinetEntity).get(y * 9 + x).y = 18 + y * 18; // Orig 18 + y * 18
                 } else {
