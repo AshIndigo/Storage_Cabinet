@@ -118,22 +118,16 @@ public class StorageCabinetBlock extends BaseEntityBlock {
         return tier;
     }
 
-    @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new StorageCabinetEntity(pos, state).setTier(tier);
     }
 
+    public static int getWidth() { // TODO Just remove? It's always 9
+        return 9;
+    }
 
-
-
-    public static class Manager {
-        public static int getWidth() { // TODO Just remove? It's always 9
-            return 9;
-        }
-
-        public static int getHeight(int tier) {
-            return 10 * (tier + 1);
-        }
+    public static int getHeight(int tier) {
+        return 10 * (tier + 1);
     }
 }

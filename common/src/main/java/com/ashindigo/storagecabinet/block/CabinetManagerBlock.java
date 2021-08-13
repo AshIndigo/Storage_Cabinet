@@ -19,7 +19,6 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.fmllegacy.network.NetworkHooks;
 
-import javax.annotation.Nullable;
 import java.util.Random;
 
 public class CabinetManagerBlock extends BaseEntityBlock {
@@ -84,7 +83,6 @@ public class CabinetManagerBlock extends BaseEntityBlock {
         return InteractionResult.SUCCESS;
     }
 
-    @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
         return new CabinetManagerEntity(blockPos, blockState);
