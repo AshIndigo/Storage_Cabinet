@@ -1,6 +1,7 @@
 package com.ashindigo.storagecabinet.container;
 
 import com.ashindigo.storagecabinet.StorageCabinet;
+import com.ashindigo.storagecabinet.StorageCabinetExpectPlatform;
 import com.ashindigo.storagecabinet.block.StorageCabinetBlock;
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
 import com.google.common.collect.ArrayListMultimap;
@@ -17,7 +18,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.SlotItemHandler;
 
 import java.util.ArrayList;
 
@@ -120,11 +120,11 @@ public class CabinetManagerContainer extends AbstractContainerMenu {
 
         // Iterate through all slots
         for (int y = 0; y < StorageCabinetBlock.getHeight(cabinetEntity.tier); ++y) {
-            for (int x = 0; x < 9; ++x) {
+            for (int x = 0; x < StorageCabinetBlock.getWidth(); ++x) {
                 if (j == 0) {
-                    CABINET_SLOT_LIST.get(cabinetEntity).get(y * 9 + x).y = 18 + y * 18; // Orig 18 + y * 18
+                    StorageCabinetExpectPlatform.setSlotY(CABINET_SLOT_LIST.get(cabinetEntity).get(y * 9 + x), 18 + y * 18);
                 } else {
-                    CABINET_SLOT_LIST.get(cabinetEntity).get(y * 9 + x).y = 18 + (y - j) * 18; // Orig 18 + (y * j) * 18
+                    StorageCabinetExpectPlatform.setSlotY(CABINET_SLOT_LIST.get(cabinetEntity).get(y * 9 + x), 18 + (y - j) * 18);
                 }
             }
         }
@@ -143,12 +143,12 @@ public class CabinetManagerContainer extends AbstractContainerMenu {
         }
     }
 
-    static class ExtraSlotItemHandler extends SlotItemHandler {
+    static class ExtraSlotItemHandler extends Slot {
 
         private final BlockEntity entity;
         private boolean enabled;
 
-        public ExtraSlotItemHandler(IItemHandler itemHandler, int index, int xPosition, int yPosition, BlockEntity entity) {
+        public ExtraSlotItemHandler(Inventory itemHandler, int index, int xPosition, int yPosition, BlockEntity entity) {
             super(itemHandler, index, xPosition, yPosition);
             this.entity = entity;
         }

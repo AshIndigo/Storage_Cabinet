@@ -1,6 +1,7 @@
 package com.ashindigo.storagecabinet.container;
 
 import com.ashindigo.storagecabinet.StorageCabinet;
+import com.ashindigo.storagecabinet.StorageCabinetExpectPlatform;
 import com.ashindigo.storagecabinet.block.StorageCabinetBlock;
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
 import net.minecraft.core.BlockPos;
@@ -115,11 +116,11 @@ public class StorageCabinetContainer extends AbstractContainerMenu {
 
         // Iterate through all slots
         for (int y = 0; y < StorageCabinetBlock.getHeight(tier); ++y) {
-            for (int x = 0; x < 9; ++x) {
+            for (int x = 0; x < StorageCabinetBlock.getWidth(); ++x) {
                 if (j == 0) {
-                    slots.get(y * 9 + x).y = 18 + y * 18; // Orig 18 + y * 18
+                    StorageCabinetExpectPlatform.setSlotY(slots.get(y * 9 + x), 18 + y * 18);
                 } else {
-                    slots.get(y * 9 + x).y = 18 + (y - j) * 18; // Orig 18 + (y * j) * 18
+                    StorageCabinetExpectPlatform.setSlotY(slots.get(y * 9 + x), 18 + (y - j) * 18);
                 }
 
             }
