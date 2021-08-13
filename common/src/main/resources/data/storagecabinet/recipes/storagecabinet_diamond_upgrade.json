@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " A ",
+    "ACA",
+    " P "
+  ],
+  "key": {
+    "A": [
+      {
+        "item": "minecraft:diamond"
+      }
+    ],
+    "P": [
+      {
+        "item": "minecraft:gold_ingot"
+      }
+    ],
+    "C": [
+      {
+        "item": "minecraft:chest"
+      }
+    ]
+  },
+  "result": {
+    "item": "storagecabinet:storagecabinet_diamond_upgrade"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "storagecabinet",
+  "version": "${version}",
+
+  "name": "Storage Cabinet",
+  "description": "Adds a storage cabinet to Minecraft",
+  "authors": [
+    "AshIndigo", "MoonlitLamps"
+  ],
+  "contact": {
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/storage-cabinet",
+    "sources": "https://github.com/AshIndigo/Filing_Cabinet"
+  },
+
+  "license": "MIT",
+  "icon": "assets/storagecabinet/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.ashindigo.storagecabinet.fabric.StorageCabinetFabric"
+    ],
+    "client": [
+      "com.ashindigo.storagecabinet.fabric.StorageCabinetClient"
+    ]
+  }
+
+  "depends": {
+    "fabricloader": ">=0.11.0",
+    "fabric": "*",
+    "architectury": ">=1.1.55"
+  },
+  "suggests": {
+  }
+}

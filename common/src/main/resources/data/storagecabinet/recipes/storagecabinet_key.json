@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "  A",
+    " AP",
+    " AA"
+  ],
+  "key": {
+    "A": [
+      {
+        "item": "minecraft:iron_nugget"
+      }
+    ],
+    "P": [
+      {
+        "item": "minecraft:iron_ingot"
+      }
+    ]
+  },
+  "result": {
+    "item": "storagecabinet:key"
+  }
+}
