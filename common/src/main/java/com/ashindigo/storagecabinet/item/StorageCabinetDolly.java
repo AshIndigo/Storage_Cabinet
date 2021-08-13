@@ -15,7 +15,6 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 public class StorageCabinetDolly extends Item {
@@ -62,7 +61,7 @@ public class StorageCabinetDolly extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, Level world, List<Component> tooltip, TooltipFlag flag) {
         if (stack.hasTag()) {
             tooltip.add(new TranslatableComponent("text.storagecabinet.dollyhas"));
         }

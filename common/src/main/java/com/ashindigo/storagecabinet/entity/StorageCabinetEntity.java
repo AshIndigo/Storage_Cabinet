@@ -30,8 +30,6 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +49,7 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider {
         }
 
         @Override
-        public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+        public boolean isItemValid(int slot, ItemStack stack) {
             if (!locked) {
                 if (stacks.stream().allMatch(ItemStack::isEmpty) || stack.isEmpty()) {
                     return true;
@@ -112,8 +110,6 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider {
         }
         return list;
     }
-
-
 
 
     @Override
@@ -231,9 +227,9 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider {
         }
     }
 
-    @Nonnull
+
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+    public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
         if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             return inventoryHandlerLazyOptional.cast();
         }

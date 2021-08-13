@@ -15,8 +15,6 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
-import javax.annotation.Nonnull;
-
 public class StorageCabinetContainer extends AbstractContainerMenu {
 
     final StorageCabinetEntity entity;
@@ -33,7 +31,7 @@ public class StorageCabinetContainer extends AbstractContainerMenu {
         entity = (StorageCabinetEntity) playerInv.player.level.getBlockEntity(blockPos);
         entity.startOpen();
         inv = entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.NORTH).orElseThrow(() -> new NullPointerException("Source Capability was not present!"));
-        for (int i = 0; i < StorageCabinetBlock.Manager.getHeight(tier); ++i) {
+        for (int i = 0; i < StorageCabinetBlock.getHeight(tier); ++i) {
             for (int j = 0; j < 9; ++j) {
                 this.addSlot(new SlotItemHandler(inv, i * 9 + j, 9 + j * 18, 18 + i * 18) {
                     @Override
@@ -62,7 +60,6 @@ public class StorageCabinetContainer extends AbstractContainerMenu {
     }
 
     @Override
-    @Nonnull
     public ItemStack quickMoveStack(Player player, int index) {
         ItemStack itemStack = ItemStack.EMPTY;
         Slot slot = slots.get(index);
@@ -117,7 +114,7 @@ public class StorageCabinetContainer extends AbstractContainerMenu {
         }
 
         // Iterate through all slots
-        for (int y = 0; y < StorageCabinetBlock.Manager.getHeight(tier); ++y) {
+        for (int y = 0; y < StorageCabinetBlock.getHeight(tier); ++y) {
             for (int x = 0; x < 9; ++x) {
                 if (j == 0) {
                     slots.get(y * 9 + x).y = 18 + y * 18; // Orig 18 + y * 18

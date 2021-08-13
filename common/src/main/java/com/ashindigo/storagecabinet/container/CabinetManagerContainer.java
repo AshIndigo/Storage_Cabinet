@@ -19,7 +19,6 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 
 public class CabinetManagerContainer extends AbstractContainerMenu {
@@ -58,7 +57,7 @@ public class CabinetManagerContainer extends AbstractContainerMenu {
             if (entity instanceof StorageCabinetEntity cabinetEntity) {
                 if (!cabinetList.contains(cabinetEntity)) {
                     cabinetList.add(cabinetEntity);
-                    for (int i = 0; i < StorageCabinetBlock.Manager.getHeight(cabinetEntity.tier); ++i) {
+                    for (int i = 0; i < StorageCabinetBlock.getHeight(cabinetEntity.tier); ++i) {
                         for (int j = 0; j < 9; ++j) {
                             CABINET_SLOT_LIST.put(cabinetEntity, (ExtraSlotItemHandler) this.addSlot(new ExtraSlotItemHandler(cabinetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.NORTH).orElseThrow(() -> new NullPointerException("Source Capability was not present!")), i * 9 + j, 9 + j * 18, 18 + i * 18, entity)));
                         }
@@ -75,7 +74,6 @@ public class CabinetManagerContainer extends AbstractContainerMenu {
     }
 
     @Override
-    @Nonnull
     public ItemStack quickMoveStack(Player player, int index) {
         ItemStack itemStack = ItemStack.EMPTY;
         Slot slot = slots.get(index);
@@ -121,7 +119,7 @@ public class CabinetManagerContainer extends AbstractContainerMenu {
         }
 
         // Iterate through all slots
-        for (int y = 0; y < StorageCabinetBlock.Manager.getHeight(cabinetEntity.tier); ++y) {
+        for (int y = 0; y < StorageCabinetBlock.getHeight(cabinetEntity.tier); ++y) {
             for (int x = 0; x < 9; ++x) {
                 if (j == 0) {
                     CABINET_SLOT_LIST.get(cabinetEntity).get(y * 9 + x).y = 18 + y * 18; // Orig 18 + y * 18

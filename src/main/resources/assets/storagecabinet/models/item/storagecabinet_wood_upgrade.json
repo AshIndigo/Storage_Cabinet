@@ -1,6 +1,0 @@
-{
-  "parent": "item/generated",
-  "textures": {
-    "layer0": "storagecabinet:item/storagecabinet_wood_upgrade"
-  }
-}
