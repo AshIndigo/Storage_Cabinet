@@ -1,6 +1,7 @@
 package com.ashindigo.storagecabinet.block;
 
 import com.ashindigo.storagecabinet.entity.CabinetManagerEntity;
+import dev.architectury.registry.menu.MenuRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -17,7 +18,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.fmllegacy.network.NetworkHooks;
 
 import java.util.Random;
 
@@ -78,7 +78,7 @@ public class CabinetManagerBlock extends BaseEntityBlock {
     @Override
     public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (!world.isClientSide) {
-            NetworkHooks.openGui((ServerPlayer) player, (MenuProvider) world.getBlockEntity(pos), packetBuffer -> packetBuffer.writeBlockPos(pos));
+            MenuRegistry.openExtendedMenu((ServerPlayer) player, (MenuProvider) world.getBlockEntity(pos), packetBuffer -> packetBuffer.writeBlockPos(pos));
         }
         return InteractionResult.SUCCESS;
     }

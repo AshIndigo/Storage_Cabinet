@@ -78,6 +78,13 @@ public class StorageCabinet {
         CONTAINERS.register();
     }
 
-
-
+    public static Block getByTier(int tier) {
+        return switch (tier) {
+            case 1 -> IRON_CABINET.get();
+            case 2 -> GOLD_CABINET.get();
+            case 3 -> DIAMOND_CABINET.get();
+            case 4 -> EMERALD_CABINET.get();
+            default -> WOOD_CABINET.get();
+        };
+    }
 }

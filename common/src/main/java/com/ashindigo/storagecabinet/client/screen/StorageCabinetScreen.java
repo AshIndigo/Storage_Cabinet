@@ -34,7 +34,7 @@ public class StorageCabinetScreen extends AbstractContainerScreen<StorageCabinet
         int i = this.leftPos + 175;
         int j = this.topPos + 18;
         int k = j + 112;
-        RenderSystem.setShaderTexture(0, CreativeModeTab.TAB_SEARCH.getTabsImage());
+        RenderSystem.setShaderTexture(0, new ResourceLocation(CreativeModeTab.TAB_SEARCH.getBackgroundSuffix()));
         this.blit(matrixStack, i, j + (int) ((float) (k - j - 17) * this.scrollOffs), 232, 0, 12, 15);
     }
 
@@ -99,6 +99,6 @@ public class StorageCabinetScreen extends AbstractContainerScreen<StorageCabinet
     @Override
     protected void init() {
         super.init();
-        getMinecraft().keyboardHandler.setSendRepeatsToGui(true);
+        minecraft.keyboardHandler.setSendRepeatsToGui(true);
     }
 }

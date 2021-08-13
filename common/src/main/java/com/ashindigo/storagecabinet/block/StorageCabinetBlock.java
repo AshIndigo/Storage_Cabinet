@@ -1,6 +1,8 @@
 package com.ashindigo.storagecabinet.block;
 
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
+import dev.architectury.hooks.client.screen.ScreenHooks;
+import dev.architectury.registry.menu.MenuRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -22,11 +24,9 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.fmllegacy.network.NetworkHooks;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
-import javax.annotation.Nullable;
 import java.util.Random;
 
 public class StorageCabinetBlock extends BaseEntityBlock {
@@ -83,7 +83,7 @@ public class StorageCabinetBlock extends BaseEntityBlock {
     @Override
     public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (!world.isClientSide) {
-            NetworkHooks.openGui((ServerPlayer) player, (MenuProvider) world.getBlockEntity(pos), packetBuffer -> {
+            MenuRegistry.openExtendedMenu((ServerPlayer) player, (MenuProvider) world.getBlockEntity(pos), packetBuffer -> {
                 packetBuffer.writeBlockPos(pos);
                 packetBuffer.writeInt(tier);
             });
@@ -114,13 +114,13 @@ public class StorageCabinetBlock extends BaseEntityBlock {
         super.playerWillDestroy(world, pos, state, player);
     }
 
-    public int getTier() {
-        return tier;
-    }
-
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new StorageCabinetEntity(pos, state).setTier(tier);
+    }
+
+    public int getTier() {
+        return tier;
     }
 
     public static int getWidth() { // TODO Just remove? It's always 9

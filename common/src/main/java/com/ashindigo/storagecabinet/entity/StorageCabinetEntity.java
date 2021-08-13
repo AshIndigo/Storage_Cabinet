@@ -28,7 +28,6 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Collection;
 import java.util.List;
@@ -121,7 +120,7 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider {
         }
         super.load(tag);
         this.locked = tag.getBoolean("locked");
-        this.item = ForgeRegistries.ITEMS.getValue(ResourceLocation.tryParse(tag.getString("item")));
+        this.item = Registry.ITEM.get(ResourceLocation.tryParse(tag.getString("item")));
         if (tag.contains("CustomName", 8)) {
             this.customName = Component.Serializer.fromJson(tag.getString("CustomName"));
         }
@@ -132,7 +131,7 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider {
         super.save(tag);
         tag.putInt("tier", tier);
         tag.putBoolean("locked", locked);
-        tag.putString("item", ForgeRegistries.ITEMS.getKey(item).toString());
+        tag.putString("item", Registry.ITEM.getKey(item).toString());
         if (this.customName != null) {
             tag.putString("CustomName", Component.Serializer.toJson(this.customName));
         }

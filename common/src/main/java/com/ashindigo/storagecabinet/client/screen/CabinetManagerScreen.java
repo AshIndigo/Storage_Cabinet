@@ -46,7 +46,7 @@ public class CabinetManagerScreen extends AbstractContainerScreen<CabinetManager
     @Override
     public void init() {
         super.init();
-        getMinecraft().keyboardHandler.setSendRepeatsToGui(true);
+        minecraft.keyboardHandler.setSendRepeatsToGui(true);
         this.menu.setEnabledTab(selectedTab);
         if (TABS.length > 6) {
             addWidget(new Button(leftPos, topPos - 50, 20, 20, new TextComponent("<"), b -> {
@@ -65,7 +65,7 @@ public class CabinetManagerScreen extends AbstractContainerScreen<CabinetManager
     public void renderBg(PoseStack matrixStack, float pPartialTicks, int pX, int pY) {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         CabinetTab tab = TABS[selectedTab];
-        TextureManager textureManager = getMinecraft().getTextureManager();
+        TextureManager textureManager = minecraft.getTextureManager();
 
         int start = tabPage * 5;
         int end = Math.min(TABS.length, (tabPage + 1) * 5 + 1);

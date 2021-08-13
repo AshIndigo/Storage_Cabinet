@@ -22,9 +22,10 @@
       "com.ashindigo.storagecabinet.fabric.StorageCabinetFabric"
     ],
     "client": [
-      "com.ashindigo.storagecabinet.fabric.StorageCabinetClient"
+      "com.ashindigo.storagecabinet.fabric.StorageCabinetFabricClient"
     ]
-  }
+  },
+  "accessWidener" : "storagecabinet.accesswidener",
 
   "depends": {
     "fabricloader": ">=0.11.0",
