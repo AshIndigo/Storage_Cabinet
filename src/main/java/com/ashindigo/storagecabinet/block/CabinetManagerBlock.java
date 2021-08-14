@@ -31,7 +31,7 @@ public class CabinetManagerBlock extends BaseEntityBlock {
     }
 
     public CabinetManagerBlock(Properties of) {
-        super(of);
+        super(of.requiresCorrectToolForDrops().strength(1,5));
         this.registerDefaultState(getStateDefinition().any().setValue(FACING, Direction.NORTH));
     }
 

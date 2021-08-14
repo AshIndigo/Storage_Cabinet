@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "storagecabinet:storagecabinet_iron",
+    "storagecabinet:storagecabinet_gold",
+    "storagecabinet:storagecabinet_diamond",
+    "storagecabinet:storagecabinet_emerald",
+    "storagecabinet:cabinet_manager"
+  ]
+}
