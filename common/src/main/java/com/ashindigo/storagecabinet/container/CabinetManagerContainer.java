@@ -9,6 +9,7 @@ import com.google.common.collect.ListMultimap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -16,8 +17,6 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 
 import java.util.ArrayList;
 
@@ -59,7 +58,7 @@ public class CabinetManagerContainer extends AbstractContainerMenu {
                     cabinetList.add(cabinetEntity);
                     for (int i = 0; i < StorageCabinetBlock.getHeight(cabinetEntity.tier); ++i) {
                         for (int j = 0; j < 9; ++j) {
-                            CABINET_SLOT_LIST.put(cabinetEntity, (ExtraSlotItemHandler) this.addSlot(new ExtraSlotItemHandler(cabinetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.NORTH).orElseThrow(() -> new NullPointerException("Source Capability was not present!")), i * 9 + j, 9 + j * 18, 18 + i * 18, entity)));
+                            CABINET_SLOT_LIST.put(cabinetEntity, (ExtraSlotItemHandler) this.addSlot(new ExtraSlotItemHandler(cabinetEntity, i * 9 + j, 9 + j * 18, 18 + i * 18, entity)));
                         }
                     }
                     checkSurroundingCabinets(cabinetList, offsetPos, world);
@@ -111,8 +110,7 @@ public class CabinetManagerContainer extends AbstractContainerMenu {
     public void scrollTo(float pos, int id) {
         if (!(cabinetList.size() > id)) return;
         StorageCabinetEntity cabinetEntity = cabinetList.get(id);
-        IItemHandler inv = cabinetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.NORTH).orElseThrow(() -> new NullPointerException("Source Capability was not present!"));
-        int i = (inv.getSlots() + 9 - 1) / 9 - 5;
+        int i = (cabinetEntity.getContainerSize() + 9 - 1) / 9 - 5;
         int j = (int) ((double) (pos * (float) i) + 0.5D);
         if (j < 0) {
             j = 0;
@@ -148,7 +146,7 @@ public class CabinetManagerContainer extends AbstractContainerMenu {
         private final BlockEntity entity;
         private boolean enabled;
 
-        public ExtraSlotItemHandler(Inventory itemHandler, int index, int xPosition, int yPosition, BlockEntity entity) {
+        public ExtraSlotItemHandler(Container itemHandler, int index, int xPosition, int yPosition, BlockEntity entity) {
             super(itemHandler, index, xPosition, yPosition);
             this.entity = entity;
         }

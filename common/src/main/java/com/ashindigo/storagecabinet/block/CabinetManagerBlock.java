@@ -1,17 +1,18 @@
 package com.ashindigo.storagecabinet.block;
 
 import com.ashindigo.storagecabinet.entity.CabinetManagerEntity;
+import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
+import com.ashindigo.storagecabinet.misc.ManagerInventory;
 import dev.architectury.registry.menu.MenuRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.MenuProvider;
+import net.minecraft.world.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -19,9 +20,10 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 
+import java.util.ArrayList;
 import java.util.Random;
 
-public class CabinetManagerBlock extends BaseEntityBlock {
+public class CabinetManagerBlock extends BaseEntityBlock implements WorldlyContainerHolder {
 
     public static final DirectionProperty FACING;
 
@@ -30,7 +32,7 @@ public class CabinetManagerBlock extends BaseEntityBlock {
     }
 
     public CabinetManagerBlock(Properties of) {
-        super(of);
+        super(of.strength(1, 5));
         this.registerDefaultState(getStateDefinition().any().setValue(FACING, Direction.NORTH));
     }
 
@@ -86,5 +88,13 @@ public class CabinetManagerBlock extends BaseEntityBlock {
     @Override
     public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
         return new CabinetManagerEntity(blockPos, blockState);
+    }
+
+    @Override
+    public WorldlyContainer getContainer(BlockState blockState, LevelAccessor levelAccessor, BlockPos blockPos) {
+        ArrayList<StorageCabinetEntity> list = new ArrayList<>();
+        CabinetManagerEntity entity = (CabinetManagerEntity) levelAccessor.getBlockEntity(blockPos);
+        entity.checkSurroundingCabinets(list, blockPos, levelAccessor);
+        return new ManagerInventory(entity, list);
     }
 }

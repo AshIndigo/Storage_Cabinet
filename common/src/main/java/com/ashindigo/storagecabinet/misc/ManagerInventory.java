@@ -5,6 +5,7 @@ import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.WorldlyContainer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
@@ -15,14 +16,14 @@ import java.util.stream.IntStream;
 public record ManagerInventory(CabinetManagerEntity entity, List<StorageCabinetEntity> cabinets) implements WorldlyContainer { // The methods involving "temp" scare me
 
     @Override
-    public int[] getAvailableSlots(Direction side) {
-        return IntStream.range(0, size()).toArray();
+    public int[] getSlotsForFace(Direction side) {
+        return IntStream.range(0, getContainerSize()).toArray();
     }
 
     @Override
-    public boolean canInsert(int slot, ItemStack stack, Direction dir) {
+    public boolean canPlaceItemThroughFace(int slot, ItemStack stack, Direction dir) {
         for (StorageCabinetEntity cabinet : cabinets) {
-            if (cabinet.isValid(slot, stack)) {
+            if (cabinet.canPlaceItem(slot, stack)) {
                 return true;
             }
         }
@@ -30,11 +31,11 @@ public record ManagerInventory(CabinetManagerEntity entity, List<StorageCabinetE
     }
 
     @Override
-    public boolean isValid(int slot, ItemStack stack) {
+    public boolean canPlaceItem(int slot, ItemStack stack) {
         int temp = slot;
         for (StorageCabinetEntity cabinet : cabinets) {
             if (cabinet.size() - 1 >= temp) {
-                return cabinet.isValid(temp, stack);
+                return cabinet.canPlaceItem(temp, stack);
             } else {
                 temp -= cabinet.size();
             }
@@ -43,18 +44,19 @@ public record ManagerInventory(CabinetManagerEntity entity, List<StorageCabinetE
     }
 
     @Override
-    public boolean canExtract(int slot, ItemStack stack, Direction dir) {
+    public boolean canTakeItemThroughFace(int slot, ItemStack stack, Direction dir) {
         return true;
     }
 
     @Override
-    public int size() {
+    public int getContainerSize() {
         int i = 0;
         for (StorageCabinetEntity cabinet : cabinets) {
             i += cabinet.size();
         }
         return i;
     }
+
 
     @Override
     public boolean isEmpty() {
@@ -67,11 +69,11 @@ public record ManagerInventory(CabinetManagerEntity entity, List<StorageCabinetE
     }
 
     @Override
-    public ItemStack getStack(int slot) {
+    public ItemStack getItem(int slot) {
         int temp = slot;
         for (StorageCabinetEntity cabinet : cabinets) {
             if (cabinet.size() - 1 >= temp) {
-                return cabinet.getStack(temp);
+                return cabinet.getItem(temp);
             } else {
                 temp -= cabinet.size();
             }
@@ -80,11 +82,11 @@ public record ManagerInventory(CabinetManagerEntity entity, List<StorageCabinetE
     }
 
     @Override
-    public ItemStack removeStack(int slot, int amount) {
+    public ItemStack removeItem(int slot, int amount) {
         int temp = slot;
         for (StorageCabinetEntity cabinet : cabinets) {
             if (cabinet.size() - 1 >= temp) {
-                return cabinet.removeStack(temp, amount);
+                return cabinet.removeItem(temp, amount);
             } else {
                 temp -= cabinet.size();
             }
@@ -93,11 +95,11 @@ public record ManagerInventory(CabinetManagerEntity entity, List<StorageCabinetE
     }
 
     @Override
-    public ItemStack removeStack(int slot) {
+    public ItemStack removeItemNoUpdate(int slot) {
         int temp = slot;
         for (StorageCabinetEntity cabinet : cabinets) {
             if (cabinet.size() - 1 >= temp) {
-                return cabinet.removeStack(temp);
+                return cabinet.removeItemNoUpdate(temp);
             } else {
                 temp -= cabinet.size();
             }
@@ -106,11 +108,11 @@ public record ManagerInventory(CabinetManagerEntity entity, List<StorageCabinetE
     }
 
     @Override
-    public void setStack(int slot, ItemStack stack) {
+    public void setItem(int slot, ItemStack stack) {
         int temp = slot;
         for (StorageCabinetEntity cabinet : cabinets) {
             if (cabinet.size() - 1 >= temp) {
-                cabinet.setStack(temp, stack);
+                cabinet.setItem(temp, stack);
                 return;
             } else {
                 temp -= cabinet.size();
@@ -119,33 +121,34 @@ public record ManagerInventory(CabinetManagerEntity entity, List<StorageCabinetE
     }
 
     @Override
-    public void markDirty() { // Probably not good for performance
+    public void setChanged() { // Probably not good for performance
         cabinets.clear();
-        checkSurroundingCabinets((ArrayList<StorageCabinetEntity>) cabinets, entity.getPos(), entity.getWorld());
+        checkSurroundingCabinets((ArrayList<StorageCabinetEntity>) cabinets, entity.getBlockPos(), entity.getLevel());
         for (StorageCabinetEntity cabinet : cabinets) {
-            cabinet.markDirty();
+            cabinet.setChanged();
         }
-        entity.markDirty();
+        entity.setChanged();
     }
 
     @Override
-    public boolean canPlayerUse(PlayerEntity player) {
+    public boolean stillValid(Player player) {
         return true;
     }
 
     @Override
-    public void clear() {
+    public void clearContent() {
         for (StorageCabinetEntity cabinet : cabinets) {
-            cabinet.clear();
+            cabinet.clearContent();
         }
     }
 
     private void checkSurroundingCabinets(ArrayList<StorageCabinetEntity> cabinetList, BlockPos pos, Level world) {
         for (Direction direction : Direction.values()) {
-            if (world.getBlockEntity(pos.offset(direction)) instanceof StorageCabinetEntity) {
-                if (!cabinetList.contains(world.getBlockEntity(pos.offset(direction)))) {
-                    cabinetList.add((StorageCabinetEntity) world.getBlockEntity(pos.offset(direction)));
-                    checkSurroundingCabinets(cabinetList, pos.offset(direction), world);
+            BlockPos offsetPos = pos.relative(direction);
+            if (world.getBlockEntity(offsetPos) instanceof StorageCabinetEntity) {
+                if (!cabinetList.contains(world.getBlockEntity(offsetPos))) {
+                    cabinetList.add((StorageCabinetEntity) world.getBlockEntity(offsetPos));
+                    checkSurroundingCabinets(cabinetList, offsetPos, world);
                 }
             }
         }

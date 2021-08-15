@@ -5,21 +5,16 @@ import com.ashindigo.storagecabinet.StorageCabinetExpectPlatform;
 import com.ashindigo.storagecabinet.block.StorageCabinetBlock;
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.SlotItemHandler;
 
 public class StorageCabinetContainer extends AbstractContainerMenu {
 
     final StorageCabinetEntity entity;
-    final IItemHandler inv;
     private final int tier;
 
     public StorageCabinetContainer(int windowId, Inventory playerInv, FriendlyByteBuf buf) {
@@ -31,16 +26,9 @@ public class StorageCabinetContainer extends AbstractContainerMenu {
         this.tier = tier;
         entity = (StorageCabinetEntity) playerInv.player.level.getBlockEntity(blockPos);
         entity.startOpen();
-        inv = entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.NORTH).orElseThrow(() -> new NullPointerException("Source Capability was not present!"));
         for (int i = 0; i < StorageCabinetBlock.getHeight(tier); ++i) {
             for (int j = 0; j < 9; ++j) {
-                this.addSlot(new SlotItemHandler(inv, i * 9 + j, 9 + j * 18, 18 + i * 18) {
-                    @Override
-                    public void setChanged() {
-                        super.setChanged();
-                        entity.setChanged();
-                    }
-
+                this.addSlot(new Slot(entity, i * 9 + j, 9 + j * 18, 18 + i * 18) {
                     @Override
                     public boolean isActive() {
                         return this.y < 91 && this.y > 0 && x < 154 && x > 0;
@@ -107,7 +95,7 @@ public class StorageCabinetContainer extends AbstractContainerMenu {
     }
 
     public void scrollTo(float pos) {
-        int i = (inv.getSlots() + 9 - 1) / 9 - 5; // 25.8888888889 for 270 slots
+        int i = (entity.getContainerSize() + 9 - 1) / 9 - 5; // 25.8888888889 for 270 slots
         int j = (int) ((double) (pos * (float) i) + 0.5D);
 
         if (j < 0) {

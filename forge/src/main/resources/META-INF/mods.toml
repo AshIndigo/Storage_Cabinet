@@ -1,13 +1,13 @@
 modLoader="javafml"
-loaderVersion="[36,)"
+loaderVersion="[37,)"
 license="MIT"
 issueTrackerURL="https://github.com/AshIndigo/Storage_Cabinet/issues"
 
 [[mods]]
 modId="storagecabinet"
-version="${file.jarVersion}"
+version="${version}"
 displayName="Storage Cabinet"
-#displayURL="https://change.me.to.your.mods.homepage.example.invalid/"
+displayURL="https://www.curseforge.com/minecraft/mc-mods/storage-cabinet"
 logoFile="icon.png"
 credits=""
 authors="AshIndigo, MoonlitLamps"
@@ -16,7 +16,7 @@ Adds multiple tiers of storage cabinets to Minecraft'''
 [[dependencies.storagecabinet]]
     modId="forge"
     mandatory=true
-    versionRange="[36,)"
+    versionRange="[37.0.31,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.storagecabinet]]

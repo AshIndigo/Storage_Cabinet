@@ -1,7 +1,11 @@
 package com.ashindigo.storagecabinet.misc;
 
+import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
+import net.minecraft.world.Container;
+import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.WorldlyContainer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 public interface BasicSidedInventory extends WorldlyContainer {
@@ -17,7 +21,7 @@ public interface BasicSidedInventory extends WorldlyContainer {
      * Creates a new inventory with the specified size.
      */
     static BasicInventory ofSize(int size) {
-        return of(NonNullList.ofSize(size, ItemStack.EMPTY));
+        return of(NonNullList.withSize(size, ItemStack.EMPTY));
     }
 
     /**
@@ -30,7 +34,7 @@ public interface BasicSidedInventory extends WorldlyContainer {
      * Returns the inventory size.
      */
     @Override
-    default int size() {
+    default int getContainerSize() {
         return getItems().size();
     }
 
@@ -41,8 +45,8 @@ public interface BasicSidedInventory extends WorldlyContainer {
      */
     @Override
     default boolean isEmpty() {
-        for (int i = 0; i < size(); i++) {
-            ItemStack stack = getStack(i);
+        for (int i = 0; i < getContainerSize(); i++) {
+            ItemStack stack = getItem(i);
             if (!stack.isEmpty()) {
                 return false;
             }
@@ -54,7 +58,7 @@ public interface BasicSidedInventory extends WorldlyContainer {
      * Retrieves the item in the slot.
      */
     @Override
-    default ItemStack getStack(int slot) {
+    default ItemStack getItem(int slot) {
         return getItems().get(slot);
     }
 
@@ -66,10 +70,10 @@ public interface BasicSidedInventory extends WorldlyContainer {
      *              takes all items in that slot.
      */
     @Override
-    default ItemStack removeStack(int slot, int count) {
-        ItemStack result = Inventories.splitStack(getItems(), slot, count);
+    default ItemStack removeItem(int slot, int count) {
+        ItemStack result = ContainerHelper.removeItem(getItems(), slot, count);
         if (!result.isEmpty()) {
-            markDirty();
+            setChanged();
         }
         return result;
     }
@@ -80,8 +84,8 @@ public interface BasicSidedInventory extends WorldlyContainer {
      * @param slot The slot to remove from.
      */
     @Override
-    default ItemStack removeStack(int slot) {
-        return Inventories.removeStack(getItems(), slot);
+    default ItemStack removeItemNoUpdate(int slot) {
+        return ContainerHelper.takeItem(getItems(), slot);
     }
 
     /**
@@ -89,14 +93,14 @@ public interface BasicSidedInventory extends WorldlyContainer {
      *
      * @param slot  The inventory slot of which to replace the ItemStack.
      * @param stack The replacing ItemStack. If the stack is too big for
-     *              this inventory ({@link Inventory#getMaxCountPerStack()}),
+     *              this inventory ({@link Container#getMaxStackSize()} ()}),
      *              it gets resized to this inventory's maximum amount.
      */
     @Override
-    default void setStack(int slot, ItemStack stack) {
+    default void setItem(int slot, ItemStack stack) {
         getItems().set(slot, stack);
-        if (stack.getCount() > getMaxCountPerStack()) {
-            stack.setCount(getMaxCountPerStack());
+        if (stack.getCount() > getMaxStackSize()) {
+            stack.setCount(getMaxStackSize());
         }
     }
 
@@ -104,7 +108,7 @@ public interface BasicSidedInventory extends WorldlyContainer {
      * Clears the inventory.
      */
     @Override
-    default void clear() {
+    default void clearContent() {
         getItems().clear();
     }
 
@@ -114,7 +118,7 @@ public interface BasicSidedInventory extends WorldlyContainer {
      * the inventory contents and notify neighboring blocks of inventory changes.
      */
     @Override
-    default void markDirty() {
+    default void setChanged() {
         // Override if you want behavior.
     }
 
@@ -122,12 +126,12 @@ public interface BasicSidedInventory extends WorldlyContainer {
      * @return true if the player can use the inventory, false otherwise.
      */
     @Override
-    default boolean canPlayerUse(PlayerEntity player) {
+    default boolean stillValid(Player player) {
         return true;
     }
 
     @Override
-    default int[] getAvailableSlots(Direction dir) {
+    default int[] getSlotsForFace(Direction dir) {
         // Just return an array of all slots
         int[] result = new int[getItems().size()];
         for (int i = 0; i < result.length; i++) {
@@ -137,12 +141,12 @@ public interface BasicSidedInventory extends WorldlyContainer {
     }
 
     @Override
-    default boolean canInsert(int slot, ItemStack stack, Direction direction) {
-        return isValid(slot, stack);
+    default boolean canPlaceItemThroughFace(int slot, ItemStack stack, Direction direction) {
+        return canPlaceItem(slot, stack);
     }
 
     @Override
-    default boolean canExtract(int slot, ItemStack stack, Direction direction) {
-        return isValid(slot, stack);
+    default boolean canTakeItemThroughFace(int slot, ItemStack stack, Direction direction) {
+        return canPlaceItem(slot, stack);
     }
 }

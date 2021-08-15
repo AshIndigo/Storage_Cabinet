@@ -1,17 +1,16 @@
 package com.ashindigo.storagecabinet.block;
 
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
-import dev.architectury.hooks.client.screen.ScreenHooks;
 import dev.architectury.registry.menu.MenuRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -24,8 +23,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 
 import java.util.Random;
 
@@ -104,11 +101,9 @@ public class StorageCabinetBlock extends BaseEntityBlock {
     @Override
     public void playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
         BlockEntity blockEntity = world.getBlockEntity(pos);
-        if (blockEntity instanceof StorageCabinetEntity) {
-            IItemHandler inventory = world.getBlockEntity(pos).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseThrow(() -> new NullPointerException("Source Capability was not present!"));
-            for (int i = 0; i < inventory.getSlots(); i++) {
-                world.addFreshEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), inventory.getStackInSlot(i)));
-            }
+        if (blockEntity instanceof StorageCabinetEntity storageCabinetEntity) {
+            Containers.dropContents(world, pos, storageCabinetEntity);
+
             world.updateNeighbourForOutputSignal(pos, this);
         }
         super.playerWillDestroy(world, pos, state, player);

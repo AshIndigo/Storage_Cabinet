@@ -3,9 +3,10 @@ package com.ashindigo.storagecabinet.entity;
 import com.ashindigo.storagecabinet.StorageCabinet;
 import com.ashindigo.storagecabinet.block.StorageCabinetBlock;
 import com.ashindigo.storagecabinet.container.StorageCabinetContainer;
+import com.ashindigo.storagecabinet.misc.BasicSidedInventory;
 import com.google.common.collect.Lists;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -14,6 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.SerializationTags;
 import net.minecraft.tags.Tag;
+import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -23,68 +25,20 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
-public class StorageCabinetEntity extends BlockEntity implements MenuProvider {
+public class StorageCabinetEntity extends BlockEntity implements MenuProvider, BasicSidedInventory {
 
     public boolean locked = false;
     public int tier = 0;
     public Item item = Items.AIR;
-    private final ItemStackHandler itemHandler = new ItemStackHandler(size()) {
-
-        @Override
-        protected void onContentsChanged(int slot) {
-            super.onContentsChanged(slot);
-            setChanged();
-        }
-
-        @Override
-        public boolean isItemValid(int slot, ItemStack stack) {
-            if (!locked) {
-                if (stacks.stream().allMatch(ItemStack::isEmpty) || stack.isEmpty()) {
-                    return true;
-                } else {
-                    Collection<ResourceLocation> idList = getTagsFor(stack.getItem());
-                    if (idList.isEmpty()) {
-                        return IntStream.range(0, this.getSlots()).mapToObj(this::getStackInSlot).anyMatch(itemStack -> stack.getItem().equals(itemStack.getItem()) && itemStack.getCount() > 0);
-                    } else {
-                        for (ResourceLocation id : idList) {
-                            Tag<Item> tag = ItemTags.getAllTags().getTagOrEmpty(id);
-                            return stacks.stream().anyMatch(stack2 -> tag.contains(stack2.getItem()));
-                        }
-                    }
-                }
-            } else {
-                if (item.equals(Items.AIR)) {
-                    return true;
-                }
-                Collection<ResourceLocation> idList = getTagsFor(item);
-                if (idList.isEmpty()) {
-                    return stack.getItem().equals(item);
-                } else {
-                    for (ResourceLocation id : idList) {
-                        Tag<Item> itemTag = ItemTags.getAllTags().getTagOrEmpty(id);
-                        if (itemTag.contains(stack.getItem())) {
-                            return true;
-                        }
-                    }
-                }
-            }
-            return false;
-        }
-    };
-    final LazyOptional<IItemHandler> inventoryHandlerLazyOptional = LazyOptional.of(() -> itemHandler);
     private int viewerCount;
     private Component customName;
+    private NonNullList<ItemStack> items;
 
     public StorageCabinetEntity(BlockPos pos, BlockState state) {
         super(StorageCabinet.CABINET_ENTITY.get(), pos, state);
@@ -92,7 +46,7 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider {
 
     public StorageCabinetEntity setTier(int tier) {
         this.tier = tier;
-        itemHandler.setSize(size());
+        items = NonNullList.withSize(size(), ItemStack.EMPTY);
         return this;
     }
 
@@ -114,9 +68,10 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider {
     @Override
     public void load(CompoundTag tag) {
         this.tier = tag.getInt("tier");
-        //setTier(tier);
+        setTier(tier);
         if (tag.contains("inv")) {
-            itemHandler.deserializeNBT(tag.getCompound("inv"));
+            ContainerHelper.loadAllItems(tag.getCompound("inv"), items);
+            //itemHandler.deserializeNBT(tag.getCompound("inv"));
         }
         super.load(tag);
         this.locked = tag.getBoolean("locked");
@@ -135,7 +90,8 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider {
         if (this.customName != null) {
             tag.putString("CustomName", Component.Serializer.toJson(this.customName));
         }
-        tag.put("inv", itemHandler.serializeNBT());
+        ContainerHelper.saveAllItems(tag.getCompound("inv"), items);
+        //tag.put("inv", itemHandler.serializeNBT());
         return tag;
     }
 
@@ -157,21 +113,47 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider {
         if (locked) {
             return new ItemStack(item);
         }
-        ItemStack stack = ItemStack.EMPTY;
-        IItemHandler inv = inventoryHandlerLazyOptional.orElseThrow(() -> new NullPointerException("Source Capability was not present!"));
-        for (int i = 0; i < inv.getSlots(); i++) {
-            ItemStack stackInSlot = inv.getStackInSlot(i);
-            if (!stackInSlot.isEmpty()) {
-                stack = stackInSlot;
+        return items.stream().filter(stack -> !stack.isEmpty()).findAny().orElse(ItemStack.EMPTY);
+    }
+
+    @Override
+    public boolean canPlaceItem(int i, ItemStack stack) {
+        if (!locked) {
+            if (items.stream().allMatch(ItemStack::isEmpty) || stack.isEmpty()) {
+                return true;
+            } else {
+                Collection<ResourceLocation> idList = getTagsFor(stack.getItem());
+                if (idList.isEmpty()) {
+                    return IntStream.range(0, this.getContainerSize()).mapToObj(this::getItem).anyMatch(itemStack -> stack.getItem().equals(itemStack.getItem()) && itemStack.getCount() > 0);
+                } else {
+                    for (ResourceLocation id : idList) {
+                        Tag<Item> tag = ItemTags.getAllTags().getTagOrEmpty(id);
+                        return items.stream().anyMatch(stack2 -> tag.contains(stack2.getItem()));
+                    }
+                }
+            }
+        } else {
+            if (item.equals(Items.AIR)) {
+                return true;
+            }
+            Collection<ResourceLocation> idList = getTagsFor(item);
+            if (idList.isEmpty()) {
+                return stack.getItem().equals(item);
+            } else {
+                for (ResourceLocation id : idList) {
+                    Tag<Item> itemTag = ItemTags.getAllTags().getTagOrEmpty(id);
+                    if (itemTag.contains(stack.getItem())) {
+                        return true;
+                    }
+                }
             }
         }
-        return stack;
+        return false;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof StorageCabinetEntity) {
-            StorageCabinetEntity cabinet = (StorageCabinetEntity) obj;
+        if (obj instanceof StorageCabinetEntity cabinet) {
             return cabinet.getBlockPos().equals(this.getBlockPos());
         }
         return false;
@@ -182,7 +164,7 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider {
         CompoundTag tag = super.getUpdateTag();
         tag.putInt("tier", tier);
         tag.putBoolean("locked", locked);
-        tag.putString("item", ForgeRegistries.ITEMS.getKey(item).toString());
+        tag.putString("item", Registry.ITEM.getKey(item).toString());
         if (this.customName != null) {
             tag.putString("CustomName", Component.Serializer.toJson(this.customName));
         }
@@ -226,18 +208,23 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider {
         }
     }
 
-
     @Override
-    public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
-        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return inventoryHandlerLazyOptional.cast();
-        }
-        return super.getCapability(cap, side);
+    public NonNullList<ItemStack> getItems() {
+        return items;
     }
 
-    @Override
-    public void invalidateCaps() {
-        super.invalidateCaps();
-        inventoryHandlerLazyOptional.invalidate();
-    }
+
+//    @Override
+//    public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
+//        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+//            return inventoryHandlerLazyOptional.cast();
+//        }
+//        return super.getCapability(cap, side);
+//    }
+//
+//    @Override
+//    public void invalidateCaps() {
+//        super.invalidateCaps();
+//        inventoryHandlerLazyOptional.invalidate();
+//    }
 }
