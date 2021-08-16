@@ -4,7 +4,7 @@ import com.ashindigo.storagecabinet.BlockRegistry;
 import com.ashindigo.storagecabinet.StorageCabinet;
 import com.ashindigo.storagecabinet.blocks.StorageCabinetBlock;
 import com.ashindigo.storagecabinet.description.StorageCabinetDescription;
-import com.ashindigo.storagecabinet.misc.BasicSidedInventory;
+import com.ashindigo.storagecabinet.inventory.BasicSidedInventory;
 import com.google.common.collect.Lists;
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;

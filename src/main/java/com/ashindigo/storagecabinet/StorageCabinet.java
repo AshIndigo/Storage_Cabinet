@@ -20,7 +20,7 @@ public class StorageCabinet implements ModInitializer {
 
     public static final String MODID = "storagecabinet";
     public static BlockEntityType<StorageCabinetEntity> STORAGE_CABINET_ENTITY;
-    public static BlockEntityType<CabinetManagerEntity> cabinetManagerEntity;
+    public static BlockEntityType<CabinetManagerEntity> CABINET_MANAGER_ENTITY;
     public static ItemGroup CABINET_GROUP;
     public static ExtendedScreenHandlerType<StorageCabinetDescription> cabinetScreenHandler;
     public static ExtendedScreenHandlerType<? extends CabinetManagerDescription> managerScreenHandler;
@@ -33,6 +33,6 @@ public class StorageCabinet implements ModInitializer {
         cabinetScreenHandler = (ExtendedScreenHandlerType<StorageCabinetDescription>) ScreenHandlerRegistry.registerExtended(new Identifier(MODID, MODID), (syncId, inventory, buf) -> new StorageCabinetDescription(syncId, inventory, ScreenHandlerContext.create(inventory.player.getEntityWorld(), buf.readBlockPos())));
         managerScreenHandler = (ExtendedScreenHandlerType<CabinetManagerDescription>) ScreenHandlerRegistry.registerExtended(new Identifier(MODID, "cabinet_manager"), (syncId, inventory, buf) -> new CabinetManagerDescription(syncId, inventory, ScreenHandlerContext.create(inventory.player.getEntityWorld(), buf.readBlockPos())));
         STORAGE_CABINET_ENTITY = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(MODID, MODID), FabricBlockEntityTypeBuilder.create(StorageCabinetEntity::new, BlockRegistry.WOOD_CABINET, BlockRegistry.IRON_CABINET, BlockRegistry.GOLD_CABINET, BlockRegistry.DIAMOND_CABINET, BlockRegistry.EMERALD_CABINET).build(null));
-        cabinetManagerEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(MODID, "cabinet_manager"), FabricBlockEntityTypeBuilder.create(CabinetManagerEntity::new, BlockRegistry.CABINET_MANAGER).build(null));
+        CABINET_MANAGER_ENTITY = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(MODID, "cabinet_manager"), FabricBlockEntityTypeBuilder.create(CabinetManagerEntity::new, BlockRegistry.CABINET_MANAGER).build(null));
     }
 }

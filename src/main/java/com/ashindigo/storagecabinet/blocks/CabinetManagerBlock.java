@@ -1,6 +1,6 @@
 package com.ashindigo.storagecabinet.blocks;
 
-import com.ashindigo.storagecabinet.ManagerInventory;
+import com.ashindigo.storagecabinet.inventory.ManagerInventory;
 import com.ashindigo.storagecabinet.entity.CabinetManagerEntity;
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;

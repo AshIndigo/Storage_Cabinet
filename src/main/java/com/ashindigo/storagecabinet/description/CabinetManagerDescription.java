@@ -1,6 +1,6 @@
 package com.ashindigo.storagecabinet.description;
 
-import com.ashindigo.storagecabinet.ManagerInventory;
+import com.ashindigo.storagecabinet.inventory.ManagerInventory;
 import com.ashindigo.storagecabinet.StorageCabinet;
 import com.ashindigo.storagecabinet.blocks.StorageCabinetBlock;
 import com.ashindigo.storagecabinet.entity.CabinetManagerEntity;

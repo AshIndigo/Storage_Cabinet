@@ -1,4 +1,4 @@
-package com.ashindigo.storagecabinet.misc;
+package com.ashindigo.storagecabinet.inventory;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
@@ -9,20 +9,6 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.Direction;
 
 public interface BasicSidedInventory extends SidedInventory {
-
-    /**
-     * Creates an inventory from the item list.
-     */
-    static BasicInventory of(DefaultedList<ItemStack> items) {
-        return () -> items;
-    }
-
-    /**
-     * Creates a new inventory with the specified size.
-     */
-    static BasicInventory ofSize(int size) {
-        return of(DefaultedList.ofSize(size, ItemStack.EMPTY));
-    }
 
     /**
      * Retrieves the item list of this inventory.

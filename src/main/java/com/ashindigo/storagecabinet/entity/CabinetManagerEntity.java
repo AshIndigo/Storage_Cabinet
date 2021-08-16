@@ -19,7 +19,7 @@ import net.minecraft.util.math.BlockPos;
 public class CabinetManagerEntity extends BlockEntity implements ExtendedScreenHandlerFactory {
 
     public CabinetManagerEntity(BlockPos pos, BlockState state) {
-        super(StorageCabinet.cabinetManagerEntity, pos, state);
+        super(StorageCabinet.CABINET_MANAGER_ENTITY, pos, state);
     }
 
     @Override
