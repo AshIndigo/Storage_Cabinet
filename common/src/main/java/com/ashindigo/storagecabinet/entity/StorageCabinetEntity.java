@@ -5,6 +5,7 @@ import com.ashindigo.storagecabinet.block.StorageCabinetBlock;
 import com.ashindigo.storagecabinet.container.StorageCabinetContainer;
 import com.ashindigo.storagecabinet.inventory.BasicSidedInventory;
 import com.google.common.collect.Lists;
+import dev.architectury.injectables.targets.ArchitecturyTarget;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
@@ -66,11 +67,25 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
 
     @Override
     public void load(CompoundTag tag) {
+        // Fabric initial impl.
+        // Items listtag
         this.tier = tag.getInt("tier");
         setTier(tier);
-        if (tag.contains("inv")) {
-            ContainerHelper.loadAllItems(tag.getCompound("inv"), items);
+        switch (ArchitecturyTarget.getCurrentTarget()) {
+            case "fabric": { // This is what I get for two differing implementations in the two versions
+                if (tag.contains("Items")) {
+                    ContainerHelper.loadAllItems(tag, items);
+                }
+            }
+            case "forge": {
+                if (tag.contains("inv")) {
+                    ContainerHelper.loadAllItems(tag.getCompound("inv"), items);
+                }
+                break;
+            }
         }
+        // Newer loads should just hopefully auto convert it to "standard" format
+        ContainerHelper.loadAllItems(tag, items);
         super.load(tag);
         this.locked = tag.getBoolean("locked");
         this.item = Registry.ITEM.get(ResourceLocation.tryParse(tag.getString("item")));
@@ -88,10 +103,7 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
         if (this.customName != null) {
             tag.putString("CustomName", Component.Serializer.toJson(this.customName));
         }
-        CompoundTag invTag = new CompoundTag();
-        ContainerHelper.saveAllItems(invTag, items);
-        tag.put("inv", invTag);
-        return tag;
+        return ContainerHelper.saveAllItems(tag, items);
     }
 
     public void setCustomName(Component text) {
