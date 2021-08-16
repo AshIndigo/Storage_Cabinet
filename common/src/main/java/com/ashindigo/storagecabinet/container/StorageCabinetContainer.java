@@ -33,6 +33,11 @@ public class StorageCabinetContainer extends AbstractContainerMenu {
                     public boolean isActive() {
                         return this.y < 91 && this.y > 0 && x < 154 && x > 0;
                     }
+
+                    @Override
+                    public boolean mayPlace(ItemStack itemStack) {
+                        return entity.canPlaceItem(index, itemStack);
+                    }
                 });
             }
         }

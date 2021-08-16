@@ -58,7 +58,7 @@ public class CabinetManagerContainer extends AbstractContainerMenu {
                     cabinetList.add(cabinetEntity);
                     for (int i = 0; i < StorageCabinetBlock.getHeight(cabinetEntity.tier); ++i) {
                         for (int j = 0; j < 9; ++j) {
-                            CABINET_SLOT_LIST.put(cabinetEntity, (ExtraSlotItemHandler) this.addSlot(new ExtraSlotItemHandler(cabinetEntity, i * 9 + j, 9 + j * 18, 18 + i * 18, entity)));
+                            CABINET_SLOT_LIST.put(cabinetEntity, (ExtraSlotItemHandler) this.addSlot(new ExtraSlotItemHandler(cabinetEntity, i * 9 + j, 9 + j * 18, 18 + i * 18, cabinetEntity)));
                         }
                     }
                     checkSurroundingCabinets(cabinetList, offsetPos, world);
@@ -143,10 +143,10 @@ public class CabinetManagerContainer extends AbstractContainerMenu {
 
     static class ExtraSlotItemHandler extends Slot {
 
-        private final BlockEntity entity;
+        private final StorageCabinetEntity entity;
         private boolean enabled;
 
-        public ExtraSlotItemHandler(Container itemHandler, int index, int xPosition, int yPosition, BlockEntity entity) {
+        public ExtraSlotItemHandler(Container itemHandler, int index, int xPosition, int yPosition, StorageCabinetEntity entity) {
             super(itemHandler, index, xPosition, yPosition);
             this.entity = entity;
         }
@@ -155,6 +155,11 @@ public class CabinetManagerContainer extends AbstractContainerMenu {
         public void setChanged() {
             super.setChanged();
             entity.setChanged();
+        }
+
+        @Override
+        public boolean mayPlace(ItemStack itemStack) {
+            return entity.canPlaceItem(index, itemStack);
         }
 
         @Override
