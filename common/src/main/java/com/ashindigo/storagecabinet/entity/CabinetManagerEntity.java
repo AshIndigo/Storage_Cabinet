@@ -10,7 +10,6 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.TickPriority;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -42,20 +41,6 @@ public class CabinetManagerEntity extends BlockEntity implements MenuProvider {
         if (!getLevel().getBlockTicks().willTickThisTick(getBlockPos(), StorageCabinet.CABINET_MANAGER.get()))
             getLevel().getBlockTicks().scheduleTick(getBlockPos(), StorageCabinet.CABINET_MANAGER.get(), 1, TickPriority.NORMAL);
     }
-
-//    @Override
-//    public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
-//        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-//            return inventoryHandlerLazyOptional.cast();
-//        }
-//        return super.getCapability(cap, side);
-//    }
-//
-//    @Override
-//    public void invalidateCaps() {
-//        super.invalidateCaps();
-//        inventoryHandlerLazyOptional.invalidate();
-//    }
 
     public void updateCabinetList() {
         cabinetList.clear();

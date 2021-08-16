@@ -3,7 +3,6 @@ package com.ashindigo.storagecabinet.client;
 import com.ashindigo.storagecabinet.StorageCabinet;
 import com.ashindigo.storagecabinet.block.StorageCabinetBlock;
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
-import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
@@ -11,10 +10,9 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 
-public class StorageCabinetRenderer implements BlockEntityRenderer<StorageCabinetEntity> {
+public class StorageCabinetRenderer<T extends StorageCabinetEntity> implements BlockEntityRenderer<T> {
 
     public static final ItemStack KEY = new ItemStack(StorageCabinet.KEY.get());
 
@@ -67,13 +65,7 @@ public class StorageCabinetRenderer implements BlockEntityRenderer<StorageCabine
     }
 
     private static void drawStack(ItemStack stack, PoseStack matrices, MultiBufferSource vertexConsumers, int overlay) {
-        if (stack.getItem() instanceof BlockItem) {
-            //Lighting.turnOff();
-        }
         Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemTransforms.TransformType.GUI, 0x00f000f0, overlay, matrices, vertexConsumers, 0);
-        if (stack.getItem() instanceof BlockItem) {
-            //Lighting.turnBackOn();
-        }
     }
 
 }

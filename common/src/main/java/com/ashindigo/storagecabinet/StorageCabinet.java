@@ -9,7 +9,6 @@ import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
 import com.ashindigo.storagecabinet.item.StorageCabinetDolly;
 import com.ashindigo.storagecabinet.item.StorageCabinetKey;
 import com.ashindigo.storagecabinet.item.StorageCabinetUpgrade;
-import dev.architectury.hooks.block.BlockEntityHooks;
 import dev.architectury.registry.CreativeTabRegistry;
 import dev.architectury.registry.menu.MenuRegistry;
 import dev.architectury.registry.registries.DeferredRegister;
@@ -29,7 +28,7 @@ import net.minecraft.world.level.material.Material;
 public class StorageCabinet {
 
     public static final String MODID = "storagecabinet";
-    
+
     // Items
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(MODID, Registry.ITEM_REGISTRY);
     public static final RegistrySupplier<Item> WOOD_CABINET_UPGRADE = ITEMS.register("storagecabinet_wood_upgrade", () -> new StorageCabinetUpgrade(0));
@@ -48,11 +47,11 @@ public class StorageCabinet {
     public static final RegistrySupplier<Block> DIAMOND_CABINET = BLOCKS.register("storagecabinet_diamond", () -> new StorageCabinetBlock(BlockBehaviour.Properties.of(Material.METAL), 3));
     public static final RegistrySupplier<Block> EMERALD_CABINET = BLOCKS.register("storagecabinet_emerald", () -> new StorageCabinetBlock(BlockBehaviour.Properties.of(Material.METAL), 4));
     public static final RegistrySupplier<Block> CABINET_MANAGER = BLOCKS.register("cabinet_manager", () -> new CabinetManagerBlock(BlockBehaviour.Properties.of(Material.METAL)));
-    
+
     // Tile Entities
-    private static final DeferredRegister<BlockEntityType<?>> TILE_ENTITIES = DeferredRegister.create(MODID, Registry.BLOCK_ENTITY_TYPE_REGISTRY);
-    public static final RegistrySupplier<BlockEntityType<StorageCabinetEntity>> CABINET_ENTITY = TILE_ENTITIES.register(MODID, () -> BlockEntityHooks.builder(StorageCabinetEntity::new, WOOD_CABINET.get(), IRON_CABINET.get(), GOLD_CABINET.get(), DIAMOND_CABINET.get(), EMERALD_CABINET.get()).build(null));
-    public static final RegistrySupplier<BlockEntityType<CabinetManagerEntity>> CABINET_MANAGER_ENTITY = TILE_ENTITIES.register("cabinet_manager", () -> BlockEntityHooks.builder(CabinetManagerEntity::new, CABINET_MANAGER.get()).build(null));
+    public static final DeferredRegister<BlockEntityType<?>> TILE_ENTITIES = DeferredRegister.create(MODID, Registry.BLOCK_ENTITY_TYPE_REGISTRY);
+    public static RegistrySupplier<BlockEntityType<? extends StorageCabinetEntity>> CABINET_ENTITY;
+    public static RegistrySupplier<BlockEntityType<? extends CabinetManagerEntity>> CABINET_MANAGER_ENTITY;
 
     // Containers
     public static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(MODID, Registry.MENU_REGISTRY);
@@ -72,9 +71,9 @@ public class StorageCabinet {
     public static final RegistrySupplier<Item> CABINET_MANAGER_ITEM = ITEMS.register("cabinet_manager", () -> new BlockItem(CABINET_MANAGER.get(), DEF_PROPS));
 
     public static void init() {
-        ITEMS.register();
         BLOCKS.register();
-        TILE_ENTITIES.register();
+        ITEMS.register();
+        //TILE_ENTITIES.register();
         CONTAINERS.register();
     }
 

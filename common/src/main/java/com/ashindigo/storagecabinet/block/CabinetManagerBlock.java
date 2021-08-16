@@ -2,7 +2,7 @@ package com.ashindigo.storagecabinet.block;
 
 import com.ashindigo.storagecabinet.entity.CabinetManagerEntity;
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
-import com.ashindigo.storagecabinet.misc.ManagerInventory;
+import com.ashindigo.storagecabinet.inventory.ManagerInventory;
 import dev.architectury.registry.menu.MenuRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

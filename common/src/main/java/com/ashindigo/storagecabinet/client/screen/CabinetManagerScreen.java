@@ -7,7 +7,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -65,7 +64,6 @@ public class CabinetManagerScreen extends AbstractContainerScreen<CabinetManager
     public void renderBg(PoseStack matrixStack, float pPartialTicks, int pX, int pY) {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         CabinetTab tab = TABS[selectedTab];
-        TextureManager textureManager = minecraft.getTextureManager();
 
         int start = tabPage * 5;
         int end = Math.min(TABS.length, (tabPage + 1) * 5 + 1);
@@ -260,14 +258,7 @@ public class CabinetManagerScreen extends AbstractContainerScreen<CabinetManager
         this.itemRenderer.blitOffset = 0.0F;
     }
 
-    public static class CabinetTab {
-        final int id;
-        final StorageCabinetEntity entity;
-
-        public CabinetTab(int id, StorageCabinetEntity entity) {
-            this.id = id;
-            this.entity = entity;
-        }
+    public record CabinetTab(int id, StorageCabinetEntity entity) {
 
         public ItemStack getIcon() {
             return entity == null || entity.getMainItemStack().isEmpty() ? new ItemStack(Blocks.BARRIER) : new ItemStack(entity.getMainItemStack().getItem()); // Quick way to make sure the icon doesn't show count

@@ -1,4 +1,4 @@
-package com.ashindigo.storagecabinet.misc;
+package com.ashindigo.storagecabinet.inventory;
 
 import com.ashindigo.storagecabinet.entity.CabinetManagerEntity;
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;

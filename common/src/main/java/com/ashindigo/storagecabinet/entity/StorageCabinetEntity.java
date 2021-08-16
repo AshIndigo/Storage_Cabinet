@@ -3,7 +3,7 @@ package com.ashindigo.storagecabinet.entity;
 import com.ashindigo.storagecabinet.StorageCabinet;
 import com.ashindigo.storagecabinet.block.StorageCabinetBlock;
 import com.ashindigo.storagecabinet.container.StorageCabinetContainer;
-import com.ashindigo.storagecabinet.misc.BasicSidedInventory;
+import com.ashindigo.storagecabinet.inventory.BasicSidedInventory;
 import com.google.common.collect.Lists;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
@@ -64,14 +64,12 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
         return list;
     }
 
-
     @Override
     public void load(CompoundTag tag) {
         this.tier = tag.getInt("tier");
         setTier(tier);
         if (tag.contains("inv")) {
             ContainerHelper.loadAllItems(tag.getCompound("inv"), items);
-            //itemHandler.deserializeNBT(tag.getCompound("inv"));
         }
         super.load(tag);
         this.locked = tag.getBoolean("locked");
@@ -90,8 +88,9 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
         if (this.customName != null) {
             tag.putString("CustomName", Component.Serializer.toJson(this.customName));
         }
-        ContainerHelper.saveAllItems(tag.getCompound("inv"), items);
-        //tag.put("inv", itemHandler.serializeNBT());
+        CompoundTag invTag = new CompoundTag();
+        ContainerHelper.saveAllItems(invTag, items);
+        tag.put("inv", invTag);
         return tag;
     }
 

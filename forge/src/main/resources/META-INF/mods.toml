@@ -25,3 +25,9 @@ Adds multiple tiers of storage cabinets to Minecraft'''
     versionRange="[1.17.1,1.18)"
     ordering="NONE"
     side="BOTH"
+[[dependencies.storagecabinet]]
+    modId = "architectury"
+    mandatory = true
+    versionRange = "[1.1.55,)"
+    ordering = "AFTER"
+    side = "BOTH"

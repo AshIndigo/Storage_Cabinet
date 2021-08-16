@@ -1,39 +1,20 @@
-package com.ashindigo.storagecabinet.misc;
+package com.ashindigo.storagecabinet.inventory;
 
-
+import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
-/**
- * A simple {@code Inventory} implementation with only default methods + an item list getter.
- *
- * Originally by Juuz
- */
-// I got lazy, thanks Fabric wiki
-public interface BasicInventory extends Container {
+public interface BasicSidedInventory extends WorldlyContainer {
 
     /**
      * Retrieves the item list of this inventory.
      * Must return the same instance every time it's called.
      */
     NonNullList<ItemStack> getItems();
-
-    /**
-     * Creates an inventory from the item list.
-     */
-    static BasicInventory of(NonNullList<ItemStack> items) {
-        return () -> items;
-    }
-
-    /**
-     * Creates a new inventory with the specified size.
-     */
-    static BasicInventory ofSize(int size) {
-        return of(NonNullList.withSize(size, ItemStack.EMPTY));
-    }
 
     /**
      * Returns the inventory size.
@@ -45,6 +26,7 @@ public interface BasicInventory extends Container {
 
     /**
      * Checks if the inventory is empty.
+     *
      * @return true if this inventory has only empty stacks, false otherwise.
      */
     @Override
@@ -68,6 +50,7 @@ public interface BasicInventory extends Container {
 
     /**
      * Removes items from an inventory slot.
+     *
      * @param slot  The slot to remove from.
      * @param count How many items to remove. If there are less items in the slot than what are requested,
      *              takes all items in that slot.
@@ -83,6 +66,7 @@ public interface BasicInventory extends Container {
 
     /**
      * Removes all items from an inventory slot.
+     *
      * @param slot The slot to remove from.
      */
     @Override
@@ -92,9 +76,10 @@ public interface BasicInventory extends Container {
 
     /**
      * Replaces the current stack in an inventory slot with the provided stack.
+     *
      * @param slot  The inventory slot of which to replace the ItemStack.
      * @param stack The replacing ItemStack. If the stack is too big for
-     *              this inventory ({@link Container#getMaxStackSize()}),
+     *              this inventory ({@link Container#getMaxStackSize()} ()}),
      *              it gets resized to this inventory's maximum amount.
      */
     @Override
@@ -131,5 +116,23 @@ public interface BasicInventory extends Container {
         return true;
     }
 
+    @Override
+    default int[] getSlotsForFace(Direction dir) {
+        // Just return an array of all slots
+        int[] result = new int[getItems().size()];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = i;
+        }
+        return result;
+    }
 
+    @Override
+    default boolean canPlaceItemThroughFace(int slot, ItemStack stack, Direction direction) {
+        return canPlaceItem(slot, stack);
+    }
+
+    @Override
+    default boolean canTakeItemThroughFace(int slot, ItemStack stack, Direction direction) {
+        return canPlaceItem(slot, stack);
+    }
 }

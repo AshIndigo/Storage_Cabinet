@@ -9,11 +9,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.CreativeModeTab;
 
 public class StorageCabinetScreen extends AbstractContainerScreen<StorageCabinetContainer> {
 
     private static final ResourceLocation BG_TEXTURE = new ResourceLocation(StorageCabinet.MODID, "textures/gui/cabinet.png");
+    private static final ResourceLocation CREATIVE_INVENTORY_TABS = new ResourceLocation("textures/gui/container/creative_inventory/tabs.png");
     private float scrollOffs;
     private boolean scrolling;
 
@@ -34,7 +34,7 @@ public class StorageCabinetScreen extends AbstractContainerScreen<StorageCabinet
         int i = this.leftPos + 175;
         int j = this.topPos + 18;
         int k = j + 112;
-        RenderSystem.setShaderTexture(0, new ResourceLocation(CreativeModeTab.TAB_SEARCH.getBackgroundSuffix()));
+        RenderSystem.setShaderTexture(0, CREATIVE_INVENTORY_TABS);
         this.blit(matrixStack, i, j + (int) ((float) (k - j - 17) * this.scrollOffs), 232, 0, 12, 15);
     }
 
