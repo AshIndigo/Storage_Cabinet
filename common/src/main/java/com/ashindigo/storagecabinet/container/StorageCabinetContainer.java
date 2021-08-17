@@ -6,15 +6,17 @@ import com.ashindigo.storagecabinet.block.StorageCabinetBlock;
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
-public class StorageCabinetContainer extends AbstractContainerMenu {
+public class StorageCabinetContainer extends AbstractStorageCabinetContainer {
 
-    final StorageCabinetEntity entity;
+    public final StorageCabinetEntity entity;
     private final int tier;
 
     public StorageCabinetContainer(int windowId, Inventory playerInv, FriendlyByteBuf buf) {
@@ -54,41 +56,6 @@ public class StorageCabinetContainer extends AbstractContainerMenu {
     }
 
     @Override
-    public ItemStack quickMoveStack(Player player, int index) {
-        ItemStack itemStack = ItemStack.EMPTY;
-        Slot slot = slots.get(index);
-
-        if (slot.hasItem()) {
-            ItemStack itemStack1 = slot.getItem();
-            itemStack = itemStack1.copy();
-
-            int containerSlots = slots.size() - player.getInventory().items.size();
-
-            if (index < containerSlots) {
-                if (!this.moveItemStackTo(itemStack1, containerSlots, slots.size(), true)) {
-                    return ItemStack.EMPTY;
-                }
-            } else if (!this.moveItemStackTo(itemStack1, 0, containerSlots, false)) {
-                return ItemStack.EMPTY;
-            }
-
-            if (itemStack1.getCount() == 0) {
-                slot.set(ItemStack.EMPTY);
-            } else {
-                slot.setChanged();
-            }
-
-            if (itemStack1.getCount() == itemStack.getCount()) {
-                return ItemStack.EMPTY;
-            }
-
-            slot.onTake(player, itemStack1);
-        }
-
-        return itemStack;
-    }
-
-    @Override
     public boolean stillValid(Player player) {
         return true;
     }
@@ -99,8 +66,9 @@ public class StorageCabinetContainer extends AbstractContainerMenu {
         entity.onClose(player);
     }
 
-    public void scrollTo(float pos) {
-        int i = (entity.getContainerSize() + 9 - 1) / 9 - 5; // 25.8888888889 for 270 slots
+    @Override
+    public void scrollTo(float pos, StorageCabinetEntity entity) {
+        int i = (this.entity.getContainerSize() + 9 - 1) / 9 - 5; // 25.8888888889 for 270 slots
         int j = (int) ((double) (pos * (float) i) + 0.5D);
 
         if (j < 0) {

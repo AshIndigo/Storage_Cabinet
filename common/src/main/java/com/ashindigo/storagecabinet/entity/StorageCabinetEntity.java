@@ -67,8 +67,6 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
 
     @Override
     public void load(CompoundTag tag) {
-        // Fabric initial impl.
-        // Items listtag
         this.tier = tag.getInt("tier");
         setTier(tier);
         switch (ArchitecturyTarget.getCurrentTarget()) {
