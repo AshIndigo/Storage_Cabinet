@@ -51,8 +51,8 @@ public class CabinetManagerContainer extends AbstractStorageCabinetContainer {
                 if (!cabinetList.contains(cabinetEntity)) {
                     cabinetList.add(cabinetEntity);
                     for (int i = 0; i < StorageCabinetBlock.getHeight(cabinetEntity.tier); ++i) {
-                        for (int j = 0; j < 9; ++j) {
-                            CABINET_SLOT_LIST.put(cabinetEntity, (ExtraSlotItemHandler) this.addSlot(new ExtraSlotItemHandler(cabinetEntity, i * 9 + j, 9 + j * 18, 18 + i * 18, cabinetEntity)));
+                        for (int j = 0; j < StorageCabinetBlock.getWidth(); ++j) {
+                            CABINET_SLOT_LIST.put(cabinetEntity, (ExtraSlotItemHandler) this.addSlot(new ExtraSlotItemHandler(cabinetEntity, i * StorageCabinetBlock.getWidth() + j, 9 + j * 18, 18 + i * 18, cabinetEntity)));
                         }
                     }
                     checkSurroundingCabinets(cabinetList, offsetPos, world);
@@ -63,7 +63,7 @@ public class CabinetManagerContainer extends AbstractStorageCabinetContainer {
 
     @Override
     public void scrollTo(float pos, StorageCabinetEntity cabinetEntity) {
-        int i = (cabinetEntity.getContainerSize() + 9 - 1) / 9 - 5;
+        int i = (cabinetEntity.getContainerSize() + StorageCabinetBlock.getWidth() - 1) / StorageCabinetBlock.getWidth() - 5;
         int j = (int) ((double) (pos * (float) i) + 0.5D);
         if (j < 0) {
             j = 0;
@@ -73,9 +73,9 @@ public class CabinetManagerContainer extends AbstractStorageCabinetContainer {
         for (int y = 0; y < StorageCabinetBlock.getHeight(cabinetEntity.tier); ++y) {
             for (int x = 0; x < StorageCabinetBlock.getWidth(); ++x) {
                 if (j == 0) {
-                    StorageCabinetExpectPlatform.setSlotY(CABINET_SLOT_LIST.get(cabinetEntity).get(y * 9 + x), 18 + y * 18);
+                    StorageCabinetExpectPlatform.setSlotY(CABINET_SLOT_LIST.get(cabinetEntity).get(y * StorageCabinetBlock.getWidth() + x), 18 + y * 18);
                 } else {
-                    StorageCabinetExpectPlatform.setSlotY(CABINET_SLOT_LIST.get(cabinetEntity).get(y * 9 + x), 18 + (y - j) * 18);
+                    StorageCabinetExpectPlatform.setSlotY(CABINET_SLOT_LIST.get(cabinetEntity).get(y * StorageCabinetBlock.getWidth() + x), 18 + (y - j) * 18);
                 }
             }
         }
