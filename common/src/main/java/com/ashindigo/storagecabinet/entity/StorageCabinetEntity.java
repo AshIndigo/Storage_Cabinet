@@ -1,5 +1,6 @@
 package com.ashindigo.storagecabinet.entity;
 
+import com.ashindigo.storagecabinet.DisplayHeight;
 import com.ashindigo.storagecabinet.StorageCabinet;
 import com.ashindigo.storagecabinet.block.StorageCabinetBlock;
 import com.ashindigo.storagecabinet.container.StorageCabinetContainer;
@@ -32,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
-public class StorageCabinetEntity extends BlockEntity implements MenuProvider, BasicSidedInventory {
+public class StorageCabinetEntity extends BlockEntity implements MenuProvider, BasicSidedInventory, ModifiableDisplaySize {
 
     public boolean locked = false;
     public int tier = 0;
@@ -40,6 +41,7 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
     private int viewerCount;
     private Component customName;
     private NonNullList<ItemStack> items;
+    private DisplayHeight displayHeight = StorageCabinet.DEFAULT_HEIGHT;
 
     public StorageCabinetEntity(BlockPos pos, BlockState state) {
         super(StorageCabinet.CABINET_ENTITY.get(), pos, state);
@@ -90,6 +92,7 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
         if (tag.contains("CustomName", 8)) {
             this.customName = Component.Serializer.fromJson(tag.getString("CustomName"));
         }
+        setDisplayHeight(DisplayHeight.values()[tag.getInt("displaySize")]);
     }
 
     @Override
@@ -101,6 +104,7 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
         if (this.customName != null) {
             tag.putString("CustomName", Component.Serializer.toJson(this.customName));
         }
+        tag.putInt("displaySize", getDisplayHeight().ordinal());
         return ContainerHelper.saveAllItems(tag, items);
     }
 
@@ -116,13 +120,6 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
     @Override
     public AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
         return new StorageCabinetContainer(syncId, inv, getBlockPos(), tier);
-    }
-
-    public ItemStack getMainItemStack() {
-        if (locked) {
-            return new ItemStack(item);
-        }
-        return items.stream().filter(stack -> !stack.isEmpty()).findAny().orElse(ItemStack.EMPTY);
     }
 
     @Override
@@ -177,19 +174,30 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
         if (this.customName != null) {
             tag.putString("CustomName", Component.Serializer.toJson(this.customName));
         }
+        tag.putInt("displaySize", getDisplayHeight().ordinal());
         return tag;
     }
 
-    public void startOpen() {
-        BlockState blockState = this.getBlockState();
-        boolean bl = blockState.getValue(StorageCabinetBlock.OPEN);
-        if (level != null) {
-            if (!bl) {
-                this.level.setBlock(this.getBlockPos(), blockState.setValue(StorageCabinetBlock.OPEN, true), 3);
-            }
-            this.level.getBlockTicks().scheduleTick(this.getBlockPos(), this.getBlockState().getBlock(), 5);
-            viewerCount++;
+    @Override
+    public NonNullList<ItemStack> getItems() {
+        return items;
+    }
+
+    @Override
+    public void setDisplayHeight(DisplayHeight displayHeight) {
+        this.displayHeight = displayHeight;
+    }
+
+    @Override
+    public DisplayHeight getDisplayHeight() {
+        return displayHeight;
+    }
+
+    public ItemStack getMainItemStack() {
+        if (locked) {
+            return new ItemStack(item);
         }
+        return items.stream().filter(stack -> !stack.isEmpty()).findAny().orElse(ItemStack.EMPTY);
     }
 
     public void tick() {
@@ -211,29 +219,21 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
         }
     }
 
+    public void startOpen() {
+        BlockState blockState = this.getBlockState();
+        boolean bl = blockState.getValue(StorageCabinetBlock.OPEN);
+        if (level != null) {
+            if (!bl) {
+                this.level.setBlock(this.getBlockPos(), blockState.setValue(StorageCabinetBlock.OPEN, true), 3);
+            }
+            this.level.getBlockTicks().scheduleTick(this.getBlockPos(), this.getBlockState().getBlock(), 5);
+            viewerCount++;
+        }
+    }
+
     public void onClose(Player player) {
         if (!player.isSpectator()) {
             --this.viewerCount;
         }
     }
-
-    @Override
-    public NonNullList<ItemStack> getItems() {
-        return items;
-    }
-
-
-//    @Override
-//    public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
-//        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-//            return inventoryHandlerLazyOptional.cast();
-//        }
-//        return super.getCapability(cap, side);
-//    }
-//
-//    @Override
-//    public void invalidateCaps() {
-//        super.invalidateCaps();
-//        inventoryHandlerLazyOptional.invalidate();
-//    }
 }

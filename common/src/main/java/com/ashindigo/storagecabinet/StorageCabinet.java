@@ -9,6 +9,9 @@ import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
 import com.ashindigo.storagecabinet.item.StorageCabinetDolly;
 import com.ashindigo.storagecabinet.item.StorageCabinetKey;
 import com.ashindigo.storagecabinet.item.StorageCabinetUpgrade;
+import com.ashindigo.storagecabinet.networking.SizeChangeMessage;
+import dev.architectury.networking.simple.MessageType;
+import dev.architectury.networking.simple.SimpleNetworkManager;
 import dev.architectury.registry.CreativeTabRegistry;
 import dev.architectury.registry.menu.MenuRegistry;
 import dev.architectury.registry.registries.DeferredRegister;
@@ -28,7 +31,8 @@ import net.minecraft.world.level.material.Material;
 public class StorageCabinet {
 
     public static final String MODID = "storagecabinet";
-    public static final DisplayHeight DEFAULT = DisplayHeight.SMALL;
+    public static final DisplayHeight DEFAULT_HEIGHT = DisplayHeight.SMALL;
+    public static final SimpleNetworkManager NETWORK_MANAGER = SimpleNetworkManager.create(StorageCabinet.MODID);
 
     // Items
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(MODID, Registry.ITEM_REGISTRY);
@@ -70,6 +74,9 @@ public class StorageCabinet {
     public static final RegistrySupplier<Item> DIAMOND_CABINET_ITEM = ITEMS.register("storagecabinet_diamond", () -> new BlockItem(DIAMOND_CABINET.get(), DEF_PROPS));
     public static final RegistrySupplier<Item> EMERALD_CABINET_ITEM = ITEMS.register("storagecabinet_emerald", () -> new BlockItem(EMERALD_CABINET.get(), DEF_PROPS));
     public static final RegistrySupplier<Item> CABINET_MANAGER_ITEM = ITEMS.register("cabinet_manager", () -> new BlockItem(CABINET_MANAGER.get(), DEF_PROPS));
+
+    // Packets
+    public static final MessageType CHANGE_SIZE = NETWORK_MANAGER.registerC2S("change_size", SizeChangeMessage::new);
 
     public static void init() {
         BLOCKS.register();

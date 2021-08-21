@@ -2,6 +2,7 @@ package com.ashindigo.storagecabinet.client.screen;
 
 import com.ashindigo.storagecabinet.container.CabinetManagerContainer;
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
+import com.ashindigo.storagecabinet.networking.SizeChangeMessage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.Button;
@@ -152,6 +153,9 @@ public class CabinetManagerScreen extends AbstractStorageCabinetScreen<CabinetMa
         if (buttonBack != null) {
             buttonBack.x = leftPos;
             buttonBack.y = topPos - 50;
+        }
+        if (menu.cabinetManagerEntity.getBlockPos() != null) {
+            new SizeChangeMessage(selectedHeight, menu.cabinetManagerEntity.getBlockPos()).sendToServer();
         }
     }
 

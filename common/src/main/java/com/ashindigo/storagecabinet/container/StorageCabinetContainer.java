@@ -1,5 +1,6 @@
 package com.ashindigo.storagecabinet.container;
 
+import com.ashindigo.storagecabinet.DisplayHeight;
 import com.ashindigo.storagecabinet.StorageCabinet;
 import com.ashindigo.storagecabinet.StorageCabinetExpectPlatform;
 import com.ashindigo.storagecabinet.block.StorageCabinetBlock;
@@ -41,7 +42,7 @@ public class StorageCabinetContainer extends AbstractStorageCabinetContainer {
                 });
             }
         }
-        addPlayerInv(playerInv, StorageCabinet.DEFAULT);
+        addPlayerInv(playerInv, getDisplayHeight());
     }
 
     @Override
@@ -75,5 +76,15 @@ public class StorageCabinetContainer extends AbstractStorageCabinetContainer {
 
             }
         }
+    }
+
+    @Override
+    public void setDisplayHeight(DisplayHeight displayHeight) {
+        entity.setDisplayHeight(displayHeight);
+    }
+
+    @Override
+    public DisplayHeight getDisplayHeight() {
+        return entity.getDisplayHeight();
     }
 }

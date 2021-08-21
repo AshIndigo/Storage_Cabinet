@@ -1,8 +1,10 @@
 package com.ashindigo.storagecabinet.container;
 
+import com.ashindigo.storagecabinet.DisplayHeight;
 import com.ashindigo.storagecabinet.StorageCabinet;
 import com.ashindigo.storagecabinet.StorageCabinetExpectPlatform;
 import com.ashindigo.storagecabinet.block.StorageCabinetBlock;
+import com.ashindigo.storagecabinet.entity.CabinetManagerEntity;
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
@@ -22,6 +24,7 @@ public class CabinetManagerContainer extends AbstractStorageCabinetContainer {
 
     public final ArrayList<StorageCabinetEntity> cabinetList = new ArrayList<>();
     public final ListMultimap<StorageCabinetEntity, ExtraSlotItemHandler> CABINET_SLOT_LIST = ArrayListMultimap.create();
+    public final CabinetManagerEntity cabinetManagerEntity;
 
     public CabinetManagerContainer(int syncId, Inventory inv, FriendlyByteBuf buf) {
         this(syncId, inv, buf.readBlockPos());
@@ -29,8 +32,9 @@ public class CabinetManagerContainer extends AbstractStorageCabinetContainer {
 
     public CabinetManagerContainer(int syncId, Inventory playerInv, BlockPos blockPos) {
         super(StorageCabinet.MANAGER_CONTAINER.get(), syncId);
+        cabinetManagerEntity = (CabinetManagerEntity) playerInv.player.level.getBlockEntity(blockPos);
         checkSurroundingCabinets(cabinetList, blockPos, playerInv.player.level);
-        addPlayerInv(playerInv, StorageCabinet.DEFAULT);
+        addPlayerInv(playerInv, getDisplayHeight());
     }
 
     private void checkSurroundingCabinets(ArrayList<StorageCabinetEntity> cabinetList, BlockPos pos, Level world) {
@@ -83,6 +87,16 @@ public class CabinetManagerContainer extends AbstractStorageCabinetContainer {
         for (ExtraSlotItemHandler slot : CABINET_SLOT_LIST.get(entity)) {
             slot.setEnabled(true);
         }
+    }
+
+    @Override
+    public void setDisplayHeight(DisplayHeight displayHeight) {
+        cabinetManagerEntity.setDisplayHeight(displayHeight);
+    }
+
+    @Override
+    public DisplayHeight getDisplayHeight() {
+        return cabinetManagerEntity.getDisplayHeight();
     }
 
     class ExtraSlotItemHandler extends Slot {

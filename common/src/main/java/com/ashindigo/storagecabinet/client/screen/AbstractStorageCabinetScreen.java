@@ -1,7 +1,6 @@
 package com.ashindigo.storagecabinet.client.screen;
 
 import com.ashindigo.storagecabinet.DisplayHeight;
-import com.ashindigo.storagecabinet.StorageCabinet;
 import com.ashindigo.storagecabinet.block.StorageCabinetBlock;
 import com.ashindigo.storagecabinet.container.AbstractStorageCabinetContainer;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -9,7 +8,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -20,25 +18,27 @@ public abstract class AbstractStorageCabinetScreen<T extends AbstractStorageCabi
     public static final ResourceLocation CREATIVE_INVENTORY_TABS = new ResourceLocation("textures/gui/container/creative_inventory/tabs.png");
     public float scrollOffs;
     public boolean scrolling;
-    DisplayHeight selectedHeight = StorageCabinet.DEFAULT;
+    DisplayHeight selectedHeight;
+    Button sizeButton;
 
     public AbstractStorageCabinetScreen(T container, Inventory inv, Component name) {
         super(container, inv, name);
         this.isQuickCrafting = true;
-        changeDisplaySize();
+        selectedHeight = menu.getDisplayHeight();
     }
 
     @Override
     protected void init() {
         super.init();
         minecraft.keyboardHandler.setSendRepeatsToGui(true);
-        addRenderableWidget(new Button(leftPos - 24, topPos, 24, 20, new TranslatableComponent("text.storagecabinet.size"), button -> {
+        sizeButton = addRenderableWidget(new Button(leftPos - 24, topPos, 24, 20, new TranslatableComponent("text.storagecabinet.size"), button -> {
             selectedHeight = switch (selectedHeight) {
                 case SMALL -> DisplayHeight.MEDIUM;
                 case MEDIUM -> DisplayHeight.SMALL;
             };
             changeDisplaySize();
         }));
+        changeDisplaySize();
     }
 
     @Override
@@ -125,6 +125,8 @@ public abstract class AbstractStorageCabinetScreen<T extends AbstractStorageCabi
         this.topPos = (this.height - this.imageHeight) / 2;
         this.inventoryLabelY = selectedHeight.getPlayerInvStart() - 10;
         menu.changeSlotPositions(selectedHeight);
+        sizeButton.x = leftPos - 24;
+        sizeButton.y = topPos;
         scrollMenu(scrollOffs);
     }
 }
