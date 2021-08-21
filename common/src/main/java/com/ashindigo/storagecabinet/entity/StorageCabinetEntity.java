@@ -1,5 +1,6 @@
 package com.ashindigo.storagecabinet.entity;
 
+import com.ashindigo.storagecabinet.Constants;
 import com.ashindigo.storagecabinet.DisplayHeight;
 import com.ashindigo.storagecabinet.StorageCabinet;
 import com.ashindigo.storagecabinet.block.StorageCabinetBlock;
@@ -41,7 +42,7 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
     private int viewerCount;
     private Component customName;
     private NonNullList<ItemStack> items;
-    private DisplayHeight displayHeight = StorageCabinet.DEFAULT_HEIGHT;
+    private DisplayHeight displayHeight = Constants.DEFAULT_HEIGHT;
 
     public StorageCabinetEntity(BlockPos pos, BlockState state) {
         super(StorageCabinet.CABINET_ENTITY.get(), pos, state);
@@ -69,7 +70,7 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
 
     @Override
     public void load(CompoundTag tag) {
-        this.tier = tag.getInt("tier");
+        this.tier = tag.getInt(Constants.TIER);
         setTier(tier);
         switch (ArchitecturyTarget.getCurrentTarget()) {
             case "fabric": { // This is what I get for two differing implementations in the two versions
@@ -87,24 +88,24 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
         // Newer loads should just hopefully auto convert it to "standard" format
         ContainerHelper.loadAllItems(tag, items);
         super.load(tag);
-        this.locked = tag.getBoolean("locked");
-        this.item = Registry.ITEM.get(ResourceLocation.tryParse(tag.getString("item")));
-        if (tag.contains("CustomName", 8)) {
-            this.customName = Component.Serializer.fromJson(tag.getString("CustomName"));
+        this.locked = tag.getBoolean(Constants.LOCKED);
+        this.item = Registry.ITEM.get(ResourceLocation.tryParse(tag.getString(Constants.ITEM)));
+        if (tag.contains(Constants.CUSTOM_NAME, 8)) {
+            this.customName = Component.Serializer.fromJson(tag.getString(Constants.CUSTOM_NAME));
         }
-        setDisplayHeight(DisplayHeight.values()[tag.getInt("displaySize")]);
+        setDisplayHeight(DisplayHeight.values()[tag.getInt(Constants.DISPLAY_SIZE)]);
     }
 
     @Override
     public CompoundTag save(CompoundTag tag) {
         super.save(tag);
-        tag.putInt("tier", tier);
-        tag.putBoolean("locked", locked);
-        tag.putString("item", Registry.ITEM.getKey(item).toString());
+        tag.putInt(Constants.TIER, tier);
+        tag.putBoolean(Constants.LOCKED, locked);
+        tag.putString(Constants.ITEM, Registry.ITEM.getKey(item).toString());
         if (this.customName != null) {
-            tag.putString("CustomName", Component.Serializer.toJson(this.customName));
+            tag.putString(Constants.CUSTOM_NAME, Component.Serializer.toJson(this.customName));
         }
-        tag.putInt("displaySize", getDisplayHeight().ordinal());
+        tag.putInt(Constants.DISPLAY_SIZE, getDisplayHeight().ordinal());
         return ContainerHelper.saveAllItems(tag, items);
     }
 
@@ -168,13 +169,13 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
     @Override
     public CompoundTag getUpdateTag() {
         CompoundTag tag = super.getUpdateTag();
-        tag.putInt("tier", tier);
-        tag.putBoolean("locked", locked);
-        tag.putString("item", Registry.ITEM.getKey(item).toString());
+        tag.putInt(Constants.TIER, tier);
+        tag.putBoolean(Constants.LOCKED, locked);
+        tag.putString(Constants.ITEM, Registry.ITEM.getKey(item).toString());
         if (this.customName != null) {
-            tag.putString("CustomName", Component.Serializer.toJson(this.customName));
+            tag.putString(Constants.CUSTOM_NAME, Component.Serializer.toJson(this.customName));
         }
-        tag.putInt("displaySize", getDisplayHeight().ordinal());
+        tag.putInt(Constants.DISPLAY_SIZE, getDisplayHeight().ordinal());
         return tag;
     }
 

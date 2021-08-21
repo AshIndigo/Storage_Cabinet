@@ -30,12 +30,10 @@ import net.minecraft.world.level.material.Material;
 
 public class StorageCabinet {
 
-    public static final String MODID = "storagecabinet";
-    public static final DisplayHeight DEFAULT_HEIGHT = DisplayHeight.SMALL;
-    public static final SimpleNetworkManager NETWORK_MANAGER = SimpleNetworkManager.create(StorageCabinet.MODID);
+    public static final SimpleNetworkManager NETWORK_MANAGER = SimpleNetworkManager.create(Constants.MODID);
 
     // Items
-    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(MODID, Registry.ITEM_REGISTRY);
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Constants.MODID, Registry.ITEM_REGISTRY);
     public static final RegistrySupplier<Item> WOOD_CABINET_UPGRADE = ITEMS.register("storagecabinet_wood_upgrade", () -> new StorageCabinetUpgrade(0));
     public static final RegistrySupplier<Item> IRON_CABINET_UPGRADE = ITEMS.register("storagecabinet_iron_upgrade", () -> new StorageCabinetUpgrade(1));
     public static final RegistrySupplier<Item> GOLD_CABINET_UPGRADE = ITEMS.register("storagecabinet_gold_upgrade", () -> new StorageCabinetUpgrade(2));
@@ -45,7 +43,7 @@ public class StorageCabinet {
     public static final RegistrySupplier<Item> DOLLY = ITEMS.register("dolly", StorageCabinetDolly::new);
 
     // Blocks
-    private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(MODID, Registry.BLOCK_REGISTRY);
+    private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(Constants.MODID, Registry.BLOCK_REGISTRY);
     public static final RegistrySupplier<Block> WOOD_CABINET = BLOCKS.register("storagecabinet_wood", () -> new StorageCabinetBlock(BlockBehaviour.Properties.of(Material.WOOD), 0));
     public static final RegistrySupplier<Block> IRON_CABINET = BLOCKS.register("storagecabinet_iron", () -> new StorageCabinetBlock(BlockBehaviour.Properties.of(Material.METAL), 1));
     public static final RegistrySupplier<Block> GOLD_CABINET = BLOCKS.register("storagecabinet_gold", () -> new StorageCabinetBlock(BlockBehaviour.Properties.of(Material.METAL), 2));
@@ -54,17 +52,17 @@ public class StorageCabinet {
     public static final RegistrySupplier<Block> CABINET_MANAGER = BLOCKS.register("cabinet_manager", () -> new CabinetManagerBlock(BlockBehaviour.Properties.of(Material.METAL)));
 
     // Tile Entities
-    public static final DeferredRegister<BlockEntityType<?>> TILE_ENTITIES = DeferredRegister.create(MODID, Registry.BLOCK_ENTITY_TYPE_REGISTRY);
+    public static final DeferredRegister<BlockEntityType<?>> TILE_ENTITIES = DeferredRegister.create(Constants.MODID, Registry.BLOCK_ENTITY_TYPE_REGISTRY);
     public static RegistrySupplier<BlockEntityType<? extends StorageCabinetEntity>> CABINET_ENTITY;
     public static RegistrySupplier<BlockEntityType<? extends CabinetManagerEntity>> CABINET_MANAGER_ENTITY;
 
     // Containers
-    public static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(MODID, Registry.MENU_REGISTRY);
-    public static final RegistrySupplier<MenuType<StorageCabinetContainer>> CABINET_CONTAINER = CONTAINERS.register(MODID, () -> MenuRegistry.ofExtended(StorageCabinetContainer::new));
+    public static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(Constants.MODID, Registry.MENU_REGISTRY);
+    public static final RegistrySupplier<MenuType<StorageCabinetContainer>> CABINET_CONTAINER = CONTAINERS.register(Constants.MODID, () -> MenuRegistry.ofExtended(StorageCabinetContainer::new));
     public static final RegistrySupplier<MenuType<CabinetManagerContainer>> MANAGER_CONTAINER = CONTAINERS.register("cabinet_manager", () -> MenuRegistry.ofExtended(CabinetManagerContainer::new));
 
     // Registering a new creative tab
-    public static final CreativeModeTab CABINET_GROUP = CreativeTabRegistry.create(new ResourceLocation(MODID, MODID), () -> new ItemStack(IRON_CABINET.get()));
+    public static final CreativeModeTab CABINET_GROUP = CreativeTabRegistry.create(new ResourceLocation(Constants.MODID, Constants.MODID), () -> new ItemStack(IRON_CABINET.get()));
 
     // Item Blocks
     private static final Item.Properties DEF_PROPS = new Item.Properties().tab(CABINET_GROUP);

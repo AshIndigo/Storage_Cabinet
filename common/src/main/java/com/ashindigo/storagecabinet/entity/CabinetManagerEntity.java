@@ -1,5 +1,6 @@
 package com.ashindigo.storagecabinet.entity;
 
+import com.ashindigo.storagecabinet.Constants;
 import com.ashindigo.storagecabinet.DisplayHeight;
 import com.ashindigo.storagecabinet.StorageCabinet;
 import com.ashindigo.storagecabinet.container.CabinetManagerContainer;
@@ -22,7 +23,7 @@ import java.util.ArrayList;
 public class CabinetManagerEntity extends BlockEntity implements MenuProvider, ModifiableDisplaySize {
 
     public final ArrayList<StorageCabinetEntity> cabinetList = new ArrayList<>();
-    private DisplayHeight displayHeight = StorageCabinet.DEFAULT_HEIGHT;
+    private DisplayHeight displayHeight = Constants.DEFAULT_HEIGHT;
 
     public CabinetManagerEntity(BlockPos pos, BlockState state) {
         super(StorageCabinet.CABINET_MANAGER_ENTITY.get(), pos, state);
@@ -58,19 +59,19 @@ public class CabinetManagerEntity extends BlockEntity implements MenuProvider, M
     @Override
     public void load(CompoundTag compoundTag) {
         super.load(compoundTag);
-        setDisplayHeight(DisplayHeight.values()[compoundTag.getInt("displaySize")]);
+        setDisplayHeight(DisplayHeight.values()[compoundTag.getInt(Constants.DISPLAY_SIZE)]);
     }
 
     @Override
     public CompoundTag save(CompoundTag compoundTag) {
-        compoundTag.putInt("displaySize", getDisplayHeight().ordinal());
+        compoundTag.putInt(Constants.DISPLAY_SIZE, getDisplayHeight().ordinal());
         return super.save(compoundTag);
     }
 
     @Override
     public CompoundTag getUpdateTag() {
         CompoundTag tag = super.getUpdateTag();
-        tag.putInt("displaySize", getDisplayHeight().ordinal());
+        tag.putInt(Constants.DISPLAY_SIZE, getDisplayHeight().ordinal());
         return tag;
     }
 

@@ -22,7 +22,7 @@ public enum DisplayHeight {
         this.playerInvStart = playerInvStart;
         this.slotBottom = slotBottom;
         this.dimension = dimension;
-        textureName = new ResourceLocation(StorageCabinet.MODID, "textures/gui/cabinet_" + name().toLowerCase(Locale.ROOT) + ".png");
+        textureName = new ResourceLocation(Constants.MODID, "textures/gui/cabinet_" + name().toLowerCase(Locale.ROOT) + ".png");
     }
 
     public int getVerticalSlotCount() {

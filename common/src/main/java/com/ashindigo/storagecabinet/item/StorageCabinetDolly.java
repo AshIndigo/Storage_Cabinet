@@ -1,5 +1,6 @@
 package com.ashindigo.storagecabinet.item;
 
+import com.ashindigo.storagecabinet.Constants;
 import com.ashindigo.storagecabinet.StorageCabinet;
 import com.ashindigo.storagecabinet.block.StorageCabinetBlock;
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
@@ -33,7 +34,7 @@ public class StorageCabinetDolly extends Item {
             if (level.getBlockState(clickedPos).getBlock() instanceof StorageCabinetBlock) {
                 if (level.getBlockEntity(clickedPos) != null && level.getBlockEntity(clickedPos) instanceof StorageCabinetEntity) {
                     CompoundTag tag = level.getBlockEntity(clickedPos).save(new CompoundTag());
-                    if (!dolly.hasTag() || dolly.hasTag() && !dolly.getTag().contains("tier")) {
+                    if (!dolly.hasTag() || dolly.hasTag() && !dolly.getTag().contains(Constants.TIER)) {
                         dolly.setTag(tag);
                         level.setBlockAndUpdate(clickedPos, Blocks.AIR.defaultBlockState());
                         return super.useOn(context);
@@ -41,16 +42,15 @@ public class StorageCabinetDolly extends Item {
                 }
             }
 
-            if (dolly.hasTag() && dolly.getTag().contains("tier")) {
+            if (dolly.hasTag() && dolly.getTag().contains(Constants.TIER)) {
                 if (level.isEmptyBlock(offsetPos)) {
-                    level.setBlockAndUpdate(offsetPos, StorageCabinet.getByTier(dolly.getTag().getInt("tier")).defaultBlockState().setValue(StorageCabinetBlock.FACING, context.getHorizontalDirection().getOpposite()));
+                    level.setBlockAndUpdate(offsetPos, StorageCabinet.getByTier(dolly.getTag().getInt(Constants.TIER)).defaultBlockState().setValue(StorageCabinetBlock.FACING, context.getHorizontalDirection().getOpposite()));
                     StorageCabinetEntity ent = (StorageCabinetEntity) level.getBlockEntity(offsetPos);
                     if (ent != null) {
                         dolly.getTag().putInt("x", offsetPos.getX());
                         dolly.getTag().putInt("y", offsetPos.getY());
                         dolly.getTag().putInt("z", offsetPos.getZ());
                         ent.load(dolly.getTag());
-                        //ent.setPosition(offsetPos);
                         dolly.setTag(null);
                         ent.setChanged();
                     }

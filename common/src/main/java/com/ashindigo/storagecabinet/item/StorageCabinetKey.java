@@ -1,5 +1,6 @@
 package com.ashindigo.storagecabinet.item;
 
+import com.ashindigo.storagecabinet.Constants;
 import com.ashindigo.storagecabinet.StorageCabinet;
 import com.ashindigo.storagecabinet.block.StorageCabinetBlock;
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
@@ -20,8 +21,8 @@ public class StorageCabinetKey extends Item {
         if (context.getLevel().getBlockState(context.getClickedPos()).getBlock() instanceof StorageCabinetBlock) {
             if (context.getLevel().getBlockEntity(context.getClickedPos()) != null && context.getLevel().getBlockEntity(context.getClickedPos()) instanceof StorageCabinetEntity blockEntity) {
                 CompoundTag tag = blockEntity.save(new CompoundTag());
-                tag.putBoolean("locked", !tag.getBoolean("locked"));
-                tag.putString("item", Registry.ITEM.getKey(blockEntity.getMainItemStack().getItem()).toString());
+                tag.putBoolean(Constants.LOCKED, !tag.getBoolean(Constants.LOCKED));
+                tag.putString(Constants.ITEM, Registry.ITEM.getKey(blockEntity.getMainItemStack().getItem()).toString());
                 blockEntity.load(tag);
             }
             return InteractionResult.SUCCESS;
