@@ -28,6 +28,7 @@ import net.minecraft.world.level.material.Material;
 public class StorageCabinet {
 
     public static final String MODID = "storagecabinet";
+    public static final DisplayHeight DEFAULT = DisplayHeight.SMALL;
 
     // Items
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(MODID, Registry.ITEM_REGISTRY);
@@ -73,7 +74,6 @@ public class StorageCabinet {
     public static void init() {
         BLOCKS.register();
         ITEMS.register();
-        //TILE_ENTITIES.register();
         CONTAINERS.register();
     }
 

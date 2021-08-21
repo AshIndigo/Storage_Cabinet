@@ -1,5 +1,6 @@
 package com.ashindigo.storagecabinet.client.screen;
 
+import com.ashindigo.storagecabinet.DisplayHeight;
 import com.ashindigo.storagecabinet.StorageCabinet;
 import com.ashindigo.storagecabinet.block.StorageCabinetBlock;
 import com.ashindigo.storagecabinet.container.AbstractStorageCabinetContainer;
@@ -9,44 +10,42 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 
-import java.util.Locale;
-
 public abstract class AbstractStorageCabinetScreen<T extends AbstractStorageCabinetContainer> extends AbstractContainerScreen<T> {
 
     public static final ResourceLocation CREATIVE_INVENTORY_TABS = new ResourceLocation("textures/gui/container/creative_inventory/tabs.png");
-    DisplayHeight selectedHeight = DisplayHeight.SMALL;
     public float scrollOffs;
     public boolean scrolling;
+    DisplayHeight selectedHeight = StorageCabinet.DEFAULT;
 
     public AbstractStorageCabinetScreen(T container, Inventory inv, Component name) {
         super(container, inv, name);
         this.isQuickCrafting = true;
-        this.imageHeight = selectedHeight.getImageHeight();
-        this.imageWidth = 195; // Final, width doesn't change at all
-        this.inventoryLabelY = imageHeight - 92;
+        changeDisplaySize();
     }
 
     @Override
     protected void init() {
         super.init();
         minecraft.keyboardHandler.setSendRepeatsToGui(true);
-        this.addWidget(new Button(leftPos, topPos - 50, 20, 20, new TextComponent("Size"), button -> {
+        addRenderableWidget(new Button(leftPos - 24, topPos, 24, 20, new TranslatableComponent("text.storagecabinet.size"), button -> {
             selectedHeight = switch (selectedHeight) {
                 case SMALL -> DisplayHeight.MEDIUM;
                 case MEDIUM -> DisplayHeight.SMALL;
             };
+            changeDisplaySize();
         }));
     }
 
     @Override
     protected void renderBg(PoseStack matrixStack, float pPartialTicks, int pX, int pY) {
         RenderSystem.setShaderColor(1, 1, 1, 1);
-        RenderSystem.setShaderTexture(0, DisplayHeight.SMALL.getTextureName());
-        this.blit(matrixStack, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
+        RenderSystem.setShaderTexture(0, selectedHeight.getTextureName());
+        blit(matrixStack, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, selectedHeight.getDimension(), selectedHeight.getDimension());
         RenderSystem.setShaderColor(1, 1, 1, 1);
         int i = this.leftPos + 175;
         int j = this.topPos + 18;
@@ -84,7 +83,7 @@ public abstract class AbstractStorageCabinetScreen<T extends AbstractStorageCabi
     @Override
     public boolean mouseScrolled(double pMouseX, double pMouseY, double pDelta) {
         if (menu.slots.size() - 36 == 0) return true;
-        int i = (menu.slots.size() - 36 + StorageCabinetBlock.getWidth() - 1) / StorageCabinetBlock.getWidth() - 5;
+        int i = (menu.slots.size() - 36 + StorageCabinetBlock.getWidth() - 1) / StorageCabinetBlock.getWidth() - selectedHeight.getVerticalSlotCount();
         setScrollOffs((float) ((double) this.scrollOffs - pDelta / (double) i));
         scrollMenu(scrollOffs);
         return true;
@@ -119,31 +118,13 @@ public abstract class AbstractStorageCabinetScreen<T extends AbstractStorageCabi
 
     public abstract void scrollMenu(float pos);
 
-    public enum DisplayHeight {
-
-        SMALL(5, 200), // 5 slots
-        MEDIUM(10, 295); // 10 slots
-
-        private final int verticalSlotCount;
-        private final int imageHeight;
-        private final ResourceLocation textureName;
-
-        DisplayHeight(int verticalSlotCount, int imageHeight) {
-            this.verticalSlotCount = verticalSlotCount;
-            this.imageHeight = imageHeight;
-            textureName = new ResourceLocation(StorageCabinet.MODID, "textures/gui/cabinet_" + name().toLowerCase(Locale.ROOT) + ".png");
-        }
-
-        public int getVerticalSlotCount() {
-            return verticalSlotCount;
-        }
-
-        public ResourceLocation getTextureName() {
-            return textureName;
-        }
-
-        public int getImageHeight() {
-            return imageHeight;
-        }
+    public void changeDisplaySize() {
+        this.imageHeight = selectedHeight.getImageHeight();
+        this.imageWidth = selectedHeight.getImageWidth();
+        this.leftPos = (this.width - this.imageWidth) / 2;
+        this.topPos = (this.height - this.imageHeight) / 2;
+        this.inventoryLabelY = selectedHeight.getPlayerInvStart() - 10;
+        menu.changeSlotPositions(selectedHeight);
+        scrollMenu(scrollOffs);
     }
 }

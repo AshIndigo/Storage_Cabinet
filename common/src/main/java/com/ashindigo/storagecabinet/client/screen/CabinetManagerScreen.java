@@ -20,6 +20,8 @@ public class CabinetManagerScreen extends AbstractStorageCabinetScreen<CabinetMa
     private int selectedTab = 0;
     private int tabPage = 0;
     private int maxPages = 0;
+    private Button buttonBack;
+    private Button buttonForward;
 
     public CabinetManagerScreen(CabinetManagerContainer container, Inventory playerInv, Component name) {
         super(container, playerInv, name);
@@ -35,11 +37,11 @@ public class CabinetManagerScreen extends AbstractStorageCabinetScreen<CabinetMa
         super.init();
         this.menu.setEnabledTab(selectedTab);
         if (TABS.length > 6) {
-            addWidget(new Button(leftPos, topPos - 50, 20, 20, new TextComponent("<"), b -> {
+            buttonBack = addRenderableWidget(new Button(leftPos, topPos - 50, 20, 20, new TextComponent("<"), b -> {
                 tabPage = Math.max(tabPage - 1, 0);
                 selectTab(TABS[tabPage * 6]);
             }));
-            addWidget(new Button(leftPos + imageWidth - 20, topPos - 50, 20, 20, new TextComponent(">"), b -> {
+            buttonForward = addRenderableWidget(new Button(leftPos + imageWidth - 20, topPos - 50, 20, 20, new TextComponent(">"), b -> {
                 tabPage = Math.min(tabPage + 1, maxPages);
                 selectTab(TABS[tabPage * 6]);
             }));
@@ -135,7 +137,22 @@ public class CabinetManagerScreen extends AbstractStorageCabinetScreen<CabinetMa
 
     @Override
     public void scrollMenu(float pos) {
-        menu.scrollTo(pos, TABS[selectedTab].entity);
+        if (TABS != null) {
+            menu.scrollTo(pos, TABS[selectedTab].entity);
+        }
+    }
+
+    @Override
+    public void changeDisplaySize() {
+        super.changeDisplaySize();
+        if (buttonForward != null) {
+            buttonForward.x = leftPos + imageWidth - 20;
+            buttonForward.y = topPos - 50;
+        }
+        if (buttonBack != null) {
+            buttonBack.x = leftPos;
+            buttonBack.y = topPos - 50;
+        }
     }
 
     private void selectTab(CabinetTab tab) {

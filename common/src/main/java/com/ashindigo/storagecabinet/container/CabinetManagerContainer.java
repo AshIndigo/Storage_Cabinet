@@ -30,16 +30,7 @@ public class CabinetManagerContainer extends AbstractStorageCabinetContainer {
     public CabinetManagerContainer(int syncId, Inventory playerInv, BlockPos blockPos) {
         super(StorageCabinet.MANAGER_CONTAINER.get(), syncId);
         checkSurroundingCabinets(cabinetList, blockPos, playerInv.player.level);
-
-        // Player Inv stuff
-        for (int l = 0; l < 3; ++l) {
-            for (int j1 = 0; j1 < 9; ++j1) {
-                this.addSlot(new Slot(playerInv, j1 + l * 9 + 9, 9 + j1 * 18, 118 + l * 18));
-            }
-        }
-        for (int k = 0; k < 9; ++k) {
-            this.addSlot(new Slot(playerInv, k, 9 + k * 18, 176)); // 112 orig
-        }
+        addPlayerInv(playerInv, StorageCabinet.DEFAULT);
     }
 
     private void checkSurroundingCabinets(ArrayList<StorageCabinetEntity> cabinetList, BlockPos pos, Level world) {
@@ -63,7 +54,7 @@ public class CabinetManagerContainer extends AbstractStorageCabinetContainer {
 
     @Override
     public void scrollTo(float pos, StorageCabinetEntity cabinetEntity) {
-        int i = (cabinetEntity.getContainerSize() + StorageCabinetBlock.getWidth() - 1) / StorageCabinetBlock.getWidth() - 5;
+        int i = (cabinetEntity.getContainerSize() + StorageCabinetBlock.getWidth() - 1) / StorageCabinetBlock.getWidth() - heightSetting.getVerticalSlotCount();
         int j = (int) ((double) (pos * (float) i) + 0.5D);
         if (j < 0) {
             j = 0;
@@ -94,13 +85,13 @@ public class CabinetManagerContainer extends AbstractStorageCabinetContainer {
         }
     }
 
-    static class ExtraSlotItemHandler extends Slot {
+    class ExtraSlotItemHandler extends Slot {
 
         private final StorageCabinetEntity entity;
         private boolean enabled;
 
-        public ExtraSlotItemHandler(Container itemHandler, int index, int xPosition, int yPosition, StorageCabinetEntity entity) {
-            super(itemHandler, index, xPosition, yPosition);
+        public ExtraSlotItemHandler(Container container, int index, int xPosition, int yPosition, StorageCabinetEntity entity) {
+            super(container, index, xPosition, yPosition);
             this.entity = entity;
         }
 
@@ -117,7 +108,7 @@ public class CabinetManagerContainer extends AbstractStorageCabinetContainer {
 
         @Override
         public boolean isActive() {
-            return isEnabled() && this.y < 91 && this.y > 0 && x < 154 && x > 0;
+            return isEnabled() && this.y < heightSetting.getSlotBottom() && this.y > 0 && x < 154 && x > 0;
         }
 
         public boolean isEnabled() {

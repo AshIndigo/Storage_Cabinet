@@ -14,6 +14,7 @@ import net.minecraft.world.item.ItemStack;
 public class StorageCabinetContainer extends AbstractStorageCabinetContainer {
 
     public final StorageCabinetEntity entity;
+
     private final int tier;
 
     public StorageCabinetContainer(int windowId, Inventory playerInv, FriendlyByteBuf buf) {
@@ -30,8 +31,8 @@ public class StorageCabinetContainer extends AbstractStorageCabinetContainer {
                 this.addSlot(new Slot(entity, i * 9 + j, 9 + j * 18, 18 + i * 18) {
                     @Override
                     public boolean isActive() {
-                        return this.y < 91 && this.y > 0 && x < 154 && x > 0;
-                    }
+                        return this.y < heightSetting.getSlotBottom() && this.y > 0 && x < 154 && x > 0;
+                    } // 91 for small
 
                     @Override
                     public boolean mayPlace(ItemStack itemStack) {
@@ -40,16 +41,7 @@ public class StorageCabinetContainer extends AbstractStorageCabinetContainer {
                 });
             }
         }
-
-        for (int l = 0; l < 3; ++l) {
-            for (int j1 = 0; j1 < 9; ++j1) {
-                this.addSlot(new Slot(playerInv, j1 + l * 9 + 9, 9 + j1 * 18, 118 + l * 18));
-            }
-        }
-
-        for (int k = 0; k < 9; ++k) {
-            this.addSlot(new Slot(playerInv, k, 9 + k * 18, 176)); // 112 orig
-        }
+        addPlayerInv(playerInv, StorageCabinet.DEFAULT);
     }
 
     @Override
@@ -65,7 +57,7 @@ public class StorageCabinetContainer extends AbstractStorageCabinetContainer {
 
     @Override
     public void scrollTo(float pos, StorageCabinetEntity entity) {
-        int i = (this.entity.getContainerSize() + 9 - 1) / 9 - 5; // 25.8888888889 for 270 slots
+        int i = (this.entity.getContainerSize() + 9 - 1) / 9 - heightSetting.getVerticalSlotCount(); // 25.8888888889 for 270 slots
         int j = (int) ((double) (pos * (float) i) + 0.5D);
 
         if (j < 0) {

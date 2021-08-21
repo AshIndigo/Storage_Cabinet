@@ -1,6 +1,10 @@
 package com.ashindigo.storagecabinet.container;
 
+import com.ashindigo.storagecabinet.DisplayHeight;
+import com.ashindigo.storagecabinet.StorageCabinet;
+import com.ashindigo.storagecabinet.StorageCabinetExpectPlatform;
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
@@ -9,6 +13,8 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class AbstractStorageCabinetContainer extends AbstractContainerMenu {
+
+    public DisplayHeight heightSetting = StorageCabinet.DEFAULT;
 
     protected AbstractStorageCabinetContainer(@Nullable MenuType<?> menuType, int i) {
         super(menuType, i);
@@ -54,5 +60,29 @@ public abstract class AbstractStorageCabinetContainer extends AbstractContainerM
         return true;
     }
 
-   public abstract void scrollTo(float pos, StorageCabinetEntity entity);
+    public void changeSlotPositions(DisplayHeight height) {
+        heightSetting = height;
+        for (Slot slot : slots) {
+            if (slot.container instanceof Inventory) {
+                if (Inventory.isHotbarSlot(slot.getContainerSlot())) {
+                    StorageCabinetExpectPlatform.setSlotY(slot, height.getPlayerInvStart() + 58);
+                } else {
+                    StorageCabinetExpectPlatform.setSlotY(slot, height.getPlayerInvStart() + ((slot.getContainerSlot() / 9) - 1) * 18);
+                }
+            }
+        }
+    }
+
+    public void addPlayerInv(Inventory playerInv, DisplayHeight height) {
+        for (int l = 0; l < 3; ++l) {
+            for (int j1 = 0; j1 < 9; ++j1) {
+                this.addSlot(new Slot(playerInv, j1 + l * 9 + 9, 9 + j1 * 18, height.getPlayerInvStart() + l * 18));
+            }
+        }
+        for (int k = 0; k < 9; ++k) {
+            this.addSlot(new Slot(playerInv, k, 9 + k * 18, height.getPlayerInvStart() + 58)); // 58 is the gap between starting slot and hotbar
+        }
+    }
+
+    public abstract void scrollTo(float pos, StorageCabinetEntity entity);
 }

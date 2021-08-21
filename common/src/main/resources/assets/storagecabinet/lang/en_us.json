@@ -15,5 +15,6 @@
     "itemGroup.storagecabinet.storagecabinet": "Storage Cabinet",
     "text.storagecabinet.dollyhas":"Contains cabinet",
     "text.storagecabinet.nocabinets": "No Cabinets",
+    "text.storagecabinet.size": "Size",
     "desc.storagecabinet.nocabinets": "No cabinets are currently attached to the manager"
 }
