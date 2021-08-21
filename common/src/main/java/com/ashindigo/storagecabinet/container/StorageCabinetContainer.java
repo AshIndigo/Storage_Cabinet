@@ -32,7 +32,7 @@ public class StorageCabinetContainer extends AbstractStorageCabinetContainer {
                 this.addSlot(new Slot(entity, i * 9 + j, 9 + j * 18, 18 + i * 18) {
                     @Override
                     public boolean isActive() {
-                        return this.y < heightSetting.getSlotBottom() && this.y > 0 && x < 154 && x > 0;
+                        return this.y < getDisplayHeight().getSlotBottom() && this.y > 0 && x < 154 && x > 0;
                     } // 91 for small
 
                     @Override
@@ -58,7 +58,7 @@ public class StorageCabinetContainer extends AbstractStorageCabinetContainer {
 
     @Override
     public void scrollTo(float pos, StorageCabinetEntity entity) {
-        int i = (this.entity.getContainerSize() + 9 - 1) / 9 - heightSetting.getVerticalSlotCount(); // 25.8888888889 for 270 slots
+        int i = (this.entity.getContainerSize() + 9 - 1) / 9 - getDisplayHeight().getVerticalSlotCount(); // 25.8888888889 for 270 slots
         int j = (int) ((double) (pos * (float) i) + 0.5D);
 
         if (j < 0) {

@@ -11,8 +11,8 @@ import net.minecraft.network.FriendlyByteBuf;
 
 public class SizeChangeMessage extends BaseC2SMessage {
 
-    DisplayHeight displayHeight;
-    BlockPos blockPos;
+    final DisplayHeight displayHeight;
+    final BlockPos blockPos;
 
     public SizeChangeMessage(DisplayHeight displayHeight, BlockPos blockPos) {
         this.displayHeight = displayHeight;

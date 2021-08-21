@@ -1,7 +1,6 @@
 package com.ashindigo.storagecabinet.container;
 
 import com.ashindigo.storagecabinet.DisplayHeight;
-import com.ashindigo.storagecabinet.StorageCabinet;
 import com.ashindigo.storagecabinet.StorageCabinetExpectPlatform;
 import com.ashindigo.storagecabinet.entity.ModifiableDisplaySize;
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
@@ -14,8 +13,6 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class AbstractStorageCabinetContainer extends AbstractContainerMenu implements ModifiableDisplaySize {
-
-    public DisplayHeight heightSetting = StorageCabinet.DEFAULT_HEIGHT;
 
     protected AbstractStorageCabinetContainer(@Nullable MenuType<?> menuType, int i) {
         super(menuType, i);
@@ -68,7 +65,7 @@ public abstract class AbstractStorageCabinetContainer extends AbstractContainerM
                 if (Inventory.isHotbarSlot(slot.getContainerSlot())) {
                     StorageCabinetExpectPlatform.setSlotY(slot, height.getPlayerInvStart() + 58);
                 } else {
-                    StorageCabinetExpectPlatform.setSlotY(slot, height.getPlayerInvStart() + ((slot.getContainerSlot() / 9) - 1) * 18);
+                    StorageCabinetExpectPlatform.setSlotY(slot, height.getPlayerInvStart() + (slot.getContainerSlot() / 9 - 1) * 18);
                 }
             }
         }

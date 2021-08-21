@@ -58,7 +58,7 @@ public class CabinetManagerContainer extends AbstractStorageCabinetContainer {
 
     @Override
     public void scrollTo(float pos, StorageCabinetEntity cabinetEntity) {
-        int i = (cabinetEntity.getContainerSize() + StorageCabinetBlock.getWidth() - 1) / StorageCabinetBlock.getWidth() - heightSetting.getVerticalSlotCount();
+        int i = (cabinetEntity.getContainerSize() + StorageCabinetBlock.getWidth() - 1) / StorageCabinetBlock.getWidth() - getDisplayHeight().getVerticalSlotCount();
         int j = (int) ((double) (pos * (float) i) + 0.5D);
         if (j < 0) {
             j = 0;
@@ -122,7 +122,7 @@ public class CabinetManagerContainer extends AbstractStorageCabinetContainer {
 
         @Override
         public boolean isActive() {
-            return isEnabled() && this.y < heightSetting.getSlotBottom() && this.y > 0 && x < 154 && x > 0;
+            return isEnabled() && this.y < getDisplayHeight().getSlotBottom() && this.y > 0 && x < 154 && x > 0;
         }
 
         public boolean isEnabled() {
