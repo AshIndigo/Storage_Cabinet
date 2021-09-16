@@ -125,21 +125,7 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
 
     @Override
     public boolean canPlaceItem(int i, ItemStack stack) {
-        if (!locked) {
-            if (items.stream().allMatch(ItemStack::isEmpty) || stack.isEmpty()) {
-                return true;
-            } else {
-                Collection<ResourceLocation> idList = getTagsFor(stack.getItem());
-                if (idList.isEmpty()) {
-                    return IntStream.range(0, this.getContainerSize()).mapToObj(this::getItem).anyMatch(itemStack -> stack.getItem().equals(itemStack.getItem()) && itemStack.getCount() > 0);
-                } else {
-                    for (ResourceLocation id : idList) {
-                        Tag<Item> tag = ItemTags.getAllTags().getTagOrEmpty(id);
-                        return items.stream().anyMatch(stack2 -> tag.contains(stack2.getItem()));
-                    }
-                }
-            }
-        } else {
+        if (locked) {
             if (item.equals(Items.AIR)) {
                 return true;
             }
@@ -151,6 +137,20 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
                     Tag<Item> itemTag = ItemTags.getAllTags().getTagOrEmpty(id);
                     if (itemTag.contains(stack.getItem())) {
                         return true;
+                    }
+                }
+            }
+        } else {
+            if (items.stream().allMatch(ItemStack::isEmpty) || stack.isEmpty()) {
+                return true;
+            } else {
+                Collection<ResourceLocation> idList = getTagsFor(stack.getItem());
+                if (idList.isEmpty()) {
+                    return IntStream.range(0, this.getContainerSize()).mapToObj(this::getItem).anyMatch(itemStack -> stack.getItem().equals(itemStack.getItem()) && itemStack.getCount() > 0);
+                } else {
+                    for (ResourceLocation id : idList) {
+                        Tag<Item> tag = ItemTags.getAllTags().getTagOrEmpty(id);
+                        return items.stream().anyMatch(stack2 -> tag.contains(stack2.getItem()));
                     }
                 }
             }
