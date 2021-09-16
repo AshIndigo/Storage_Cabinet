@@ -20,7 +20,7 @@ import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
@@ -71,12 +71,14 @@ public class StorageCabinetEntity extends BlockEntity implements BasicSidedInven
         return list;
     }
 
+
+
     @Override
-    public void fromTag(BlockState state, CompoundTag tag) {
+    public void fromTag(BlockState state, NbtCompound tag) {
         super.fromTag(state, tag);
         this.tier = tag.getInt("tier");
         setTier(tier);
-        Inventories.fromTag(tag, stacks);
+        Inventories.readNbt(tag, stacks);
         this.locked = tag.getBoolean("locked");
         this.item = Registry.ITEM.get(Identifier.tryParse(tag.getString("item")));
         if (tag.contains("CustomName", 8)) {
@@ -84,16 +86,18 @@ public class StorageCabinetEntity extends BlockEntity implements BasicSidedInven
         }
     }
 
+
+
     @Override
-    public CompoundTag toTag(CompoundTag tag) {
+    public NbtCompound writeNbt(NbtCompound tag) {
         tag.putInt("tier", tier);
-        Inventories.toTag(tag, stacks);
+        Inventories.writeNbt(tag, stacks);
         tag.putBoolean("locked", locked);
         tag.putString("item", Registry.ITEM.getId(item).toString());
         if (this.customName != null) {
             tag.putString("CustomName", Text.Serializer.toJson(this.customName));
         }
-        return super.toTag(tag);
+        return super.writeNbt(tag);
     }
 
     public void addClientOnlyListener(InventoryChangedListener... listeners) {
@@ -284,13 +288,13 @@ public class StorageCabinetEntity extends BlockEntity implements BasicSidedInven
     }
 
     @Override
-    public void fromClientTag(CompoundTag tag) {
+    public void fromClientTag(NbtCompound tag) {
         fromTag(getCachedState(), tag);
     }
 
     @Override
-    public CompoundTag toClientTag(CompoundTag tag) {
-        return toTag(tag);
+    public NbtCompound toClientTag(NbtCompound tag) {
+        return writeNbt(tag);
     }
 }
 

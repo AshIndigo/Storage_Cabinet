@@ -10,9 +10,9 @@ import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.Vec3f;
 
 public class StorageCabinetRenderer extends BlockEntityRenderer<StorageCabinetEntity> {
 
@@ -27,7 +27,7 @@ public class StorageCabinetRenderer extends BlockEntityRenderer<StorageCabinetEn
         matrices.push();
         switch (entity.getCachedState().get(StorageCabinetBlock.FACING)) {
             case NORTH:
-                matrices.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(180));
+                matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(180));
                 matrices.scale(.1F, .1F, 0.001F);
                 matrices.translate(-.4F, 9.5F, 0);
                 drawKey(entity.locked, matrices, vertexConsumers, overlay);
@@ -42,7 +42,7 @@ public class StorageCabinetRenderer extends BlockEntityRenderer<StorageCabinetEn
                 drawStack(entity.getMainItemStack(), matrices, vertexConsumers, overlay);
                 break;
             case WEST:
-                matrices.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(-90));
+                matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(-90));
                 matrices.scale(.1F, .1F, 0.001F);
                 matrices.translate(9.5F, 9.5F, 0);
                 drawKey(entity.locked, matrices, vertexConsumers, overlay);
@@ -50,7 +50,7 @@ public class StorageCabinetRenderer extends BlockEntityRenderer<StorageCabinetEn
                 drawStack(entity.getMainItemStack(), matrices, vertexConsumers, overlay);
                 break;
             case EAST:
-                matrices.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(90));
+                matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(90));
                 matrices.scale(.1F, .1F, 0.001F);
                 matrices.translate(-.4F, 9.5F, 1000);
                 drawKey(entity.locked, matrices, vertexConsumers, overlay);
