@@ -165,28 +165,18 @@ public class StorageCabinetEntity extends BlockEntity implements BasicSidedInven
 
     @Override
     public boolean isValid(int slot, ItemStack stack) {
-        if (!locked) {
-            if (isEmpty() || stack.isEmpty()) {
-                return true;
-            } else {
-                Collection<Identifier> idList = getTagsFor(stack.getItem());
-                if (idList.isEmpty()) {
-                    return containsAny(Collections.singleton(stack.getItem()));
-                } else {
-                    for (Identifier id : idList) {
-                        Tag<Item> tag = ItemTags.getTagGroup().getTagOrEmpty(id);
-                        return stacks.stream().anyMatch(stack2 -> tag.contains(stack2.getItem()));
-                    }
-                }
+        if ((isEmpty() || stack.isEmpty()) && !locked) { // If the inventory is empty, or the stack is empty, and it is not locked
+            if (!stack.isEmpty()) {
+                item = getMainItemStack().getItem();
             }
-        } else {
-            if (item.equals(Items.AIR)) {
-                return true;
-            }
-            Collection<Identifier> idList = getTagsFor(item);
-            if (idList.isEmpty()) {
-                return stack.getItem().equals(item);
-            } else {
+            return true;
+        }
+        if (stack.getItem().equals(item)) {
+            return true;
+        }
+
+        Collection<Identifier> idList = getTagsFor(item);
+            if (!idList.isEmpty()) {
                 for (Identifier id : idList) {
                     Tag<Item> itemTag = ItemTags.getTagGroup().getTagOrEmpty(id);
                     if (itemTag.contains(stack.getItem())) {
@@ -194,7 +184,6 @@ public class StorageCabinetEntity extends BlockEntity implements BasicSidedInven
                     }
                 }
             }
-        }
         return false;
     }
 
