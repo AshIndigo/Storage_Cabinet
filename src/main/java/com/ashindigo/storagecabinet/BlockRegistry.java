@@ -22,11 +22,11 @@ public class BlockRegistry {
 
     public static void init() {
         WOOD_CABINET = addCabinet(0, FabricBlockSettings.of(Material.WOOD, MapColor.OAK_TAN).breakByTool(FabricToolTags.AXES), "wood");
-        IRON_CABINET = addCabinet(1, FabricBlockSettings.of(Material.METAL, MapColor.IRON_GRAY).breakByTool(FabricToolTags.PICKAXES, 2), "iron");
-        GOLD_CABINET = addCabinet(2, FabricBlockSettings.of(Material.METAL, MapColor.GOLD).breakByTool(FabricToolTags.PICKAXES, 2), "gold");
-        DIAMOND_CABINET = addCabinet(3, FabricBlockSettings.of(Material.METAL, MapColor.DIAMOND_BLUE).breakByTool(FabricToolTags.PICKAXES, 2), "diamond");
-        EMERALD_CABINET = addCabinet(4, FabricBlockSettings.of(Material.METAL, MapColor.EMERALD_GREEN).breakByTool(FabricToolTags.PICKAXES, 2), "emerald");
-        CABINET_MANAGER = new CabinetManagerBlock(FabricBlockSettings.of(Material.METAL, MapColor.IRON_GRAY).requiresTool().breakByTool(FabricToolTags.PICKAXES, 2).breakByHand(false).strength(3, 5));
+        IRON_CABINET = addCabinet(1, FabricBlockSettings.of(Material.METAL, MapColor.IRON_GRAY).breakByTool(FabricToolTags.PICKAXES, 1), "iron");
+        GOLD_CABINET = addCabinet(2, FabricBlockSettings.of(Material.METAL, MapColor.GOLD).breakByTool(FabricToolTags.PICKAXES, 1), "gold");
+        DIAMOND_CABINET = addCabinet(3, FabricBlockSettings.of(Material.METAL, MapColor.DIAMOND_BLUE).breakByTool(FabricToolTags.PICKAXES, 1), "diamond");
+        EMERALD_CABINET = addCabinet(4, FabricBlockSettings.of(Material.METAL, MapColor.EMERALD_GREEN).breakByTool(FabricToolTags.PICKAXES, 1), "emerald");
+        CABINET_MANAGER = new CabinetManagerBlock(FabricBlockSettings.of(Material.METAL, MapColor.IRON_GRAY).requiresTool().breakByTool(FabricToolTags.PICKAXES, 1).breakByHand(false).strength(3, 5));
         Registry.register(Registry.BLOCK, new Identifier(StorageCabinet.MODID, "cabinet_manager"), CABINET_MANAGER);
         Registry.register(Registry.ITEM, new Identifier(StorageCabinet.MODID, "cabinet_manager"), new BlockItem(CABINET_MANAGER, new Item.Settings().group(StorageCabinet.CABINET_GROUP)));
 
