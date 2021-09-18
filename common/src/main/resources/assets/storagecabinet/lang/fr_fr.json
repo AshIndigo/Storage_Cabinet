@@ -1,0 +1,20 @@
+{
+  "block.storagecabinet.storagecabinet_wood": "Armoire de rangement en bois",
+  "block.storagecabinet.storagecabinet_iron": "Armoire de rangement en fer",
+  "block.storagecabinet.storagecabinet_gold": "Armoire de rangement en or",
+  "block.storagecabinet.storagecabinet_diamond": "Armoire de rangement en diamant",
+  "block.storagecabinet.storagecabinet_emerald": "Armoire de rangement en  émeraude",
+  "block.storagecabinet.cabinet_manager": "Gestionnaire d'armoire ",
+  "item.storagecabinet.storagecabinet_wood_upgrade": "Amélioration de l'armoir en bois",
+  "item.storagecabinet.storagecabinet_iron_upgrade": "Amélioration de l'armoir en fer",
+  "item.storagecabinet.storagecabinet_gold_upgrade": "Amélioration de l'armoir en or",
+  "item.storagecabinet.storagecabinet_diamond_upgrade": "Amélioration de l'armoir en diamant",
+  "item.storagecabinet.storagecabinet_emerald_upgrade": "Amélioration de l'armoir en émeraude",
+  "item.storagecabinet.dolly": "Poupée d'armoire de rangement",
+  "item.storagecabinet.key": "Clef d'armoire",
+  "itemGroup.storagecabinet.storagecabinet": "Armoire de rangement",
+  "text.storagecabinet.dollyhas": "Contient l'armoire",
+  "text.storagecabinet.nocabinets": "Pas d'armoire",
+  "desc.storagecabinet.nocabinets": "Aucun cabinet n'est actuellement rattaché au gestionnaire",
+  "text.storagecabinet.size": "Taille"
+}
