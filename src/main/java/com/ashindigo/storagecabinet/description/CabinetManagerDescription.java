@@ -1,5 +1,6 @@
 package com.ashindigo.storagecabinet.description;
 
+import com.ashindigo.storagecabinet.Helpers;
 import com.ashindigo.storagecabinet.ManagerInventory;
 import com.ashindigo.storagecabinet.StorageCabinet;
 import com.ashindigo.storagecabinet.blocks.StorageCabinetBlock;
@@ -18,9 +19,6 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Items;
 import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.text.LiteralText;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
 
 import java.util.ArrayList;
 
@@ -37,7 +35,7 @@ public class CabinetManagerDescription extends SyncedGuiDescription {
         super(StorageCabinet.managerScreenHandler, synchronizationID, playerInventory, getBlockInventory(ctx), getBlockPropertyDelegate(ctx));
         // Initial set up stuff
         managerEntity = ((ManagerInventory) blockInventory).getEntity();
-        checkSurroundingCabinets(cabinetList, managerEntity.getPos(), world);
+        Helpers.checkSurroundingCabinets(cabinetList, managerEntity.getPos(), world);
         //Panel
         WPlainPanel root = new WPlainPanel();
         cabinetTabs = new WPagedTabPanel();
@@ -80,16 +78,6 @@ public class CabinetManagerDescription extends SyncedGuiDescription {
         }
     }
 
-    private void checkSurroundingCabinets(ArrayList<StorageCabinetEntity> cabinetList, BlockPos pos, World world) {
-        for (Direction direction : Direction.values()) {
-            if (world.getBlockEntity(pos.offset(direction)) instanceof StorageCabinetEntity) {
-                if (!cabinetList.contains(world.getBlockEntity(pos.offset(direction)))) {
-                    cabinetList.add((StorageCabinetEntity) world.getBlockEntity(pos.offset(direction)));
-                    checkSurroundingCabinets(cabinetList, pos.offset(direction), world);
-                }
-            }
-        }
-    }
 
     @Override
     public void close(PlayerEntity player) {

@@ -47,6 +47,7 @@ dependencies {
 	modImplementation include("io.github.cottonmc:LibGui:${project.libgui_version}")
 	modRuntime "net.fabricmc:fabric-language-kotlin:1.6.4+kotlin.1.5.30"
 	modRuntime "vazkii.patchouli:Patchouli:1.16.4-53-FABRIC"
+	modRuntime "curse.maven:slotlink-391014:3402503"
 }
 
 processResources {

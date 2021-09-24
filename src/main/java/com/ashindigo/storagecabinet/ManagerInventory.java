@@ -5,15 +5,13 @@ import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-public class ManagerInventory implements SidedInventory { // The methods involving "temp" scare me
+public class ManagerInventory implements SidedInventory {
 
     private final CabinetManagerEntity entity;
     private final List<StorageCabinetEntity> cabinets;
@@ -30,12 +28,7 @@ public class ManagerInventory implements SidedInventory { // The methods involvi
 
     @Override
     public boolean canInsert(int slot, ItemStack stack, Direction dir) {
-        for (StorageCabinetEntity cabinet : cabinets) {
-            if (cabinet.isValid(slot, stack)) {
-                return true;
-            }
-        }
-        return false;
+        return isValid(slot, stack);
     }
 
     @Override
@@ -80,7 +73,7 @@ public class ManagerInventory implements SidedInventory { // The methods involvi
         int temp = slot;
         for (StorageCabinetEntity cabinet : cabinets) {
             if (cabinet.size() - 1 >= temp) {
-               return cabinet.getStack(temp);
+                return cabinet.getStack(temp);
             } else {
                 temp -= cabinet.size();
             }
@@ -93,7 +86,7 @@ public class ManagerInventory implements SidedInventory { // The methods involvi
         int temp = slot;
         for (StorageCabinetEntity cabinet : cabinets) {
             if (cabinet.size() - 1 >= temp) {
-               return cabinet.removeStack(temp, amount);
+                return cabinet.removeStack(temp, amount);
             } else {
                 temp -= cabinet.size();
             }
@@ -119,8 +112,8 @@ public class ManagerInventory implements SidedInventory { // The methods involvi
         int temp = slot;
         for (StorageCabinetEntity cabinet : cabinets) {
             if (cabinet.size() - 1 >= temp) {
-               cabinet.setStack(temp, stack);
-               return;
+                cabinet.setStack(temp, stack);
+                return;
             } else {
                 temp -= cabinet.size();
             }
@@ -130,22 +123,11 @@ public class ManagerInventory implements SidedInventory { // The methods involvi
     @Override
     public void markDirty() { // Probably not good for performance
         cabinets.clear();
-        checkSurroundingCabinets((ArrayList<StorageCabinetEntity>) cabinets, entity.getPos(), entity.getWorld());
+        Helpers.checkSurroundingCabinets((ArrayList<StorageCabinetEntity>) cabinets, entity.getPos(), entity.getWorld());
         for (StorageCabinetEntity cabinet : cabinets) {
             cabinet.markDirty();
         }
         entity.markDirty();
-    }
-
-    private void checkSurroundingCabinets(ArrayList<StorageCabinetEntity> cabinetList, BlockPos pos, World world) {
-        for (Direction direction : Direction.values()) {
-            if (world.getBlockEntity(pos.offset(direction)) instanceof StorageCabinetEntity) {
-                if (!cabinetList.contains(world.getBlockEntity(pos.offset(direction)))) {
-                    cabinetList.add((StorageCabinetEntity) world.getBlockEntity(pos.offset(direction)));
-                    checkSurroundingCabinets(cabinetList, pos.offset(direction), world);
-                }
-            }
-        }
     }
 
     @Override

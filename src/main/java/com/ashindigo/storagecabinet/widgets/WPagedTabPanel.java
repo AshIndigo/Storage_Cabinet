@@ -3,7 +3,6 @@ package com.ashindigo.storagecabinet.widgets;
 import io.github.cottonmc.cotton.gui.GuiDescription;
 import io.github.cottonmc.cotton.gui.client.BackgroundPainter;
 import io.github.cottonmc.cotton.gui.client.LibGui;
-import io.github.cottonmc.cotton.gui.client.LibGuiClient;
 import io.github.cottonmc.cotton.gui.client.ScreenDrawing;
 import io.github.cottonmc.cotton.gui.widget.*;
 import io.github.cottonmc.cotton.gui.widget.data.Axis;

@@ -97,6 +97,6 @@ public class WItemScrollPanel extends WClippedPanel {
     }
 
     public int getBoundOffsetX() {
-        return parent instanceof WCardPanel ? 0 : 0; // 25
+        return 0; // 25
     }
 }
