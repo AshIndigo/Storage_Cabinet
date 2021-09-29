@@ -10,7 +10,7 @@ displayName="Storage Cabinet"
 displayURL="https://www.curseforge.com/minecraft/mc-mods/storage-cabinet"
 logoFile="icon.png"
 credits=""
-authors="AshIndigo, MoonlitLamps"
+authors="AshIndigo, MoonlitLamps, LotuxPunk"
 description='''
 Adds multiple tiers of storage cabinets to Minecraft'''
 [[dependencies.storagecabinet]]

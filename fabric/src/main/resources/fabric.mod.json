@@ -6,15 +6,16 @@
   "name": "Storage Cabinet",
   "description": "Adds a storage cabinet to Minecraft",
   "authors": [
-    "AshIndigo", "MoonlitLamps"
+    "AshIndigo", "MoonlitLamps", "LotuxPunk"
   ],
   "contact": {
     "homepage": "https://www.curseforge.com/minecraft/mc-mods/storage-cabinet",
-    "sources": "https://github.com/AshIndigo/Filing_Cabinet"
+    "sources": "https://github.com/AshIndigo/Filing_Cabinet",
+    "issues": "https://github.com/AshIndigo/Storage_Cabinet/issues"
   },
 
   "license": "MIT",
-  "icon": "assets/storagecabinet/icon.png",
+  "icon": "icon.png",
 
   "environment": "*",
   "entrypoints": {
