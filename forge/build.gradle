@@ -12,7 +12,7 @@ architectury {
 }
 
 loom {
-    useFabricMixin = true
+    //useFabricMixin = true
 }
 dependencies {
     forge "net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}"

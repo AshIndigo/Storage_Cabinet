@@ -4,7 +4,7 @@
   "version": "${version}",
 
   "name": "Storage Cabinet",
-  "description": "Adds a storage cabinet to Minecraft",
+  "description": "Adds storage cabinets to Minecraft",
   "authors": [
     "AshIndigo", "MoonlitLamps", "LotuxPunk"
   ],

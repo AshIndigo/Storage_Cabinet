@@ -1,13 +1,13 @@
 modLoader="javafml"
 loaderVersion="[37,)"
 license="MIT"
-issueTrackerURL="https://github.com/AshIndigo/Storage_Cabinet/issues"
 
 [[mods]]
 modId="storagecabinet"
 version="${version}"
 displayName="Storage Cabinet"
 displayURL="https://www.curseforge.com/minecraft/mc-mods/storage-cabinet"
+issueTrackerURL="https://github.com/AshIndigo/Storage_Cabinet/issues"
 logoFile="icon.png"
 credits=""
 authors="AshIndigo, MoonlitLamps, LotuxPunk"

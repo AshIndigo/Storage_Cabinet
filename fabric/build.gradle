@@ -6,8 +6,8 @@ configurations {
     shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
 }
 
-minecraft {
-    accessWidener = file("src/main/resources/storagecabinet.accesswidener")
+loom {
+    accessWidenerPath = file("src/main/resources/storagecabinet.accesswidener")
 }
 
 architectury {
@@ -15,12 +15,16 @@ architectury {
     fabric()
 }
 
+repositories {
+    maven { url = "https://maven.terraformersmc.com/releases/" }
+}
+
 dependencies {
-    modImplementation "net.fabric   mc:fabric-loader:${rootProject.fabric_loader_version}"
+    modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
     modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
     // Remove the next line if you don't want to depend on the API
     modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
-
+    modRuntimeOnly("com.terraformersmc:modmenu:${rootProject.modmenu_version}")
     implementation(project(path: ":common", configuration: "dev")) {
         transitive = false
     }
