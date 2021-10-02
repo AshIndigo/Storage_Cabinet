@@ -42,6 +42,7 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
     private Component customName;
     private NonNullList<ItemStack> items;
     private DisplayHeight displayHeight = Constants.DEFAULT_HEIGHT;
+    private ItemStack cachedStack = ItemStack.EMPTY;
 
     public StorageCabinetEntity(BlockPos pos, BlockState state) {
         super(StorageCabinet.CABINET_ENTITY.get(), pos, state);
@@ -128,38 +129,6 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
 
     @Override
     public boolean canPlaceItem(int i, ItemStack stack) {
-//        if (locked) {
-//            if (item.equals(Items.AIR)) {
-//                return true;
-//            }
-//            Collection<ResourceLocation> idList = getTagsFor(item);
-//            if (idList.isEmpty()) {
-//                return stack.getItem().equals(item);
-//            } else {
-//                for (ResourceLocation id : idList) {
-//                    Tag<Item> itemTag = ItemTags.getAllTags().getTagOrEmpty(id);
-//                    if (itemTag.contains(stack.getItem())) {
-//                        return true;
-//                    }
-//                }
-//            }
-//        } else {
-//            if (items.stream().allMatch(ItemStack::isEmpty) || stack.isEmpty()) {
-//                return true;
-//            } else {
-//                Collection<ResourceLocation> idList = getTagsFor(stack.getItem());
-//                if (idList.isEmpty()) {
-//                    return IntStream.range(0, this.getContainerSize()).mapToObj(this::getItem).anyMatch(itemStack -> stack.getItem().equals(itemStack.getItem()) && itemStack.getCount() > 0);
-//                } else {
-//                    for (ResourceLocation id : idList) {
-//                        Tag<Item> tag = ItemTags.getAllTags().getTagOrEmpty(id);
-//                        return items.stream().anyMatch(stack2 -> tag.contains(stack2.getItem()));
-//                    }
-//                }
-//            }
-//        }
-//        return false;
-    //}
         if ((isEmpty() || stack.isEmpty()) && !locked) { // If the inventory is empty, or the stack is empty, and it is not locked
             if (!stack.isEmpty()) {
                 item = getMainItemStack().getItem();
@@ -212,11 +181,19 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
         return displayHeight;
     }
 
+    // NOT FOR EDITING
     public ItemStack getMainItemStack() {
-        if (locked) {
-            return new ItemStack(item);
+        if (isEmpty()) {
+            item = Items.AIR;
+            cachedStack = ItemStack.EMPTY;
+        } else {
+            if (item == Items.AIR) {
+                item = items.stream().filter(stack -> !stack.isEmpty()).findAny().orElse(ItemStack.EMPTY).getItem();
+                cachedStack = new ItemStack(item);
+            }
         }
-        return items.stream().filter(stack -> !stack.isEmpty()).findAny().orElse(ItemStack.EMPTY);
+
+        return cachedStack;
     }
 
     public void tick() {
