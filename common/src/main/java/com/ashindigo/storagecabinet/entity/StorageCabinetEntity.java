@@ -129,25 +129,26 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
 
     @Override
     public boolean canPlaceItem(int i, ItemStack stack) {
-        if ((isEmpty() || stack.isEmpty()) && !locked) { // If the inventory is empty, or the stack is empty, and it is not locked
-            if (!stack.isEmpty()) {
-                item = getMainItemStack().getItem();
+        getMainItemStack();
+            if ((isEmpty() || stack.isEmpty()) && !locked) { // If the inventory is empty, or the stack is empty, and it is not locked
+                if (!stack.isEmpty()) {
+                    //item = getMainItemStack().getItem();
+                }
+                return true;
             }
-            return true;
-        }
-        if (stack.getItem().equals(item)) {
-            return true;
-        }
+            if (stack.getItem().equals(item)) {
+                return true;
+            }
 
-        Collection<ResourceLocation> idList = getTagsFor(item);
-        if (!idList.isEmpty()) {
-            for (ResourceLocation id : idList) {
-                Tag<Item> itemTag = ItemTags.getAllTags().getTagOrEmpty(id);
-                if (itemTag.contains(stack.getItem())) {
-                    return true;
+            Collection<ResourceLocation> idList = getTagsFor(item);
+            if (!idList.isEmpty()) {
+                for (ResourceLocation id : idList) {
+                    Tag<Item> itemTag = ItemTags.getAllTags().getTagOrEmpty(id);
+                    if (itemTag.contains(stack.getItem())) {
+                        return true;
+                    }
                 }
             }
-        }
         return false;
     }
 
@@ -179,6 +180,13 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
     @Override
     public DisplayHeight getDisplayHeight() {
         return displayHeight;
+    }
+
+    @Override
+    public void setChanged() { // TODO Further optimize this, and getMainItemStack. I need to set the stack more effectively
+        super.setChanged();
+        item = items.stream().filter(stack -> !stack.isEmpty()).findAny().orElse(ItemStack.EMPTY).getItem();
+        cachedStack = new ItemStack(item);
     }
 
     // NOT FOR EDITING

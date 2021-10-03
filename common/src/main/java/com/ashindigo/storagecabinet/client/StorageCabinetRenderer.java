@@ -58,6 +58,7 @@ public class StorageCabinetRenderer<T extends StorageCabinetEntity> implements B
         matrices.popPose();
     }
 
+    // TODO Something is off with the lighting here
     private static void drawKey(boolean locked, PoseStack matrices, MultiBufferSource provider, int overlay) {
         if (locked) {
             Minecraft.getInstance().getItemRenderer().renderStatic(KEY, ItemTransforms.TransformType.GUI, 0x00f000f0, overlay, matrices, provider, 0);
