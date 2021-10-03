@@ -2,6 +2,15 @@ plugins {
     id "com.github.johnrengelman.shadow" version "7.0.0"
 }
 
+repositories {
+    maven { // For some reason this didn't work in common
+        url "https://cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+}
+
 configurations {
     shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
 }
@@ -19,6 +28,9 @@ dependencies {
     // Remove the next line if you don't want to depend on the API
     modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}"
 
+    //modRuntimeOnly "me.shedaniel:RoughlyEnoughItems:${rootProject.rei_forge_version}"
+    modRuntimeOnly("me.shedaniel.cloth:cloth-config-forge:${rootProject.cloth_config_forge_version}")
+    modRuntimeOnly("curse.maven:roughly-enough-items-forge-392060:3441626")
     implementation(project(path: ":common", configuration: "dev")) {
         transitive = false
     }
