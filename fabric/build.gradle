@@ -2,6 +2,15 @@ plugins {
     id "com.github.johnrengelman.shadow" version "7.0.0"
 }
 
+repositories {
+    maven { // For some reason this didn't work in common
+        url "https://cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+}
+
 configurations {
     shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
 }
@@ -26,7 +35,8 @@ dependencies {
     modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
 
     modRuntimeOnly("com.terraformersmc:modmenu:${rootProject.modmenu_version}")
-    modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${rootProject.rei_fabric_version}"
+    //modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${rootProject.rei_fabric_version}"
+    modRuntimeOnly("curse.maven:smooth-swapping-513689:3434194")
     implementation(project(path: ":common", configuration: "dev")) {
         transitive = false
     }
