@@ -10,6 +10,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
@@ -25,6 +26,7 @@ public class CabinetManagerContainer extends AbstractStorageCabinetContainer {
     public final ArrayList<StorageCabinetEntity> cabinetList = new ArrayList<>();
     public final ListMultimap<StorageCabinetEntity, ExtraSlotItemHandler> CABINET_SLOT_LIST = ArrayListMultimap.create();
     public final CabinetManagerEntity cabinetManagerEntity;
+    public final ManagerInvList<ItemStack> managerInvList;
 
     public CabinetManagerContainer(int syncId, Inventory inv, FriendlyByteBuf buf) {
         this(syncId, inv, buf.readBlockPos());
@@ -35,6 +37,7 @@ public class CabinetManagerContainer extends AbstractStorageCabinetContainer {
         cabinetManagerEntity = (CabinetManagerEntity) playerInv.player.level.getBlockEntity(blockPos);
         checkSurroundingCabinets(cabinetList, blockPos, playerInv.player.level);
         addPlayerInv(playerInv, getDisplayHeight());
+        managerInvList = ManagerInvList.create().setCabinetList(cabinetList, playerInv);
     }
 
     private void checkSurroundingCabinets(ArrayList<StorageCabinetEntity> cabinetList, BlockPos pos, Level world) {
@@ -54,6 +57,11 @@ public class CabinetManagerContainer extends AbstractStorageCabinetContainer {
                 }
             }
         }
+    }
+
+    @Override
+    public NonNullList<ItemStack> getItems() {
+        return managerInvList;
     }
 
     @Override
