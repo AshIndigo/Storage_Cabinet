@@ -20,7 +20,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 public class CabinetManagerContainer extends AbstractStorageCabinetContainer {
 

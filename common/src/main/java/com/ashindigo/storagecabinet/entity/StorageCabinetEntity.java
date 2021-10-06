@@ -131,9 +131,9 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
     public boolean canPlaceItem(int i, ItemStack stack) {
         getMainItemStack();
             if ((isEmpty() || stack.isEmpty()) && !locked) { // If the inventory is empty, or the stack is empty, and it is not locked
-                if (!stack.isEmpty()) {
-                    //item = getMainItemStack().getItem();
-                }
+//                if (!stack.isEmpty()) {
+//                    //item = getMainItemStack().getItem();
+//                }
                 return true;
             }
             if (stack.getItem().equals(item)) {
