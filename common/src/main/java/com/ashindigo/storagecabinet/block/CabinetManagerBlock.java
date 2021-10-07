@@ -1,5 +1,6 @@
 package com.ashindigo.storagecabinet.block;
 
+import com.ashindigo.storagecabinet.StorageCabinet;
 import com.ashindigo.storagecabinet.entity.CabinetManagerEntity;
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
 import com.ashindigo.storagecabinet.inventory.ManagerInventory;
@@ -79,7 +80,7 @@ public class CabinetManagerBlock extends BaseEntityBlock implements WorldlyConta
 
     @Override
     public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (!world.isClientSide) {
+        if (!world.isClientSide && player.getMainHandItem().getItem() != StorageCabinet.KEY.get()) {
             MenuRegistry.openExtendedMenu((ServerPlayer) player, (MenuProvider) world.getBlockEntity(pos), packetBuffer -> packetBuffer.writeBlockPos(pos));
         }
         return InteractionResult.SUCCESS;

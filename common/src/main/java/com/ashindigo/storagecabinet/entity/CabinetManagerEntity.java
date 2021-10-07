@@ -24,6 +24,7 @@ public class CabinetManagerEntity extends BlockEntity implements MenuProvider, M
 
     public final ArrayList<StorageCabinetEntity> cabinetList = new ArrayList<>();
     private DisplayHeight displayHeight = Constants.DEFAULT_HEIGHT;
+    public boolean locked = false;
 
     public CabinetManagerEntity(BlockPos pos, BlockState state) {
         super(StorageCabinet.CABINET_MANAGER_ENTITY.get(), pos, state);
@@ -59,19 +60,26 @@ public class CabinetManagerEntity extends BlockEntity implements MenuProvider, M
     @Override
     public void load(CompoundTag compoundTag) {
         super.load(compoundTag);
+        this.locked = compoundTag.getBoolean(Constants.LOCKED);
         setDisplayHeight(DisplayHeight.values()[compoundTag.getInt(Constants.DISPLAY_SIZE)]);
     }
 
     @Override
     public CompoundTag save(CompoundTag compoundTag) {
+        super.save(compoundTag);
+        prepareTag(compoundTag);
+        return compoundTag;
+    }
+
+    private void prepareTag(CompoundTag compoundTag) {
+        compoundTag.putBoolean(Constants.LOCKED, locked);
         compoundTag.putInt(Constants.DISPLAY_SIZE, getDisplayHeight().ordinal());
-        return super.save(compoundTag);
     }
 
     @Override
     public CompoundTag getUpdateTag() {
         CompoundTag tag = super.getUpdateTag();
-        tag.putInt(Constants.DISPLAY_SIZE, getDisplayHeight().ordinal());
+        prepareTag(tag);
         return tag;
     }
 
