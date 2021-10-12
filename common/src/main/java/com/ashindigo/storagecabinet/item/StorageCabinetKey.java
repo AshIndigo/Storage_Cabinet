@@ -53,23 +53,25 @@ public class StorageCabinetKey extends Item {
             return InteractionResult.SUCCESS;
         }
 
-        // Locks or unlocks all cabinet's based on average
+        // Locking functionality for Cabinet Manager
         if (level.getBlockState(context.getClickedPos()).getBlock() instanceof CabinetManagerBlock) {
             if (level.getBlockEntity(context.getClickedPos()) != null && level.getBlockEntity(context.getClickedPos()) instanceof CabinetManagerEntity cabinetManager) {
                 // If sneaking, then invert all cabinets
                 ArrayList<StorageCabinetEntity> cabinetList = Lists.newArrayList();
                 cabinetManager.checkSurroundingCabinets(cabinetList, cabinetManager.getBlockPos(), level);
-                if (context.getPlayer().isCrouching()) {
-                    for (StorageCabinetEntity cabinet : cabinetList) {
-                        lockCabinet(cabinet, KeyMode.INVERT);
-                    }
-                } else {
-                    // Otherwise, just set all to locked/unlocked
+
+                if (context.getPlayer().isShiftKeyDown()) {
+                    // Set all to locked/unlocked
                     CompoundTag tag = cabinetManager.save(new CompoundTag());
                     tag.putBoolean(Constants.LOCKED, !tag.getBoolean(Constants.LOCKED));
                     cabinetManager.load(tag);
                     for (StorageCabinetEntity cabinet : cabinetList) {
                         lockCabinet(cabinet, KeyMode.getLockMode(tag.getBoolean(Constants.LOCKED)));
+                    }
+                } else {
+                    // If not sneaking, then invert all cabinets (Currently not working)
+                    for (StorageCabinetEntity cabinet : cabinetList) {
+                        lockCabinet(cabinet, KeyMode.INVERT);
                     }
                 }
             }
