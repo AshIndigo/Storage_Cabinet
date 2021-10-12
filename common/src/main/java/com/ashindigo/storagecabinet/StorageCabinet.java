@@ -6,16 +6,24 @@ import com.ashindigo.storagecabinet.container.CabinetManagerContainer;
 import com.ashindigo.storagecabinet.container.StorageCabinetContainer;
 import com.ashindigo.storagecabinet.entity.CabinetManagerEntity;
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
+import com.ashindigo.storagecabinet.item.CabinetDebug;
 import com.ashindigo.storagecabinet.item.StorageCabinetDolly;
 import com.ashindigo.storagecabinet.item.StorageCabinetKey;
 import com.ashindigo.storagecabinet.item.StorageCabinetUpgrade;
 import com.ashindigo.storagecabinet.networking.SizeChangeMessage;
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import dev.architectury.event.events.common.CommandRegistrationEvent;
 import dev.architectury.networking.simple.MessageType;
 import dev.architectury.networking.simple.SimpleNetworkManager;
+import dev.architectury.platform.Mod;
 import dev.architectury.registry.CreativeTabRegistry;
 import dev.architectury.registry.menu.MenuRegistry;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.MenuType;
@@ -41,6 +49,7 @@ public class StorageCabinet {
     public static final RegistrySupplier<Item> EMERALD_CABINET_UPGRADE = ITEMS.register("storagecabinet_emerald_upgrade", () -> new StorageCabinetUpgrade(4));
     public static final RegistrySupplier<Item> KEY = ITEMS.register("key", StorageCabinetKey::new);
     public static final RegistrySupplier<Item> DOLLY = ITEMS.register("dolly", StorageCabinetDolly::new);
+    //public static final RegistrySupplier<Item> DEBUG = ITEMS.register("debug", CabinetDebug::new);
 
     // Blocks
     private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(Constants.MODID, Registry.BLOCK_REGISTRY);

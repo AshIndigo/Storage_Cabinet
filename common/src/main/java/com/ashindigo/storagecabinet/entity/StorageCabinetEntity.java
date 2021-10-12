@@ -182,13 +182,15 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
     @Override
     public void setChanged() { // TODO Further optimize this, and getMainItemStack. I need to set the stack more effectively
         super.setChanged();
-        item = items.stream().filter(stack -> !stack.isEmpty()).findAny().orElse(ItemStack.EMPTY).getItem();
-        cachedStack = new ItemStack(item);
+        if (!locked) {
+            item = items.stream().filter(stack -> !stack.isEmpty()).findAny().orElse(ItemStack.EMPTY).getItem();
+            cachedStack = new ItemStack(item);
+        }
     }
 
     // NOT FOR EDITING
     public ItemStack getMainItemStack() {
-        if (isEmpty()) {
+        if (isEmpty() && !locked) {
             item = Items.AIR;
             cachedStack = ItemStack.EMPTY;
         } else {
