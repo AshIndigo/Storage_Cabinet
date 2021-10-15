@@ -1,1 +1,2 @@
-1.0: Initial release for 1.17.1
+1.4.1: Partially rewritten to use Architectury, unifying the Forge and Fabric versions of the mod. Also adds extra functionality to the cabinet key and a new display size function for the GUI's.
+This should be compatible with previous saves, please take a backup of your world.
