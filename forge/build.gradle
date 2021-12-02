@@ -9,6 +9,7 @@ repositories {
             includeGroup "curse.maven"
         }
     }
+    maven { url "https://maven.shedaniel.me" }
 }
 
 architectury {
@@ -28,8 +29,8 @@ dependencies {
     forge "net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}"
     // Remove the next line if you don't want to depend on the API
     modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}"
-    //modRuntimeOnly "me.shedaniel:RoughlyEnoughItems:${rootProject.rei_forge_version}"
-//    modRuntimeOnly("me.shedaniel.cloth:cloth-config-forge:${rootProject.cloth_config_forge_version}")
+    modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-forge:${rootProject.rei_forge_version}"
+    modRuntimeOnly("me.shedaniel.cloth:cloth-config-forge:${rootProject.cloth_config_forge_version}")
 //    modRuntimeOnly("curse.maven:roughly-enough-items-forge-392060:3441626")
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }

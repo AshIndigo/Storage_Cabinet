@@ -32,6 +32,8 @@ public class StorageCabinetUpgrade extends Item {
                     oldList.add(sourceInv.getItem(i));
                 }
                 context.getLevel().setBlockAndUpdate(context.getClickedPos(), StorageCabinet.getByTier(tier).defaultBlockState().setValue(StorageCabinetBlock.FACING, state.getValue(StorageCabinetBlock.FACING)));
+                // Bug fix for disappearing items
+                sourceInv = (StorageCabinetEntity) context.getLevel().getBlockEntity(context.getClickedPos());
                 copyItems(oldList, sourceInv);
                 context.getItemInHand().shrink(1);
             }

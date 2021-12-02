@@ -9,6 +9,7 @@ repositories {
             includeGroup "curse.maven"
         }
     }
+    maven { url "https://maven.shedaniel.me" }
     maven {
         name = "CottonMC"
         url = "https://server.bbkr.space/artifactory/libs-release"
@@ -39,20 +40,15 @@ repositories {
 dependencies {
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
     //modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}") {
-        //exclude(group: "net.fabricmc.fabric-api", module: "fabric-gametest-api-v1")
-    }
+    modImplementation("net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}")
 
     // Remove the next line if you don't want to depend on the API
     modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
 
-//    modRuntimeOnly("com.terraformersmc:modmenu:${rootProject.modmenu_version}")
-//    modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${rootProject.rei_fabric_version}"
-//    modRuntimeOnly("curse.maven:smooth-swapping-513689:3434194")
-//    modRuntimeOnly("io.github.cottonmc:LibGui:4.2.1+1.17.1")
-//    modRuntimeOnly("net.fabricmc:fabric-language-kotlin:1.6.5+kotlin.1.5.31")
-//    common(project(path: ":common", configuration: "namedElements")) { transitive false }
-//    shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
+    modRuntimeOnly("com.terraformersmc:modmenu:${rootProject.modmenu_version}")
+    modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${rootProject.rei_fabric_version}"
+    common(project(path: ":common", configuration: "namedElements")) { transitive false }
+    shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 }
 
 processResources {
