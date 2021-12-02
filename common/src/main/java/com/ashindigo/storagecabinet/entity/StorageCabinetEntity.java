@@ -29,6 +29,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+Miimport java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -37,12 +38,13 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
 
     public boolean locked = false;
     public int tier = 0;
-    public Item item = Items.AIR;
+    private Item item = Items.AIR;
     private int viewerCount;
     private Component customName;
     private NonNullList<ItemStack> items;
     private DisplayHeight displayHeight = Constants.DEFAULT_HEIGHT;
     private ItemStack cachedStack = ItemStack.EMPTY;
+    private List<ResourceLocation> cachedTags = new ArrayList<>();
 
     public StorageCabinetEntity(BlockPos pos, BlockState state) {
         super(StorageCabinet.CABINET_ENTITY.get(), pos, state);
@@ -58,7 +60,12 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
         return (tier + 1) * 90;
     }
 
-    public Collection<ResourceLocation> getTagsFor(Item object) {
+    public List<ResourceLocation> getTagsFor(Item object) {
+        /*
+        Notes:
+        Cache for tags, looks like I might as well set a list of cached tags. That I can use to see if an item is compatible.
+        Would probably have to call this atleast once to gather them all but once is better than repeated useage right?
+         */
         List<ResourceLocation> list = Lists.newArrayList();
         for (Map.Entry<ResourceLocation, Tag<Item>> entry : SerializationTags.getInstance().getOrEmpty(Registry.ITEM_REGISTRY).getAllTags().entrySet()) {
             if (entry.getValue().contains(object)) {
@@ -89,7 +96,7 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
         ContainerHelper.loadAllItems(tag, items);
         super.load(tag);
         this.locked = tag.getBoolean(Constants.LOCKED);
-        this.item = Registry.ITEM.get(ResourceLocation.tryParse(tag.getString(Constants.ITEM)));
+        this.setItem(Registry.ITEM.get(ResourceLocation.tryParse(tag.getString(Constants.ITEM))));
         if (tag.contains(Constants.CUSTOM_NAME, 8)) {
             this.customName = Component.Serializer.fromJson(tag.getString(Constants.CUSTOM_NAME));
         }
@@ -106,7 +113,7 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
     private void prepareTag(CompoundTag tag) {
         tag.putInt(Constants.TIER, tier);
         tag.putBoolean(Constants.LOCKED, locked);
-        tag.putString(Constants.ITEM, Registry.ITEM.getKey(item).toString());
+        tag.putString(Constants.ITEM, Registry.ITEM.getKey(getItem()).toString());
         if (this.customName != null) {
             tag.putString(Constants.CUSTOM_NAME, Component.Serializer.toJson(this.customName));
         }
@@ -133,11 +140,11 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
         if ((isEmpty() || stack.isEmpty()) && !locked) { // If the inventory is empty, or the stack is empty, and it is not locked
             return true;
         }
-        if (stack.getItem().equals(item)) {
+        if (stack.getItem().equals(getItem())) {
             return true;
         }
 
-        Collection<ResourceLocation> idList = getTagsFor(item);
+        Collection<ResourceLocation> idList = getCachedTags();
         if (!idList.isEmpty()) {
             for (ResourceLocation id : idList) {
                 Tag<Item> itemTag = ItemTags.getAllTags().getTagOrEmpty(id);
@@ -183,24 +190,24 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
     public void setChanged() { // TODO Further optimize this, and getMainItemStack. I need to set the stack more effectively
         super.setChanged();
         if (!locked) {
-            item = items.stream().filter(stack -> !stack.isEmpty()).findAny().orElse(ItemStack.EMPTY).getItem();
-            cachedStack = new ItemStack(item);
+            setItem(items.stream().filter(stack -> !stack.isEmpty()).findAny().orElse(ItemStack.EMPTY).getItem());
+            setCachedStack(new ItemStack(getItem()));
         }
     }
 
     // NOT FOR EDITING
     public ItemStack getMainItemStack() {
         if (isEmpty() && !locked) {
-            item = Items.AIR;
-            cachedStack = ItemStack.EMPTY;
+            setItem(Items.AIR);
+            setCachedStack(ItemStack.EMPTY);
         } else {
-            if (item == Items.AIR) {
-                item = items.stream().filter(stack -> !stack.isEmpty()).findAny().orElse(ItemStack.EMPTY).getItem();
-                cachedStack = new ItemStack(item);
+            if (getItem() == Items.AIR) {
+                setItem(items.stream().filter(stack -> !stack.isEmpty()).findAny().orElse(ItemStack.EMPTY).getItem());
+                setCachedStack(new ItemStack(getItem()));
             }
         }
 
-        return cachedStack;
+        return getCachedStack();
     }
 
     public void tick() {
@@ -238,5 +245,34 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
         if (!player.isSpectator()) {
             --this.viewerCount;
         }
+    }
+
+    public Item getItem() {
+        return item;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
+        setCachedTags(getTagsFor(item));
+    }
+
+    public ItemStack getCachedStack() {
+        return cachedStack;
+    }
+
+    public void setCachedStack(ItemStack cachedStack) {
+        this.cachedStack = cachedStack;
+    }
+
+    /**
+     *
+     * @return Tag's for the current main item in the cabinet
+     */
+    public List<ResourceLocation> getCachedTags() {
+        return cachedTags;
+    }
+
+    public void setCachedTags(List<ResourceLocation> cachedTags) {
+        this.cachedTags = cachedTags;
     }
 }

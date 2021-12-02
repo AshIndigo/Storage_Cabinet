@@ -20,7 +20,7 @@ public class CabinetDebug extends Item {
         final Level level = context.getLevel();
         if (level.getBlockState(context.getClickedPos()).getBlock() instanceof StorageCabinetBlock) {
             if (level.getBlockEntity(context.getClickedPos()) != null && level.getBlockEntity(context.getClickedPos()) instanceof StorageCabinetEntity blockEntity) {
-                context.getPlayer().displayClientMessage(new TextComponent("Cabinet Item: " + blockEntity.item.toString()), true);
+                context.getPlayer().displayClientMessage(new TextComponent("Cabinet Item: " + blockEntity.getItem().toString()), true);
             }
             return InteractionResult.SUCCESS;
         }

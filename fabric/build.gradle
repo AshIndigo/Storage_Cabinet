@@ -9,19 +9,27 @@ repositories {
             includeGroup "curse.maven"
         }
     }
-}
-
-configurations {
-    shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
-}
-
-loom {
-    accessWidenerPath = file("src/main/resources/storagecabinet.accesswidener")
+    maven {
+        name = "CottonMC"
+        url = "https://server.bbkr.space/artifactory/libs-release"
+    }
 }
 
 architectury {
     platformSetupLoomIde()
     fabric()
+}
+
+configurations {
+    common
+    shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
+    compileClasspath.extendsFrom common
+    runtimeClasspath.extendsFrom common
+    developmentFabric.extendsFrom common
+}
+
+loom {
+    accessWidenerPath = file("src/main/resources/storagecabinet.accesswidener")
 }
 
 repositories {
@@ -31,24 +39,20 @@ repositories {
 dependencies {
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
     //modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
-    modApi("net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}") {
-        exclude group: "net.fabricmc.fabric-api", module: "fabric-gametest-api-v1"
+    modImplementation("net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}") {
+        //exclude(group: "net.fabricmc.fabric-api", module: "fabric-gametest-api-v1")
     }
+
     // Remove the next line if you don't want to depend on the API
     modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
 
     modRuntimeOnly("com.terraformersmc:modmenu:${rootProject.modmenu_version}")
     modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${rootProject.rei_fabric_version}"
-    modRuntimeOnly("curse.maven:smooth-swapping-513689:3434194")
-    implementation(project(path: ":common", configuration: "dev")) {
-        transitive = false
-    }
-    developmentFabric(project(path: ":common", configuration: "dev")) {
-        transitive = false
-    }
-    shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) {
-        transitive = false
-    }
+    //modRuntimeOnly("curse.maven:smooth-swapping-513689:3434194")
+    modRuntimeOnly("io.github.cottonmc:LibGui:4.2.1+1.17.1")
+    modRuntimeOnly("net.fabricmc:fabric-language-kotlin:1.6.5+kotlin.1.5.31")
+    common(project(path: ":common", configuration: "namedElements")) { transitive false }
+    shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 }
 
 processResources {
@@ -59,16 +63,16 @@ processResources {
     }
 }
 
-    shadowJar {
-        configurations = [project.configurations.shadowCommon]
-        classifier "dev-shadow"
-    }
+shadowJar {
+    configurations = [project.configurations.shadowCommon]
+    classifier "dev-shadow"
+}
 
-    remapJar {
-        input.set shadowJar.archiveFile
-        dependsOn shadowJar
-        classifier "fabric"
-    }
+remapJar {
+    input.set shadowJar.archiveFile
+    dependsOn shadowJar
+    classifier null
+}
 
 jar {
     classifier "dev"
@@ -80,17 +84,17 @@ sourcesJar {
     from commonSources.archiveFile.map { zipTree(it) }
 }
 
+components.java {
+    withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
+        skip()
+    }
+}
+
 publishing {
     publications {
         mavenFabric(MavenPublication) {
             artifactId = rootProject.archives_base_name + "-" + project.name
-            // add all the jars that should be included when publishing to maven
-            artifact(remapJar) {
-                classifier null
-            }
-            artifact(sourcesJar) {
-                builtBy remapSourcesJar
-            }
+            from components.java
         }
     }
 
