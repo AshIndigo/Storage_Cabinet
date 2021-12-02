@@ -33,7 +33,7 @@ public class StorageCabinetDolly extends Item {
         if (!level.isClientSide) {
             if (level.getBlockState(clickedPos).getBlock() instanceof StorageCabinetBlock) {
                 if (level.getBlockEntity(clickedPos) != null && level.getBlockEntity(clickedPos) instanceof StorageCabinetEntity) {
-                    CompoundTag tag = level.getBlockEntity(clickedPos).save(new CompoundTag());
+                    CompoundTag tag = level.getBlockEntity(clickedPos).saveWithFullMetadata();
                     if (!dolly.hasTag() || dolly.hasTag() && !dolly.getTag().contains(Constants.TIER)) {
                         dolly.setTag(tag);
                         level.setBlockAndUpdate(clickedPos, Blocks.AIR.defaultBlockState());

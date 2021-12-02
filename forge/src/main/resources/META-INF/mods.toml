@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[37,)"
+loaderVersion="[38,)"
 license="MIT"
 
 [[mods]]
@@ -16,18 +16,18 @@ Adds multiple tiers of storage cabinets to Minecraft'''
 [[dependencies.storagecabinet]]
     modId="forge"
     mandatory=true
-    versionRange="[37.0.31,)"
+    versionRange="[38.0.8,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.storagecabinet]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.17.1,1.18)"
+    versionRange="[1.18,1.19)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.storagecabinet]]
     modId = "architectury"
     mandatory = true
-    versionRange = "[1.1.55,)"
+    versionRange = "[3.1.44,)"
     ordering = "AFTER"
     side = "BOTH"

@@ -29,9 +29,9 @@
   "accessWidener" : "storagecabinet.accesswidener",
 
   "depends": {
-    "fabricloader": ">=0.11.0",
+    "fabricloader": ">=0.12.0",
     "fabric": "*",
-    "architectury": ">=1.1.55"
+    "architectury": ">=3.1.44"
   },
   "suggests": {
   }

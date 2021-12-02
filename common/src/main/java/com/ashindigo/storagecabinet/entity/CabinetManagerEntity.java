@@ -14,9 +14,9 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.TickPriority;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.ticks.TickPriority;
 
 import java.util.ArrayList;
 
@@ -44,7 +44,7 @@ public class CabinetManagerEntity extends BlockEntity implements MenuProvider, M
     public void clearRemoved() {
         super.clearRemoved();
         if (!getLevel().getBlockTicks().willTickThisTick(getBlockPos(), StorageCabinet.CABINET_MANAGER.get()))
-            getLevel().getBlockTicks().scheduleTick(getBlockPos(), StorageCabinet.CABINET_MANAGER.get(), 1, TickPriority.NORMAL);
+            getLevel().scheduleTick(getBlockPos(), StorageCabinet.CABINET_MANAGER.get(), 1, TickPriority.NORMAL);
     }
 
     @Override
@@ -65,10 +65,9 @@ public class CabinetManagerEntity extends BlockEntity implements MenuProvider, M
     }
 
     @Override
-    public CompoundTag save(CompoundTag compoundTag) {
-        super.save(compoundTag);
+    public void saveAdditional(CompoundTag compoundTag) {
+        super.saveAdditional(compoundTag);
         prepareTag(compoundTag);
-        return compoundTag;
     }
 
     private void prepareTag(CompoundTag compoundTag) {

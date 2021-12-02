@@ -76,7 +76,7 @@ public class CabinetManagerBlock extends BaseEntityBlock implements WorldlyConta
 
         te.updateCabinetList();
 
-        world.getBlockTicks().scheduleTick(pos, this, 100); // 5 secs
+        world.scheduleTick(pos, this, 100); // 5 secs
     }
 
     @Override

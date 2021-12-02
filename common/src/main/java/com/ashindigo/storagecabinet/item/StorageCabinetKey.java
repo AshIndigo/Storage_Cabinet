@@ -62,7 +62,7 @@ public class StorageCabinetKey extends Item {
 
                 if (context.getPlayer().isShiftKeyDown()) {
                     // Set all to locked/unlocked
-                    CompoundTag tag = cabinetManager.save(new CompoundTag());
+                    CompoundTag tag = cabinetManager.saveWithFullMetadata();
                     tag.putBoolean(Constants.LOCKED, !tag.getBoolean(Constants.LOCKED));
                     cabinetManager.load(tag);
                     for (StorageCabinetEntity cabinet : cabinetList) {
@@ -81,7 +81,7 @@ public class StorageCabinetKey extends Item {
     }
 
     private void lockCabinet(StorageCabinetEntity cabinetEntity, KeyMode mode) {
-        CompoundTag tag = cabinetEntity.save(new CompoundTag());
+        CompoundTag tag = cabinetEntity.saveWithFullMetadata();
         switch (mode) {
             case LOCK -> tag.putBoolean(Constants.LOCKED, true);
             case UNLOCK -> tag.putBoolean(Constants.LOCKED, false);

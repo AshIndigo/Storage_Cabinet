@@ -1,5 +1,5 @@
 plugins {
-    id "com.github.johnrengelman.shadow" version "7.0.0"
+    id "com.github.johnrengelman.shadow" version "7.1.0"
 }
 
 repositories {
@@ -46,13 +46,13 @@ dependencies {
     // Remove the next line if you don't want to depend on the API
     modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
 
-    modRuntimeOnly("com.terraformersmc:modmenu:${rootProject.modmenu_version}")
-    modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${rootProject.rei_fabric_version}"
-    //modRuntimeOnly("curse.maven:smooth-swapping-513689:3434194")
-    modRuntimeOnly("io.github.cottonmc:LibGui:4.2.1+1.17.1")
-    modRuntimeOnly("net.fabricmc:fabric-language-kotlin:1.6.5+kotlin.1.5.31")
-    common(project(path: ":common", configuration: "namedElements")) { transitive false }
-    shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
+//    modRuntimeOnly("com.terraformersmc:modmenu:${rootProject.modmenu_version}")
+//    modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${rootProject.rei_fabric_version}"
+//    modRuntimeOnly("curse.maven:smooth-swapping-513689:3434194")
+//    modRuntimeOnly("io.github.cottonmc:LibGui:4.2.1+1.17.1")
+//    modRuntimeOnly("net.fabricmc:fabric-language-kotlin:1.6.5+kotlin.1.5.31")
+//    common(project(path: ":common", configuration: "namedElements")) { transitive false }
+//    shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 }
 
 processResources {

@@ -29,7 +29,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-Miimport java.util.ArrayList;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -104,10 +104,10 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
     }
 
     @Override
-    public CompoundTag save(CompoundTag tag) {
-        super.save(tag);
+    public void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
         prepareTag(tag);
-        return ContainerHelper.saveAllItems(tag, items);
+        ContainerHelper.saveAllItems(tag, items);
     }
 
     private void prepareTag(CompoundTag tag) {
@@ -213,7 +213,7 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
     public void tick() {
         if (level != null) {
             if (this.viewerCount > 0) {
-                this.level.getBlockTicks().scheduleTick(this.getBlockPos(), this.getBlockState().getBlock(), 5);
+                this.level.scheduleTick(this.getBlockPos(), this.getBlockState().getBlock(), 5);
             } else {
                 BlockState blockState = this.getBlockState();
                 if (!blockState.is(StorageCabinet.getByTier(tier))) {
@@ -236,7 +236,7 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
             if (!bl) {
                 this.level.setBlock(this.getBlockPos(), blockState.setValue(StorageCabinetBlock.OPEN, true), 3);
             }
-            this.level.getBlockTicks().scheduleTick(this.getBlockPos(), this.getBlockState().getBlock(), 5);
+            this.level.scheduleTick(this.getBlockPos(), this.getBlockState().getBlock(), 5);
             viewerCount++;
         }
     }
