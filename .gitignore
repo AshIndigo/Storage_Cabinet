@@ -20,3 +20,4 @@ classes/
 /.architectury-transformer/
 /common/.architectury-transformer/debug.log
 runServer/
+build.gradle2

@@ -32,6 +32,7 @@ public class StorageCabinetUpgrade extends Item {
                     oldList.add(sourceInv.getItem(i));
                 }
                 context.getLevel().setBlockAndUpdate(context.getClickedPos(), StorageCabinet.getByTier(tier).defaultBlockState().setValue(StorageCabinetBlock.FACING, state.getValue(StorageCabinetBlock.FACING)));
+                sourceInv = (StorageCabinetEntity) context.getLevel().getBlockEntity(context.getClickedPos());
                 copyItems(oldList, sourceInv);
                 context.getItemInHand().shrink(1);
             }
