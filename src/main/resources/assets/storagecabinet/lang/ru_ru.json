@@ -1,0 +1,19 @@
+{
+    "block.storagecabinet.storagecabinet_wood": "Деревянный шкаф для хранения",
+    "block.storagecabinet.storagecabinet_iron": "Железный шкаф для хранения",
+    "block.storagecabinet.storagecabinet_gold": "Золотой шкаф для хранения",
+    "block.storagecabinet.storagecabinet_diamond": "Алмазный шкаф для хранения",
+    "block.storagecabinet.storagecabinet_emerald": "Изумрудный шкаф для хранения",
+    "block.storagecabinet.cabinet_manager": "Менеджер шкафов",
+    "item.storagecabinet.storagecabinet_wood_upgrade": "Деревянное улучшение шкафа для хранения",
+    "item.storagecabinet.storagecabinet_iron_upgrade": "Железное улучшение шкафа для хранения",
+    "item.storagecabinet.storagecabinet_gold_upgrade": "Золотое улучшение шкафа для хранения",
+    "item.storagecabinet.storagecabinet_diamond_upgrade": "Алмазное улучшение шкафа для хранения",
+    "item.storagecabinet.storagecabinet_emerald_upgrade": "Изумрудное улучшение шкафа для хранения",
+    "item.storagecabinet.dolly": "Тележка для шкафов хранения",
+    "item.storagecabinet.key": "Ключ к шкафу",
+    "itemGroup.storagecabinet.storagecabinet": "Шкафы",
+    "text.storagecabinet.dollyhas":"Содержимое шкафа",
+    "text.storagecabinet.nocabinets": "У вас нет шкафов",
+    "desc.storagecabinet.nocabinets": "У вас нет шкафов, подключенных к менеджеру"
+}
