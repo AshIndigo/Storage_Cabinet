@@ -70,19 +70,21 @@ public class CabinetManagerContainer extends AbstractStorageCabinetContainer {
 
     @Override
     public void scrollTo(float pos, StorageCabinetEntity cabinetEntity) {
-        int i = (cabinetEntity.getContainerSize() + StorageCabinetBlock.getWidth() - 1) / StorageCabinetBlock.getWidth() - getDisplayHeight().getVerticalSlotCount();
-        int j = (int) ((double) (pos * (float) i) + 0.5D);
-        if (j < 0) {
-            j = 0;
-        }
+        if (cabinetEntity != null) {
+            int i = (cabinetEntity.getContainerSize() + StorageCabinetBlock.getWidth() - 1) / StorageCabinetBlock.getWidth() - getDisplayHeight().getVerticalSlotCount();
+            int j = (int) ((double) (pos * (float) i) + 0.5D);
+            if (j < 0) {
+                j = 0;
+            }
 
-        // Iterate through all slots
-        for (int y = 0; y < StorageCabinetBlock.getHeight(cabinetEntity.tier); ++y) {
-            for (int x = 0; x < StorageCabinetBlock.getWidth(); ++x) {
-                if (j == 0) {
-                    StorageCabinetExpectPlatform.setSlotY(CABINET_SLOT_LIST.get(cabinetEntity).get(y * StorageCabinetBlock.getWidth() + x), 18 + y * 18);
-                } else {
-                    StorageCabinetExpectPlatform.setSlotY(CABINET_SLOT_LIST.get(cabinetEntity).get(y * StorageCabinetBlock.getWidth() + x), 18 + (y - j) * 18);
+            // Iterate through all slots
+            for (int y = 0; y < StorageCabinetBlock.getHeight(cabinetEntity.tier); ++y) {
+                for (int x = 0; x < StorageCabinetBlock.getWidth(); ++x) {
+                    if (j == 0) {
+                        StorageCabinetExpectPlatform.setSlotY(CABINET_SLOT_LIST.get(cabinetEntity).get(y * StorageCabinetBlock.getWidth() + x), 18 + y * 18);
+                    } else {
+                        StorageCabinetExpectPlatform.setSlotY(CABINET_SLOT_LIST.get(cabinetEntity).get(y * StorageCabinetBlock.getWidth() + x), 18 + (y - j) * 18);
+                    }
                 }
             }
         }
