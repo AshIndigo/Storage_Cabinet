@@ -4,7 +4,6 @@ import com.ashindigo.storagecabinet.StorageCabinet;
 import com.ashindigo.storagecabinet.entity.CabinetManagerEntity;
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
 import com.ashindigo.storagecabinet.inventory.ManagerInventory;
-import com.ashindigo.storagecabinet.item.StorageCabinetKey;
 import dev.architectury.registry.menu.MenuRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

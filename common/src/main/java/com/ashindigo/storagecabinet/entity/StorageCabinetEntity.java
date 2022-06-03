@@ -6,7 +6,6 @@ import com.ashindigo.storagecabinet.StorageCabinet;
 import com.ashindigo.storagecabinet.block.StorageCabinetBlock;
 import com.ashindigo.storagecabinet.container.StorageCabinetContainer;
 import com.ashindigo.storagecabinet.inventory.BasicSidedInventory;
-import com.google.common.collect.Lists;
 import dev.architectury.injectables.targets.ArchitecturyTarget;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
@@ -15,9 +14,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.SerializationTags;
-import net.minecraft.tags.Tag;
+//import net.minecraft.tags.SerializationTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -30,9 +28,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 public class StorageCabinetEntity extends BlockEntity implements MenuProvider, BasicSidedInventory, ModifiableDisplaySize {
 
@@ -44,7 +40,7 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
     private NonNullList<ItemStack> items;
     private DisplayHeight displayHeight = Constants.DEFAULT_HEIGHT;
     private ItemStack cachedStack = ItemStack.EMPTY;
-    private List<ResourceLocation> cachedTags = new ArrayList<>();
+    private List<TagKey<Item>> cachedTags = new ArrayList<>();
 
     public StorageCabinetEntity(BlockPos pos, BlockState state) {
         super(StorageCabinet.CABINET_ENTITY.get(), pos, state);
@@ -60,19 +56,26 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
         return (tier + 1) * 90;
     }
 
-    public List<ResourceLocation> getTagsFor(Item object) {
+    public List<TagKey<Item>> getTagsFor(Item object) {
         /*
         Notes:
         Cache for tags, looks like I might as well set a list of cached tags. That I can use to see if an item is compatible.
         Would probably have to call this atleast once to gather them all but once is better than repeated useage right?
          */
-        List<ResourceLocation> list = Lists.newArrayList();
-        for (Map.Entry<ResourceLocation, Tag<Item>> entry : SerializationTags.getInstance().getOrEmpty(Registry.ITEM_REGISTRY).getAllTags().entrySet()) {
-            if (entry.getValue().contains(object)) {
-                list.add(entry.getKey());
-            }
-        }
-        return list;
+        //List<ResourceLocation> list = Lists.newArrayList();
+        return Registry.ITEM.getHolderOrThrow(Registry.ITEM.getResourceKey(object).get()).tags().toList();
+//        for (Pair<TagKey<Item>, HolderSet.Named<Item>> tagKeyNamedPair : Registry.ITEM.getTags().toList()) {
+//            if (Registry.ITEM.getTag(tagKeyNamedPair.getFirst()).isPresent()) {
+//                list.add(tagKeyNamedPair.)
+//            }
+//        }
+
+//        for (Map.Entry<ResourceLocation, Tag<Item>> entry : SerializationTags.getInstance().getOrEmpty(Registry.ITEM_REGISTRY).getAllTags().entrySet()) {
+//            if (entry.getValue().contains(object)) {
+//                list.add(entry.getKey());
+//            }
+//        }
+//        return list;
     }
 
     @Override
@@ -144,11 +147,16 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
             return true;
         }
 
-        Collection<ResourceLocation> idList = getCachedTags();
+        List<TagKey<Item>> idList = getCachedTags();
         if (!idList.isEmpty()) {
-            for (ResourceLocation id : idList) {
-                Tag<Item> itemTag = ItemTags.getAllTags().getTagOrEmpty(id);
-                if (itemTag.contains(stack.getItem())) {
+//            for (ResourceLocation id : idList) {
+//                Tag<Item> itemTag = ItemTags.getAllTags().getTagOrEmpty(id);
+//                if (itemTag.contains(stack.getItem())) {
+//                    return true;
+//                }
+//            }
+            for (TagKey<Item> entry : idList) {
+                if (Registry.ITEM.getHolderOrThrow(Registry.ITEM.getResourceKey(stack.getItem()).get()).is(entry)) {
                     return true;
                 }
             }
@@ -268,11 +276,11 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
      *
      * @return Tag's for the current main item in the cabinet
      */
-    public List<ResourceLocation> getCachedTags() {
+    public List<TagKey<Item>> getCachedTags() {
         return cachedTags;
     }
 
-    public void setCachedTags(List<ResourceLocation> cachedTags) {
+    public void setCachedTags(List<TagKey<Item>> cachedTags) {
         this.cachedTags = cachedTags;
     }
 }

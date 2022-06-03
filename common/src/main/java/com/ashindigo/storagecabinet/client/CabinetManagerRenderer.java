@@ -3,7 +3,6 @@ package com.ashindigo.storagecabinet.client;
 import com.ashindigo.storagecabinet.StorageCabinet;
 import com.ashindigo.storagecabinet.block.StorageCabinetBlock;
 import com.ashindigo.storagecabinet.entity.CabinetManagerEntity;
-import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
