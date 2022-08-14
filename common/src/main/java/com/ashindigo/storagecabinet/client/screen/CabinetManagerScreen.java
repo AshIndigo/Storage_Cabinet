@@ -7,8 +7,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
@@ -38,11 +36,11 @@ public class CabinetManagerScreen extends AbstractStorageCabinetScreen<CabinetMa
         super.init();
         this.menu.setEnabledTab(selectedTab);
         if (TABS.length > 6) {
-            buttonBack = addRenderableWidget(new Button(leftPos, topPos - 50, 20, 20, new TextComponent("<"), b -> {
+            buttonBack = addRenderableWidget(new Button(leftPos, topPos - 50, 20, 20, Component.literal("<"), b -> {
                 tabPage = Math.max(tabPage - 1, 0);
                 selectTab(TABS[tabPage * 6]);
             }));
-            buttonForward = addRenderableWidget(new Button(leftPos + imageWidth - 20, topPos - 50, 20, 20, new TextComponent(">"), b -> {
+            buttonForward = addRenderableWidget(new Button(leftPos + imageWidth - 20, topPos - 50, 20, 20, Component.literal(">"), b -> {
                 tabPage = Math.min(tabPage + 1, maxPages);
                 selectTab(TABS[tabPage * 6]);
             }));
@@ -85,7 +83,7 @@ public class CabinetManagerScreen extends AbstractStorageCabinetScreen<CabinetMa
         }
 
         if (maxPages != 0) {
-            Component page = new TextComponent(String.format("%d / %d", tabPage + 1, maxPages + 1));
+            Component page = Component.literal(String.format("%d / %d", tabPage + 1, maxPages + 1));
             this.setBlitOffset(300);
             this.itemRenderer.blitOffset = 300.0F;
             font.drawShadow(matrixStack, page.getVisualOrderText(), leftPos + imageWidth / 2 - font.width(page) / 2, topPos - 44, -1);
@@ -233,7 +231,7 @@ public class CabinetManagerScreen extends AbstractStorageCabinetScreen<CabinetMa
 
         public Component getTitle() {
             if (entity == null) {
-                return new TranslatableComponent("text.storagecabinet.nocabinets");
+                return Component.translatable("text.storagecabinet.nocabinets");
             }
             return entity.getDisplayName();
         }

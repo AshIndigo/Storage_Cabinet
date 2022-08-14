@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "quilt_loader": {
+    "group": "${group}",
+    "id": "storagecabinet",
+    "version": "${version}",
+    "name": "Storage Cabinet",
+    "description": "Adds storage cabinets to Minecraft",
+    "authors": [
+      "AshIndigo", "MoonlitLamps", "LotuxPunk"
+    ],
+    "contact": {
+      "homepage": "https://www.curseforge.com/minecraft/mc-mods/storage-cabinet",
+      "sources": "https://github.com/AshIndigo/Filing_Cabinet",
+      "issues": "https://github.com/AshIndigo/Storage_Cabinet/issues"
+    },
+    "license": "MIT",
+    "icon": "icon.png",
+    "intermediate_mappings": "net.fabricmc:intermediary",
+    "environment": "*",
+    "entrypoints": {
+      "init": [
+        "com.ashindigo.storagecabinet.quilt.StorageCabinetQuilt"
+      ],
+      "client_init": [
+      "com.ashindigo.storagecabinet.quilt.StorageCabinetQuiltClient"
+    ]
+    },
+    "access_widener" : "storagecabinet.accesswidener",
+    "depends": [
+      {
+        "id": "quilt_loader",
+        "version": "*"
+      },
+      {
+        "id": "quilt_base",
+        "version": "*"
+      },
+      {
+        "id": "minecraft",
+        "version": ">=1.19"
+      },
+      {
+        "id": "architectury",
+        "version": ">=5.7.28"
+      }
+    ]
+  }
+}

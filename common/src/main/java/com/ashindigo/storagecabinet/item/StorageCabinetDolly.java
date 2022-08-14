@@ -7,7 +7,6 @@ import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -63,7 +62,7 @@ public class StorageCabinetDolly extends Item {
     @Override
     public void appendHoverText(ItemStack stack, Level world, List<Component> tooltip, TooltipFlag flag) {
         if (stack.hasTag()) {
-            tooltip.add(new TranslatableComponent("text.storagecabinet.dollyhas"));
+            tooltip.add(Component.translatable("text.storagecabinet.dollyhas"));
         }
         super.appendHoverText(stack, world, tooltip, flag);
     }

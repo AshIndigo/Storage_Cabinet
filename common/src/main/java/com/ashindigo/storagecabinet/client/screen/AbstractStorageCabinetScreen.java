@@ -8,13 +8,11 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 
 public abstract class AbstractStorageCabinetScreen<T extends AbstractStorageCabinetContainer> extends AbstractContainerScreen<T> {
-
     public static final ResourceLocation CREATIVE_INVENTORY_TABS = new ResourceLocation("textures/gui/container/creative_inventory/tabs.png");
     public float scrollOffs;
     public boolean scrolling;
@@ -31,7 +29,7 @@ public abstract class AbstractStorageCabinetScreen<T extends AbstractStorageCabi
     protected void init() {
         super.init();
         minecraft.keyboardHandler.setSendRepeatsToGui(true);
-        sizeButton = addRenderableWidget(new Button(leftPos - 24, topPos, 24, 20, new TranslatableComponent("text.storagecabinet.size"), button -> {
+        sizeButton = addRenderableWidget(new Button(leftPos - 24, topPos, 24, 20, Component.translatable("text.storagecabinet.size"), button -> {
             selectedHeight = switch (selectedHeight) {
                 case SMALL -> DisplayHeight.MEDIUM;
                 case MEDIUM -> DisplayHeight.SMALL;

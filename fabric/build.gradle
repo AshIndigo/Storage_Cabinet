@@ -29,8 +29,32 @@ configurations {
     developmentFabric.extendsFrom common
 }
 
+allprojects {
+    sourceSets {
+        testmod {
+            compileClasspath += main.compileClasspath
+            runtimeClasspath += main.runtimeClasspath
+            compileClasspath += testmod.compileClasspath
+            runtimeClasspath += testmod.runtimeClasspath
+        }
+    }
+}
+
 loom {
     accessWidenerPath = file("src/main/resources/storagecabinet.accesswidener")
+    //accessWidenerPath = project(":common").loom.accessWidenerPath
+        runs {
+            gametest {
+                server()
+                name "Game Test"
+                ideConfigGenerated project.rootProject == project
+                vmArg "-Dfabric-api.gametest"
+                vmArg "-Dfabric-api.gametest.report-file=${project.buildDir}/junit.xml"
+                runDir "build/gametest"
+                source sourceSets.testmod
+            }
+        }
+    test.dependsOn runGametest
 }
 
 repositories {
@@ -60,11 +84,13 @@ processResources {
 }
 
 shadowJar {
+    exclude "architectury.common.json"
     configurations = [project.configurations.shadowCommon]
     classifier "dev-shadow"
 }
 
 remapJar {
+    injectAccessWidener = true
     input.set shadowJar.archiveFile
     dependsOn shadowJar
     classifier null

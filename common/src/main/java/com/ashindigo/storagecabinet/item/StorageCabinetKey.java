@@ -11,7 +11,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -92,7 +91,7 @@ public class StorageCabinetKey extends Item {
     @Override
     public void appendHoverText(ItemStack itemStack, @Nullable Level level, List<Component> list, TooltipFlag tooltipFlag) {
         super.appendHoverText(itemStack, level, list, tooltipFlag);
-        list.add(new TranslatableComponent("desc.storagecabinet.item.key.1").withStyle(ChatFormatting.GRAY));
-        list.add(new TranslatableComponent("desc.storagecabinet.item.key.2").withStyle(ChatFormatting.GRAY));
+        list.add(Component.translatable("desc.storagecabinet.item.key.1").withStyle(ChatFormatting.GRAY));
+        list.add(Component.translatable("desc.storagecabinet.item.key.2").withStyle(ChatFormatting.GRAY));
     }
 }

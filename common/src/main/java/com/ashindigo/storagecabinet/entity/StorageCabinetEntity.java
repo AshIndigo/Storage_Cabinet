@@ -12,7 +12,6 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 //import net.minecraft.tags.SerializationTags;
 import net.minecraft.tags.TagKey;
@@ -129,7 +128,7 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
 
     @Override
     public Component getDisplayName() {
-        return customName != null ? customName : new TranslatableComponent(level.getBlockState(getBlockPos()).getBlock().getDescriptionId());
+        return customName != null ? customName : Component.translatable(level.getBlockState(getBlockPos()).getBlock().getDescriptionId());
     }
 
     @Override

@@ -3,7 +3,7 @@ package com.ashindigo.storagecabinet.item;
 import com.ashindigo.storagecabinet.StorageCabinet;
 import com.ashindigo.storagecabinet.block.StorageCabinetBlock;
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.UseOnContext;
@@ -20,7 +20,7 @@ public class CabinetDebug extends Item {
         final Level level = context.getLevel();
         if (level.getBlockState(context.getClickedPos()).getBlock() instanceof StorageCabinetBlock) {
             if (level.getBlockEntity(context.getClickedPos()) != null && level.getBlockEntity(context.getClickedPos()) instanceof StorageCabinetEntity blockEntity) {
-                context.getPlayer().displayClientMessage(new TextComponent("Cabinet Item: " + blockEntity.getItem().toString()), true);
+                context.getPlayer().displayClientMessage(Component.literal("Cabinet Item: " + blockEntity.getItem().toString()), true);
             }
             return InteractionResult.SUCCESS;
         }
