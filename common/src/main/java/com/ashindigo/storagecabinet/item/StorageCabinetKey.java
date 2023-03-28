@@ -9,6 +9,7 @@ import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
 import com.google.common.collect.Lists;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
@@ -35,7 +36,7 @@ public class StorageCabinetKey extends Item {
     }
 
     public StorageCabinetKey() {
-        super(new Properties().tab(StorageCabinet.CABINET_GROUP).stacksTo(1));
+        super(new Properties().arch$tab(StorageCabinet.CABINET_GROUP).stacksTo(1));
     }
 
     @Override
@@ -83,7 +84,7 @@ public class StorageCabinetKey extends Item {
             case UNLOCK -> tag.putBoolean(Constants.LOCKED, false);
             case INVERT -> tag.putBoolean(Constants.LOCKED, !tag.getBoolean(Constants.LOCKED));
         }
-        tag.putString(Constants.ITEM, Registry.ITEM.getKey(cabinetEntity.getMainItemStack().getItem()).toString());
+        tag.putString(Constants.ITEM, BuiltInRegistries.ITEM.getKey(cabinetEntity.getMainItemStack().getItem()).toString());
         cabinetEntity.load(tag);
         cabinetEntity.setChanged();
     }

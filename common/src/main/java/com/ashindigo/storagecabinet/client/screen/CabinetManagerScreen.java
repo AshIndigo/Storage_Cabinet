@@ -5,6 +5,7 @@ import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
 import com.ashindigo.storagecabinet.networking.SizeChangeMessage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -36,14 +37,23 @@ public class CabinetManagerScreen extends AbstractStorageCabinetScreen<CabinetMa
         super.init();
         this.menu.setEnabledTab(selectedTab);
         if (TABS.length > 6) {
-            buttonBack = addRenderableWidget(new Button(leftPos, topPos - 50, 20, 20, Component.literal("<"), b -> {
+            buttonBack = addRenderableWidget(Button.builder(Component.literal("<"), b -> {
                 tabPage = Math.max(tabPage - 1, 0);
                 selectTab(TABS[tabPage * 6]);
-            }));
-            buttonForward = addRenderableWidget(new Button(leftPos + imageWidth - 20, topPos - 50, 20, 20, Component.literal(">"), b -> {
+            }).size(20, 20).pos(leftPos, topPos - 50).build());
+//            buttonBack = addRenderableWidget(new Button(leftPos, topPos - 50, 20, 20, Component.literal("<"), b -> {
+//                tabPage = Math.max(tabPage - 1, 0);
+//                selectTab(TABS[tabPage * 6]);
+//            }));
+//            buttonForward = addRenderableWidget(new Button(leftPos + imageWidth - 20, topPos - 50, 20, 20, Component.literal(">"), b -> {
+//                tabPage = Math.min(tabPage + 1, maxPages);
+//                selectTab(TABS[tabPage * 6]);
+//            }));
+
+            buttonForward = addRenderableWidget(Button.builder(Component.literal(">"), b -> {
                 tabPage = Math.min(tabPage + 1, maxPages);
                 selectTab(TABS[tabPage * 6]);
-            }));
+            }).pos(leftPos + imageWidth - 20, topPos - 50).size(20, 20).build());
             maxPages = (int) Math.ceil((TABS.length - 6) / 10D);
         }
     }
@@ -84,11 +94,12 @@ public class CabinetManagerScreen extends AbstractStorageCabinetScreen<CabinetMa
 
         if (maxPages != 0) {
             Component page = Component.literal(String.format("%d / %d", tabPage + 1, maxPages + 1));
-            this.setBlitOffset(300);
-            this.itemRenderer.blitOffset = 300.0F;
+            // TODO Blit stuff, remove?
+//            this.setBlitOffset(300);
+//            this.itemRenderer.blitOffset = 300.0F;
             font.drawShadow(matrixStack, page.getVisualOrderText(), leftPos + imageWidth / 2 - font.width(page) / 2, topPos - 44, -1);
-            this.setBlitOffset(0);
-            this.itemRenderer.blitOffset = 0.0F;
+//            this.setBlitOffset(0);
+//            this.itemRenderer.blitOffset = 0.0F;
         }
 
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
@@ -145,12 +156,13 @@ public class CabinetManagerScreen extends AbstractStorageCabinetScreen<CabinetMa
     public void changeDisplaySize() {
         super.changeDisplaySize();
         if (buttonForward != null) {
-            buttonForward.x = leftPos + imageWidth - 20;
-            buttonForward.y = topPos - 50;
+            buttonForward.setX(leftPos + imageWidth - 20);
+            buttonForward.setY(topPos - 50);
         }
         if (buttonBack != null) {
-            buttonBack.x = leftPos;
-            buttonBack.y = topPos - 50;
+            buttonBack.setX(leftPos);
+            //buttonBack.x = leftPos;
+            buttonBack.setY(topPos - 50);
         }
         if (menu.cabinetManagerEntity.getBlockPos() != null) {
             new SizeChangeMessage(selectedHeight, menu.cabinetManagerEntity.getBlockPos()).sendToServer();
@@ -196,9 +208,9 @@ public class CabinetManagerScreen extends AbstractStorageCabinetScreen<CabinetMa
 
     private void renderTabButton(PoseStack matrixStack, CabinetTab tab) {
         int column = tab.getColumn();
-        int j = column * 28;
+        int j = column * 26;
         int k = 0;
-        int l = this.leftPos + 28 * column;
+        int l = this.leftPos + 26 * column;
         int i1 = this.topPos;
         if (tab.getId() == selectedTab) {
             k += 32;
@@ -206,17 +218,17 @@ public class CabinetManagerScreen extends AbstractStorageCabinetScreen<CabinetMa
         if (column > 0) {
             l += column;
         }
-        i1 = i1 - 28;
+        i1 = i1 - 26;
         // Thanks Forge for the extra fix
         RenderSystem.enableBlend(); //Forge: Make sure blend is enabled else tabs show a white border.
-        this.blit(matrixStack, l, i1, j, k, 28, 32);
-        this.itemRenderer.blitOffset = 100.0F;
+        blit(matrixStack, l, i1, j, k, 26, 32);
+        //this.itemRenderer.blitOffset = 100.0F;
         l = l + 6;
         i1 = i1 + 8 + 1;
         ItemStack itemstack = tab.getIcon();
-        this.itemRenderer.renderAndDecorateItem(itemstack, l, i1);
-        this.itemRenderer.renderGuiItemDecorations(this.font, itemstack, l, i1);
-        this.itemRenderer.blitOffset = 0.0F;
+        this.itemRenderer.renderAndDecorateItem(matrixStack, itemstack, l, i1);
+        this.itemRenderer.renderGuiItemDecorations(matrixStack, this.font, itemstack, l, i1);
+        //this.itemRenderer.blitOffset = 0.0F;
     }
 
     public record CabinetTab(int id, StorageCabinetEntity entity) {

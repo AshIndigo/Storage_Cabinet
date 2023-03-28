@@ -12,7 +12,7 @@ import net.minecraft.world.level.Level;
 public class CabinetDebug extends Item {
 
     public CabinetDebug() {
-        super(new Properties().tab(StorageCabinet.CABINET_GROUP).stacksTo(1));
+        super(new Properties().arch$tab(StorageCabinet.CABINET_GROUP).stacksTo(1));
     }
 
     @Override

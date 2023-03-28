@@ -10,6 +10,7 @@ import dev.architectury.injectables.targets.ArchitecturyTarget;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -62,7 +63,7 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
         Would probably have to call this atleast once to gather them all but once is better than repeated useage right?
          */
         //List<ResourceLocation> list = Lists.newArrayList();
-        return Registry.ITEM.getHolderOrThrow(Registry.ITEM.getResourceKey(object).get()).tags().toList();
+        return BuiltInRegistries.ITEM.getHolderOrThrow(BuiltInRegistries.ITEM.getResourceKey(object).get()).tags().toList();
 //        for (Pair<TagKey<Item>, HolderSet.Named<Item>> tagKeyNamedPair : Registry.ITEM.getTags().toList()) {
 //            if (Registry.ITEM.getTag(tagKeyNamedPair.getFirst()).isPresent()) {
 //                list.add(tagKeyNamedPair.)
@@ -98,7 +99,7 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
         ContainerHelper.loadAllItems(tag, items);
         super.load(tag);
         this.locked = tag.getBoolean(Constants.LOCKED);
-        this.setItem(Registry.ITEM.get(ResourceLocation.tryParse(tag.getString(Constants.ITEM))));
+        this.setItem(BuiltInRegistries.ITEM.get(ResourceLocation.tryParse(tag.getString(Constants.ITEM))));
         if (tag.contains(Constants.CUSTOM_NAME, 8)) {
             this.customName = Component.Serializer.fromJson(tag.getString(Constants.CUSTOM_NAME));
         }
@@ -115,7 +116,7 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
     private void prepareTag(CompoundTag tag) {
         tag.putInt(Constants.TIER, tier);
         tag.putBoolean(Constants.LOCKED, locked);
-        tag.putString(Constants.ITEM, Registry.ITEM.getKey(getItem()).toString());
+        tag.putString(Constants.ITEM, BuiltInRegistries.ITEM.getKey(getItem()).toString());
         if (this.customName != null) {
             tag.putString(Constants.CUSTOM_NAME, Component.Serializer.toJson(this.customName));
         }
@@ -155,7 +156,7 @@ public class StorageCabinetEntity extends BlockEntity implements MenuProvider, B
 //                }
 //            }
             for (TagKey<Item> entry : idList) {
-                if (Registry.ITEM.getHolderOrThrow(Registry.ITEM.getResourceKey(stack.getItem()).get()).is(entry)) {
+                if (BuiltInRegistries.ITEM.getHolderOrThrow(BuiltInRegistries.ITEM.getResourceKey(stack.getItem()).get()).is(entry)) {
                     return true;
                 }
             }

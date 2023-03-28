@@ -5,6 +5,9 @@ pluginManagement {
         maven { url "https://maven.minecraftforge.net/" }
         gradlePluginPortal()
     }
+    plugins {
+        id "com.github.johnrengelman.shadow" version "${shadow_version}"
+    }
 }
 
 include("common")

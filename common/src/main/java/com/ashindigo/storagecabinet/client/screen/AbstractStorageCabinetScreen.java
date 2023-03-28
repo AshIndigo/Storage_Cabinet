@@ -28,14 +28,21 @@ public abstract class AbstractStorageCabinetScreen<T extends AbstractStorageCabi
     @Override
     protected void init() {
         super.init();
-        minecraft.keyboardHandler.setSendRepeatsToGui(true);
-        sizeButton = addRenderableWidget(new Button(leftPos - 24, topPos, 24, 20, Component.translatable("text.storagecabinet.size"), button -> {
+        //minecraft.keyboardHandler.setSendRepeatsToGui(true);
+        sizeButton = addRenderableWidget(Button.builder(Component.translatable("text.storagecabinet.size"), button -> {
             selectedHeight = switch (selectedHeight) {
                 case SMALL -> DisplayHeight.MEDIUM;
                 case MEDIUM -> DisplayHeight.SMALL;
             };
             changeDisplaySize();
-        }));
+        }).pos(leftPos - 24, topPos).size(24,20).build());
+//        sizeButton = addRenderableWidget(new Button(leftPos - 24, topPos, 24, 20, Component.translatable("text.storagecabinet.size"), button -> {
+//            selectedHeight = switch (selectedHeight) {
+//                case SMALL -> DisplayHeight.MEDIUM;
+//                case MEDIUM -> DisplayHeight.SMALL;
+//            };
+//            changeDisplaySize();
+//        }));
         changeDisplaySize();
     }
 
@@ -123,8 +130,8 @@ public abstract class AbstractStorageCabinetScreen<T extends AbstractStorageCabi
         this.topPos = (this.height - this.imageHeight) / 2;
         this.inventoryLabelY = selectedHeight.getPlayerInvStart() - 10;
         menu.changeSlotPositions(selectedHeight);
-        sizeButton.x = leftPos - 24;
-        sizeButton.y = topPos;
+        sizeButton.setX(leftPos - 24);
+        sizeButton.setY(topPos);
         scrollMenu(scrollOffs);
     }
 }

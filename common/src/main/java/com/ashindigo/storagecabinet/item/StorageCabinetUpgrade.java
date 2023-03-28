@@ -17,7 +17,7 @@ public class StorageCabinetUpgrade extends Item {
     private final int tier;
 
     public StorageCabinetUpgrade(int tier) {
-        super(new Properties().tab(StorageCabinet.CABINET_GROUP));
+        super(new Properties().arch$tab(StorageCabinet.CABINET_GROUP));
         this.tier = tier;
     }
 
