@@ -8,7 +8,6 @@ import com.ashindigo.storagecabinet.entity.CabinetManagerEntity;
 import com.ashindigo.storagecabinet.entity.StorageCabinetEntity;
 import com.google.common.collect.Lists;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;

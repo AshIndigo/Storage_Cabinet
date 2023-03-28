@@ -5,6 +5,7 @@ import com.ashindigo.storagecabinet.block.StorageCabinetBlock;
 import com.ashindigo.storagecabinet.container.AbstractStorageCabinetContainer;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -56,7 +57,7 @@ public abstract class AbstractStorageCabinetScreen<T extends AbstractStorageCabi
         int j = this.topPos + 18;
         int k = j + 112;
         RenderSystem.setShaderTexture(0, CREATIVE_INVENTORY_TABS);
-        this.blit(matrixStack, i, j + (int) ((float) (k - j - 17) * this.scrollOffs), 232, 0, 12, 15);
+        blit(matrixStack, i, j + (int) ((float) (k - j - 17) * this.scrollOffs), 232, 0, 12, 15);
     }
 
     @Override

@@ -23,7 +23,6 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 public class CabinetManagerBlock extends BaseEntityBlock implements WorldlyContainerHolder {
 

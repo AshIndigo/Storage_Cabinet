@@ -25,8 +25,6 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 
-import java.util.Random;
-
 public class StorageCabinetBlock extends BaseEntityBlock {
 
     public static final DirectionProperty FACING;
