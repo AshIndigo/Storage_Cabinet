@@ -9,5 +9,4 @@ public class StorageCabinetExpectPlatform {
     public static void setSlotY(Slot slot, int y) {
         throw new AssertionError(); // Shouldn't run
     }
-
 }

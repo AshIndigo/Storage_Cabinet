@@ -46,11 +46,6 @@ public class StorageCabinetContainer extends AbstractStorageCabinetContainer {
     }
 
     @Override
-    public boolean stillValid(Player player) {
-        return true;
-    }
-
-    @Override
     public void removed(Player player) {
         super.removed(player);
         entity.onClose(player);
